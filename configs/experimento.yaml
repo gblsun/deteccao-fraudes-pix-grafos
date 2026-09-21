@@ -1,0 +1,39 @@
+# Parâmetros do experimento. Commitar este arquivo junto com os resultados
+# garante que cada figura/métrica possa ser reproduzida depois.
+
+simulacao:
+  seed: 42
+  start_date: "2026-01-01"
+  n_days: 30               # período simulado, em dias
+  # contas legítimas
+  n_people: 2000           # pessoas físicas
+  n_merchants: 100         # comércios (pessoas jurídicas)
+  community_size: 20       # tamanho do círculo de contatos de cada pessoa
+  tx_per_person_day: 0.6   # média de Pix enviados por pessoa por dia
+  p_merchant: 0.4          # fração dos Pix de PF que vão para comércios
+  p_contact: 0.8           # fração dos Pix P2P que ficam no círculo de contatos
+  amount_mu: 4.0           # valor ~ lognormal(mu, sigma); mediana e^4 ≈ R$ 55
+  amount_sigma: 1.1
+  # quadrilhas
+  n_rings: 6               # nº de quadrilhas
+  mules_per_ring: 4        # contas laranja por quadrilha
+  victims_per_ring: 15     # golpes aplicados por quadrilha
+  p_chain: 0.5             # prob. de a quadrilha lavar o dinheiro em cadeia
+  chain_length: 3          # nº de contas intermediárias na cadeia
+  fraud_amount_shift: 1.5  # golpes valem ~e^1.5 ≈ 4,5x o valor típico
+  forward_delay_min: 30    # tempo médio (min) até cada repasse
+  camouflage_tx: 3         # nº médio de Pix "normais" feitos por conta fraudulenta
+
+atributos:
+  betweenness_k: 500       # vértices de origem amostrados na intermediação (null = exato)
+  seed: 42
+
+modelos:
+  isolation_forest:
+    n_estimators: 300
+    contamination: auto    # ou a fração esperada de contas anômalas, ex.: 0.02
+    seed: 42
+  dbscan:
+    eps: auto              # ou um valor escolhido pelo gráfico de k-distance
+    min_samples: 10
+    eps_quantile: 0.95     # usado só quando eps = auto

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Ambientes
+.venv/
+venv/
+.env
+
+# Editores / sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Dados: são gerados pelos scripts ou baixados da API, então não são versionados.
+# Os resultados (reports/) são pequenos e ficam no repositório.
+data/**/*
+!data/**/
+!data/**/.gitkeep
+!data/README.md
