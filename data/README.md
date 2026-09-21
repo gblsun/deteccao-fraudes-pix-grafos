@@ -63,6 +63,9 @@ resultados, lembre-se de que, na versão atual:
   forte **por construção**;
 * 70% das contas fraudulentas são recém-abertas (`account_age_days` < 60);
 * comércios só recebem (não pagam fornecedores nem salários);
+* toda pessoa legítima é razoavelmente ativa (~18 Pix enviados por mês). Contas quietas
+  são raras, então qualquer conta com poucos Pix já parece anômala. Veja o exercício 4 do
+  notebook `estudos/04_padroes_de_fraude.ipynb`;
 * a taxa de fraude (~2% das contas) é muito maior que a real. Segundo o BCB, há cerca de
   5 contestações aceitas a cada 100 mil Pix. A taxa foi inflada de propósito para haver
   exemplos suficientes; vale testar cenários mais realistas via `configs/experimento.yaml`.

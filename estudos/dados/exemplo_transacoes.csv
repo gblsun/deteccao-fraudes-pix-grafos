@@ -1,0 +1,21 @@
+sender,receiver,amount,timestamp
+ana,bruno,45.00,2026-03-02 12:10
+bruno,carla,30.00,2026-03-02 19:40
+carla,ana,25.00,2026-03-03 08:15
+ana,padaria,12.50,2026-03-03 07:30
+bruno,padaria,8.00,2026-03-03 07:45
+davi,padaria,15.00,2026-03-04 07:20
+elisa,mercado,230.00,2026-03-04 18:00
+davi,elisa,60.00,2026-03-04 20:10
+elisa,davi,60.00,2026-03-05 09:00
+ana,bruno,20.00,2026-03-05 13:00
+fabio,mercado,150.00,2026-03-05 17:30
+carla,conta_x,1500.00,2026-03-06 02:14
+carla,conta_x,1200.00,2026-03-06 02:21
+fabio,conta_x,900.00,2026-03-06 10:05
+conta_x,conta_y,3450.00,2026-03-06 10:40
+conta_y,conta_z,3300.00,2026-03-06 11:02
+conta_x,padaria,9.00,2026-03-07 07:50
+davi,bruno,35.00,2026-03-07 12:00
+bruno,davi,10.00,2026-03-08 09:30
+elisa,ana,18.00,2026-03-08 15:00

@@ -48,6 +48,12 @@ def test_fraudulent_money_reaches_collectors(dataset):
     assert collectors <= set(transactions.loc[transactions["is_fraud"], "receiver"])
 
 
+def test_dataset_without_rings_has_only_legit_accounts():
+    accounts, transactions = generate_dataset(SimulationConfig(n_people=100, n_merchants=5, n_days=3, n_rings=0))
+    assert not accounts["is_fraud"].any()
+    assert (transactions["scenario"] == "normal").all()
+
+
 def test_repository_config_is_valid():
     cfg = load_config(Path(__file__).parents[1] / "configs" / "experimento.yaml")
     assert cfg.n_people > 0

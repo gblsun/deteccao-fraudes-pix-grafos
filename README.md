@@ -7,7 +7,11 @@ estruturais (grau, centralidade, intermediação) alimentam detectores não supe
 (Isolation Forest e DBSCAN), e os resultados são interpretados com grafos de calor e
 heatmaps de risco.
 
-Texto completo da proposta: [docs/proposta.md](docs/proposta.md).
+Texto completo da proposta: [docs/proposta.md](docs/proposta.md) ([PDF original](docs/proposta-original.pdf)).
+
+**Para estudar:** a pasta [estudos/](estudos/) tem notebooks sobre teoria dos grafos aplicada
+a fraudes no Pix, com exercícios e gabarito, além das ferramentas para criar, recortar,
+desenhar e exportar grafos.
 
 ## Estrutura
 
@@ -15,24 +19,27 @@ Texto completo da proposta: [docs/proposta.md](docs/proposta.md).
 ├── configs/experimento.yaml   parâmetros da simulação, dos atributos e dos modelos
 ├── data/                      dados (não versionados), ver data/README.md
 ├── docs/
-│   ├── proposta.md            proposta da pesquisa
+│   ├── proposta.md            proposta da pesquisa (e proposta-original.pdf)
 │   ├── cronograma.md          etapas e acompanhamento
 │   ├── revisao-bibliografica.md  fichamentos e sugestões de leitura
 │   ├── referencias.bib        referências em BibTeX
 │   └── reunioes/              atas das reuniões de orientação
-├── notebooks/                 análises exploratórias
+├── estudos/                   notebooks de estudo, gabarito e cola de NetworkX
+├── notebooks/                 análises exploratórias da pesquisa
 ├── reports/
 │   ├── figures/               grafos de calor e heatmaps de risco
+│   ├── estudos/               grafos gerados nos estudos
 │   └── results/               métricas dos experimentos
-├── scripts/                   pontos de entrada do pipeline
+├── scripts/                   pontos de entrada (pipeline e criar_grafo.py)
 ├── src/pixfraud/              código da pesquisa (pacote Python)
 │   ├── simulation.py          gerador do dataset sintético de transações PIX
 │   ├── bcb.py                 acesso aos dados abertos do PIX (Banco Central)
-│   ├── graph.py               transações → grafo direcionado
+│   ├── graph.py               criação de grafos, trilha do dinheiro, resumo
+│   ├── patterns.py            padrões de fraude (fan-in, cadeia, ciclo...) e injeção
 │   ├── features.py            atributos tabulares e de grafo por conta
 │   ├── anomaly.py             Isolation Forest e DBSCAN
 │   ├── evaluation.py          métricas de desempenho
-│   └── visualization.py       grafo de calor e heatmap de risco
+│   └── visualization.py       desenho, HTML interativo, Gephi, grafo de calor, heatmap
 └── tests/                     testes automatizados (pytest)
 ```
 
@@ -61,7 +68,14 @@ python scripts/rodar_experimento.py
 # 3. (opcional) baixa estatísticas públicas do PIX para calibrar o gerador
 python scripts/baixar_dados_bcb.py fraudes 202506
 python scripts/baixar_dados_bcb.py transacoes 202506 --filtro "AnoMes eq 202506"
+
+# criar grafos avulsos: padrões de fraude, CSVs quaisquer, trilha do dinheiro de uma conta
+python scripts/criar_grafo.py padrao mule_ring --saida reports/estudos/anel.png
+python scripts/criar_grafo.py csv data/synthetic/transactions.csv --conta C000333 --saltos 5 --direcao tras --saida reports/estudos/trilha.html
 ```
+
+O formato de saída de `criar_grafo.py` vem da extensão: `.png`/`.svg`/`.pdf`, `.html`
+(interativo, abre no navegador) ou `.gexf`/`.graphml` (Gephi).
 
 Todos os parâmetros ficam em [configs/experimento.yaml](configs/experimento.yaml). Com a
 mesma configuração e a mesma semente, o resultado é idêntico.
@@ -105,6 +119,7 @@ reais, e os dados do Banco Central são estatísticas agregadas e públicas.
 ## Organização do trabalho
 
 - Etapas e andamento: [docs/cronograma.md](docs/cronograma.md)
+- Estudos: [estudos/README.md](estudos/README.md)
 - Leituras: [docs/revisao-bibliografica.md](docs/revisao-bibliografica.md)
 - Reuniões de orientação: copiar [docs/reunioes/modelo.md](docs/reunioes/modelo.md)
 - Novos notebooks: prefixo numérico e nome descritivo (`02_perfis_de_fraude.ipynb`).
