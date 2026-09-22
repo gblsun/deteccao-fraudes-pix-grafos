@@ -18,7 +18,9 @@ A linha "oráculo" sinaliza cada conta fraudulenta no primeiro corte depois da
 exposição: é o teto imposto só pela frequência dos cortes.
 
 Saídas: reports/results/online_execucoes.csv, online_resumo.csv e
-online_comparacoes.csv, e a figura reports/figures/online_deteccao.png.
+online_comparacoes.csv, e a figura reports/figures/online_deteccao.png. As
+sinalizações de cada cenário e semente ficam em reports/results/online_cortes/
+e são reaproveitadas se o script rodar de novo (--refazer recalcula).
 
 Uso:
     python scripts/avaliar_deteccao_online.py --sementes 3
@@ -69,6 +71,7 @@ def main() -> None:
     parser.add_argument("--saque", nargs="+", default=["1h", "6h", "24h"],
                         help="tempos até o dinheiro parado ser sacado (um resultado para cada)")
     parser.add_argument("--saida", default="reports")
+    parser.add_argument("--refazer", action="store_true", help="recalcula as sinalizações já salvas")
     args = parser.parse_args()
 
     config = load_experiment_config(args.config)
@@ -80,6 +83,10 @@ def main() -> None:
     feature_sets = {s: FEATURE_SETS[s] for s in args.conjuntos}
     horizon = pd.Timedelta(args.horizonte)
     metrics = ["detectadas_72h", "atraso_mediano_h"] + [f"recuperado_{c}" for c in args.saque]
+    # As sinalizações (a parte cara) de cada cenário e semente são salvas assim que
+    # ficam prontas; ao rodar de novo, são reaproveitadas.
+    cache = Path(args.saida) / "results" / "online_cortes"
+    cache.mkdir(parents=True, exist_ok=True)
 
     rows = []
     for name in args.cenarios:
@@ -90,9 +97,19 @@ def main() -> None:
             fraud = accounts.loc[accounts["is_fraud"], "account_id"]
             exposure = exposure_times(tx, fraud)
             checkpoints = relevant_checkpoints(exposure, args.frequencia, args.horizonte)
-            run_config = copy.deepcopy(config)
-            run_config["modelos"].setdefault("isolation_forest", {})["seed"] = seed
-            flags = checkpoint_flags(accounts, tx, run_config, checkpoints, k=len(fraud), feature_sets=feature_sets)
+            flags_file = cache / f"{name}_semente{seed}_{args.frequencia}_{args.horizonte}.csv"
+            flags = None
+            if flags_file.exists() and not args.refazer:
+                flags = pd.read_csv(flags_file, parse_dates=["corte"])
+                if not set(feature_sets) <= set(flags["atributos"]):
+                    flags = None  # salvo sem algum dos conjuntos pedidos: recalcula
+            if flags is None:
+                run_config = copy.deepcopy(config)
+                run_config["modelos"].setdefault("isolation_forest", {})["seed"] = seed
+                flags = checkpoint_flags(accounts, tx, run_config, checkpoints, k=len(fraud),
+                                         feature_sets=feature_sets)
+                flags.to_csv(flags_file, index=False)
+            flags = flags[flags["atributos"].isin(feature_sets)]
 
             ids = {"cenario": name, "semente": seed}
             for (set_name, model), group in flags.groupby(["atributos", "modelo"], sort=False):

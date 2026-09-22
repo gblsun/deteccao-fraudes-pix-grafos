@@ -1,5 +1,6 @@
 """Testes de fumaça dos scripts de avaliação, num dataset minúsculo."""
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -22,8 +23,11 @@ dificil: {fraud_hours: comercial, p_new_fraud_account: 0.0, quiet_fraction: 0.3}
 """
 
 
-def _run(script: str, *args: str) -> None:
-    subprocess.run([sys.executable, str(ROOT / "scripts" / script), *args], check=True, capture_output=True)
+def _run(script: str, *args: str) -> str:
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+    done = subprocess.run([sys.executable, str(ROOT / "scripts" / script), *args], check=True, capture_output=True,
+                          env=env)
+    return done.stdout.decode("utf-8")
 
 
 def test_avaliar_cenarios(tmp_path):
@@ -59,8 +63,11 @@ def test_avaliar_externo(tmp_path):
     fraud = accounts[accounts["is_fraud"]]
     fraud[["account_id", "role"]].rename(columns={"role": "typology"}).to_csv(data / "patterns.csv", index=False)
     (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
-    _run("avaliar_externo.py", "--config", str(tmp_path / "config.yaml"), "--dados", str(data),
-         "--dias-janela", "2", "--min-fraudes", "1", "--saida", str(tmp_path / "saida"))
+    args = ["--config", str(tmp_path / "config.yaml"), "--dados", str(data), "--dias-janela", "2",
+            "--min-fraudes", "1", "--saida", str(tmp_path / "saida")]
+    first = _run("avaliar_externo.py", *args)
+    assert "reaproveitada" not in first
+    assert "reaproveitada" in _run("avaliar_externo.py", *args)  # as janelas prontas ficam salvas
 
     runs = pd.read_csv(tmp_path / "saida" / "results" / "externo_execucoes.csv")
     assert runs["janela"].nunique() >= 1 and set(runs["modelo"]) == {"isolation_forest", "dbscan"}
@@ -68,3 +75,19 @@ def test_avaliar_externo(tmp_path):
     assert set(typologies["typology"]) <= {"laranja", "intermediario", "coletor"}
     assert typologies["recall_at_k"].between(0, 1).all()
     assert (tmp_path / "saida" / "figures" / "externo_tipologias.png").exists()
+
+
+def test_avaliar_deteccao_online(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    args = ["--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios", str(tmp_path / "cenarios.yaml"),
+            "--cenarios", "dificil", "--sementes", "2", "--frequencia", "12h", "--conjuntos", "tabular", "grafo",
+            "--saida", str(tmp_path)]
+    _run("avaliar_deteccao_online.py", *args)
+    runs = pd.read_csv(tmp_path / "results" / "online_execucoes.csv")
+    assert set(runs["atributos"]) == {"tabular", "grafo", "oráculo"}
+    recovered = runs[["recuperado_1h", "recuperado_6h", "recuperado_24h"]]
+    assert recovered.stack().between(0, 1 + 1e-9).all()  # soma de pedaços: arredondamento
+    assert (runs["recuperado_1h"] <= runs["recuperado_24h"] + 1e-9).all()  # mais prazo, mais dinheiro retido
+    assert len(list((tmp_path / "results" / "online_cortes").glob("*.csv"))) == 2
+    assert (tmp_path / "figures" / "online_deteccao.png").exists()

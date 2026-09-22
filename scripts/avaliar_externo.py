@@ -16,6 +16,10 @@ e a figura <saida>/figures/<nome>_tipologias.png.
 Uso:
     python scripts/avaliar_externo.py --dados data/external/amlworld_pix --saida reports/amlworld
     python scripts/avaliar_externo.py --dados data/external/amlworld --max-janelas 1   # teste rápido
+
+Cada janela é salva em <saida>/results/<nome>_janelas/ assim que termina. Se a
+execução for interrompida, rodar de novo reaproveita as janelas prontas
+(--refazer recalcula tudo, por exemplo depois de mudar a configuração).
 """
 
 import argparse
@@ -52,38 +56,57 @@ def main() -> None:
     parser.add_argument("--dados", required=True, help="pasta com accounts.csv e transactions.csv (e patterns.csv)")
     parser.add_argument("--dias-janela", type=int, default=3)
     parser.add_argument("--min-fraudes", type=int, default=20, help="pula janelas com menos contas fraudulentas")
+    parser.add_argument("--max-fracao-fraude", type=float, default=0.2,
+                        help="pula janelas em que as contas fraudulentas passam dessa fração (sem movimento normal)")
     parser.add_argument("--max-janelas", type=int, help="para depois de N janelas avaliadas (teste rápido)")
     parser.add_argument("--saida", default="reports/externo")
+    parser.add_argument("--refazer", action="store_true", help="recalcula as janelas já salvas")
     args = parser.parse_args()
 
     config = load_experiment_config(args.config)
     data = Path(args.dados)
+    name = data.name
     _, transactions = load_dataset(data)
     members = pd.read_csv(data / "patterns.csv") if (data / "patterns.csv").exists() else None
+    # Cada janela é salva assim que termina; ao rodar de novo, as prontas são reaproveitadas.
+    cache = Path(args.saida) / "results" / f"{name}_janelas"
+    cache.mkdir(parents=True, exist_ok=True)
 
     runs, recalls = [], []
     for i, (start, accounts, tx) in enumerate(time_windows(transactions, args.dias_janela), start=1):
         n_fraud = int(accounts["is_fraud"].sum())
-        if n_fraud < args.min_fraudes:
-            print(f"janela {i} ({start.date()}): {n_fraud} contas fraudulentas, pulada")
+        if n_fraud < args.min_fraudes or n_fraud > args.max_fracao_fraude * len(accounts):
+            print(f"janela {i} ({start.date()}): {n_fraud} de {len(accounts)} contas fraudulentas, pulada")
             continue
-        began = time.time()
-        prepared = prepare(accounts, tx, config)
-        metrics, detections = run_detectors(prepared.features, prepared.labels, config["modelos"])
-        runs.append(metrics.assign(janela=i, inicio=start.date(), fraudes=n_fraud, contas=len(accounts)))
-        if members is not None:
-            fraud = members[members["account_id"].isin(prepared.labels.index[prepared.labels])]
-            for (set_name, model), detection in detections.items():
-                table = recall_by_group(fraud, detection.scores, k=n_fraud)
-                recalls.append(table.assign(janela=i, atributos=set_name, modelo=model))
-        print(f"janela {i} ({start.date()}): {len(accounts):,} contas, {len(tx):,} transações, "
-              f"{n_fraud} fraudulentas, {time.time() - began:.0f} s".replace(",", "."), flush=True)
+        metrics_file, typology_file = cache / f"janela_{i:02d}.csv", cache / f"janela_{i:02d}_tipologias.csv"
+        if metrics_file.exists() and not args.refazer:
+            runs.append(pd.read_csv(metrics_file))
+            if typology_file.exists():
+                recalls.append(pd.read_csv(typology_file))
+            print(f"janela {i} ({start.date()}): já calculada, reaproveitada", flush=True)
+        else:
+            began = time.time()
+            prepared = prepare(accounts, tx, config)
+            metrics, detections = run_detectors(prepared.features, prepared.labels, config["modelos"])
+            metrics = metrics.assign(janela=i, inicio=start.date(), fraudes=n_fraud, contas=len(accounts))
+            if members is not None:
+                fraud = members[members["account_id"].isin(prepared.labels.index[prepared.labels])]
+                window_recalls = pd.concat(
+                    [recall_by_group(fraud, detection.scores, k=n_fraud).assign(janela=i, atributos=s, modelo=m)
+                     for (s, m), detection in detections.items()],
+                    ignore_index=True,
+                )
+                window_recalls.to_csv(typology_file, index=False)
+                recalls.append(window_recalls)
+            metrics.to_csv(metrics_file, index=False)  # por último: marca a janela como pronta
+            runs.append(metrics)
+            print(f"janela {i} ({start.date()}): {len(accounts):,} contas, {len(tx):,} transações, "
+                  f"{n_fraud} fraudulentas, {time.time() - began:.0f} s".replace(",", "."), flush=True)
         if args.max_janelas and len(runs) >= args.max_janelas:
             break
     if not runs:
         parser.error("nenhuma janela com contas fraudulentas suficientes (veja --min-fraudes)")
 
-    name = data.name
     results, figures = Path(args.saida) / "results", Path(args.saida) / "figures"
     results.mkdir(parents=True, exist_ok=True)
     figures.mkdir(parents=True, exist_ok=True)
