@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.online`: dinheiro recuperado calculado à mão e pontos de corte."""
+
 import pandas as pd
 import pytest
 

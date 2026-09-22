@@ -36,12 +36,15 @@ REPEATED_METRICS = ["average_precision", "precision_at_k", "roc_auc", "f1"]
 
 @dataclass
 class Prepared:
+    """Tudo o que os detectores precisam, calculado uma vez por dataset (ver ``prepare``)."""
+
     graph: nx.DiGraph
     features: pd.DataFrame
     labels: pd.Series  # is_fraud por conta
 
 
 def load_experiment_config(path: str | Path) -> dict:
+    """Lê o YAML de experimento inteiro (seções ``simulacao``, ``atributos`` e ``modelos``)."""
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 

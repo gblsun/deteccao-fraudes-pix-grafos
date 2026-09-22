@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.explorer`: layout por comunidades e página da rede inteira."""
+
 import json
 import re
 

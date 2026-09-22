@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.flow`: fluxo máximo, corte mínimo, contas a bloquear e propagação de risco."""
+
 from pathlib import Path
 
 import pytest

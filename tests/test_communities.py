@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.communities`: comunidades, k-núcleos, subgrafo denso e OddBall."""
+
 import networkx as nx
 import pandas as pd
 import pytest

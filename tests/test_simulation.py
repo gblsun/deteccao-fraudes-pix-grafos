@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.simulation`: reprodutibilidade, rótulos e parâmetros de realismo."""
+
 from dataclasses import replace
 from pathlib import Path
 

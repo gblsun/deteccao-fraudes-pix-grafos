@@ -26,6 +26,7 @@ from pixfraud.anomaly import Detection
 
 
 def evaluate(y_true: pd.Series, detection: Detection, k: int | None = None) -> dict[str, float]:
+    """Todas as métricas do módulo para uma detecção; ``k`` padrão = nº de fraudes reais."""
     y = y_true.reindex(detection.scores.index).astype(bool)
     k = int(y.sum()) if k is None else k
     top_k = detection.scores.nlargest(k).index

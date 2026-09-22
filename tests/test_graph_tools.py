@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.graph`: criação de grafos, trilha do dinheiro e resumo."""
+
 from pathlib import Path
 
 import networkx as nx

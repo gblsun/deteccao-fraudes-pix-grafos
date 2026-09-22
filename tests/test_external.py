@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.external`: AMLworld e PaySim com arquivos de exemplo embutidos."""
+
 import pandas as pd
 
 from pixfraud.external import (

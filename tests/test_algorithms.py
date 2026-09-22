@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.algorithms`: caminho gargalo, ramificação máxima, VF2, HITS e similaridade."""
+
 from pathlib import Path
 
 import networkx as nx

@@ -7,15 +7,15 @@ Marque `[x]` quando a etapa for concluída.
 |:------:|-----------------------------------------------------------------|:-------:|-----------------------------------------------------------|
 | [ ]    | Revisão bibliográfica e fundamentação teórica                   | 1–2     | `estudos/`, `docs/revisao-bibliografica.md`, `docs/referencias.bib` |
 | [ ]    | Definição da metodologia e modelagem do problema                | 2–3     | `docs/proposta.md`, `configs/experimento.yaml`            |
-| [ ]    | Construção do dataset sintético PIX / seleção de dados públicos | 3–4     | `src/pixfraud/simulation.py`, `src/pixfraud/bcb.py`       |
+| [ ]    | Construção do dataset sintético PIX / seleção de dados públicos | 3–4     | `src/pixfraud/simulation.py`, `src/pixfraud/bcb.py`, `src/pixfraud/external.py` (AMLworld) |
 | [ ]    | Análise exploratória de dados e validação do dataset            | 4–5     | `notebooks/01_analise_exploratoria.ipynb`                 |
 | [ ]    | Modelagem das transações em grafos                              | 5–6     | `src/pixfraud/graph.py`                                   |
 | [ ]    | Extração de métricas estruturais dos grafos                     | 6–7     | `src/pixfraud/features.py`                                |
 | [ ]    | Aplicação de técnicas de machine learning                       | 7–8     | `src/pixfraud/anomaly.py`                                 |
 | [ ]    | Desenvolvimento de visualizações em grafos e heatmaps           | 8–9     | `src/pixfraud/visualization.py`, `reports/figures/`       |
-| [ ]    | Análise de perfis de fraude e interpretação dos resultados      | 9–10    | notebooks                                                 |
+| [ ]    | Análise de perfis de fraude e interpretação dos resultados      | 9–10    | notebooks, `reports/amlworld/` (recall por tipologia)     |
 | [ ]    | Comparação entre abordagem tabular e grafos                     | 10–11   | `reports/results/metricas.csv`, `cenarios_*.csv`, `docs/resultados.md` |
-| [ ]    | Avaliação dos modelos e métricas de desempenho                  | 11–12   | `src/pixfraud/evaluation.py`, `src/pixfraud/stats.py`, `reports/results/robustez_*.csv` |
+| [ ]    | Avaliação dos modelos e métricas de desempenho                  | 11–12   | `src/pixfraud/evaluation.py`, `src/pixfraud/stats.py`, `src/pixfraud/online.py`, `reports/results/robustez_*.csv` |
 | [ ]    | Escrita, revisão e finalização do relatório científico          | 11–12   | relatório final                                           |
 
 ```mermaid

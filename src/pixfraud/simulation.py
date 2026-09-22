@@ -131,6 +131,7 @@ def generate_dataset(cfg: SimulationConfig) -> tuple[pd.DataFrame, pd.DataFrame]
 
 
 def save_dataset(accounts: pd.DataFrame, transactions: pd.DataFrame, out_dir: str | Path) -> None:
+    """Grava ``accounts.csv`` e ``transactions.csv`` em ``out_dir`` (criada se não existir)."""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     accounts.to_csv(out / "accounts.csv", index=False)
@@ -138,6 +139,7 @@ def save_dataset(accounts: pd.DataFrame, transactions: pd.DataFrame, out_dir: st
 
 
 def load_dataset(data_dir: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Lê as tabelas gravadas por ``save_dataset`` (vale também para os datasets externos)."""
     data = Path(data_dir)
     accounts = pd.read_csv(data / "accounts.csv")
     transactions = pd.read_csv(data / "transactions.csv", parse_dates=["timestamp"])

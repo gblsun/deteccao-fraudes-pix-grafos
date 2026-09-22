@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.anomaly` e `pixfraud.evaluation`: detectores e métricas."""
+
 import numpy as np
 import pandas as pd
 import pytest

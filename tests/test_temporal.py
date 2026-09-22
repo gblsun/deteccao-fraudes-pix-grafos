@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.temporal`: caminhos que respeitam a ordem dos Pix."""
+
 from pathlib import Path
 
 import networkx as nx

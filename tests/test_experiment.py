@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.experiment`: várias sementes e leitura dos cenários."""
+
 from pathlib import Path
 
 import pytest

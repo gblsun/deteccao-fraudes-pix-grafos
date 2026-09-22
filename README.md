@@ -8,6 +8,8 @@ estruturais (grau, centralidade, intermediação) alimentam detectores não supe
 heatmaps de risco.
 
 Texto completo da proposta: [docs/proposta.md](docs/proposta.md) ([PDF original](docs/proposta-original.pdf)).
+**Mapa de toda a documentação**: [docs/README.md](docs/README.md). Cada pasta tem o seu
+README (por exemplo, [scripts/](scripts/README.md) e [reports/](reports/README.md)).
 
 **Para estudar:** a pasta [estudos/](estudos/) tem notebooks sobre teoria dos grafos aplicada
 a fraudes no Pix, com exercícios e gabarito, além das ferramentas para criar, recortar,
@@ -54,6 +56,7 @@ desenhar e exportar grafos.
 │   ├── evaluation.py          métricas de desempenho
 │   ├── stats.py               testes estatísticos, bootstrap, comparações pareadas, modelo nulo
 │   ├── experiment.py          núcleo do experimento (uma semente ou várias)
+│   ├── online.py              detecção ao longo do tempo: a conta foi bloqueada a tempo?
 │   ├── visualization.py       desenho, HTML interativo, Gephi, grafo de calor, heatmap
 │   └── explorer.py            página da rede inteira (sigma.js), com filtros e linha do tempo
 └── tests/                     testes automatizados (pytest)
@@ -107,9 +110,16 @@ python scripts/visualizar_rede.py
 # explorador interativo: rede, ficha da conta, padrões, fluxo e resultados
 streamlit run app/explorador.py
 
-# o mesmo pipeline sobre um dataset público (ver data/README.md)
-python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --dias 3
+# validação externa no AMLworld, só com transferências parecidas com o Pix (ver data/README.md)
+python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --padroes data/raw/HI-Small_Patterns.txt --formatos ACH Wire --saida data/external/amlworld_pix
+python scripts/avaliar_externo.py --dados data/external/amlworld_pix --saida reports/amlworld
+
+# detecção ao longo do tempo: quanto do dinheiro roubado seria bloqueado a tempo?
+python scripts/avaliar_deteccao_online.py --sementes 3
 ```
+
+As avaliações longas salvam o progresso: se forem interrompidas, rodar de novo continua
+de onde parou.
 
 Todos os parâmetros ficam em [configs/experimento.yaml](configs/experimento.yaml). Com a
 mesma configuração e a mesma semente, o resultado é idêntico.
@@ -125,8 +135,10 @@ combinado, temporal, grafo avançado e completo) e grava:
   suspeita.
 
 Um único dataset não basta para afirmar que uma abordagem é melhor: `avaliar_robustez.py`
-e `avaliar_cenarios.py` repetem tudo com várias sementes e aplicam testes pareados. Os
-resultados e sua interpretação estão em [docs/resultados.md](docs/resultados.md).
+e `avaliar_cenarios.py` repetem tudo com várias sementes e aplicam testes pareados,
+`avaliar_externo.py` testa a mesma configuração num dataset que não fomos nós que geramos
+(AMLworld), e `avaliar_deteccao_online.py` mede se a detecção acontece a tempo de bloquear
+o dinheiro. Os resultados e sua interpretação estão em [docs/resultados.md](docs/resultados.md).
 
 ## Atributos
 

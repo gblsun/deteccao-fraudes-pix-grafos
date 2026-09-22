@@ -14,6 +14,12 @@ from sklearn.preprocessing import StandardScaler
 
 @dataclass
 class Detection:
+    """Resultado de um detector: um escore contínuo e um rótulo binário por conta.
+
+    Os escores servem para ordenar as contas (AP, precision@k, grafo de calor); a
+    escala depende do modelo, então só a ordem é comparável entre detectores.
+    """
+
     scores: pd.Series  # quanto maior, mais anômala a conta
     is_anomaly: pd.Series  # rótulo binário atribuído pelo modelo
 

@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.features`: cada atributo conferido à mão num grafo pequeno."""
+
 import pandas as pd
 import pytest
 

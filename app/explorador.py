@@ -49,6 +49,7 @@ st.set_page_config(page_title="Explorador Pix", layout="wide")
 
 @st.cache_data(show_spinner="Carregando o dataset...")
 def load(data_dir: str):
+    """Contas e Pix da pasta; gera o dataset sintético se ela ainda estiver vazia."""
     path = Path(data_dir)
     if not (path / "transactions.csv").exists():
         save_dataset(*generate_dataset(load_config(CONFIG)), path)
@@ -57,12 +58,14 @@ def load(data_dir: str):
 
 @st.cache_resource(show_spinner="Montando o grafo e calculando os atributos...")
 def prepared(data_dir: str):
+    """Grafo, atributos e rótulos, calculados uma vez e guardados entre as interações."""
     accounts, transactions = load(data_dir)
     return prepare(accounts, transactions, load_experiment_config(CONFIG))
 
 
 @st.cache_data(show_spinner="Rodando o detector...")
 def risk_scores(data_dir: str, model: str, feature_set: str) -> pd.Series:
+    """Escore de risco de cada conta para o detector e o conjunto escolhidos na barra lateral."""
     data = prepared(data_dir)
     config = load_experiment_config(CONFIG)
     return DETECTORS[model](data.features[FEATURE_SETS[feature_set]], **config["modelos"][model]).scores
@@ -70,6 +73,7 @@ def risk_scores(data_dir: str, model: str, feature_set: str) -> pd.Series:
 
 @st.cache_data(show_spinner="Desenhando a rede inteira...")
 def explorer_page(data_dir: str, model: str, feature_set: str) -> str:
+    """HTML da aba "Rede inteira" (ver ``pixfraud.explorer``)."""
     accounts, transactions = load(data_dir)
     info = accounts.set_index("account_id")
     return network_explorer_html(
@@ -81,16 +85,19 @@ def explorer_page(data_dir: str, model: str, feature_set: str) -> str:
 
 @st.cache_data(show_spinner="Avaliando todos os detectores...")
 def all_metrics(data_dir: str) -> pd.DataFrame:
+    """Métricas de todos os detectores × conjuntos de atributos, para a aba "Resultados"."""
     data = prepared(data_dir)
     metrics, _ = run_detectors(data.features, data.labels, load_experiment_config(CONFIG)["modelos"])
     return metrics
 
 
 def roles_with_victims(info: pd.DataFrame) -> pd.Series:
+    """Papel de cada conta, com as vítimas de golpe destacadas como ``vitima``."""
     return info["role"].where(~info["is_victim"], "vitima") if "is_victim" in info else info["role"]
 
 
 def with_roles(graph, roles: pd.Series):
+    """Cópia do grafo com o atributo ``role`` em cada vértice (para colorir os desenhos)."""
     graph = graph.copy()
     for v in graph:
         graph.nodes[v]["role"] = roles.get(v, "?")

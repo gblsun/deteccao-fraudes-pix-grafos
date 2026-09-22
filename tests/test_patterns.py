@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.patterns`: formato dos padrões de fraude e injeção num grafo."""
+
 import matplotlib
 
 matplotlib.use("Agg")

@@ -1,3 +1,5 @@
+"""Testes de `evaluation.recall_by_group` e `visualization.plot_value_matrix`."""
+
 import matplotlib
 
 matplotlib.use("Agg")

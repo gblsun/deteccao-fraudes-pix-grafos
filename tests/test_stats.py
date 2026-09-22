@@ -1,3 +1,5 @@
+"""Testes de `pixfraud.stats`: tamanho de efeito, correções, bootstrap, testes pareados e modelo nulo."""
+
 import networkx as nx
 import numpy as np
 import pandas as pd
