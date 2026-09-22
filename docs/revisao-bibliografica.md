@@ -27,6 +27,25 @@ Não constam na proposta original, mas são próximas do tema. Todas já estão 
 
 ## Fichamentos
 
+Todas as leituras já têm uma nota de esqueleto em
+[`docs/leituras/`](leituras/README.md), agrupadas por tema, com o status de cada uma.
+
 | Chave | Assunto em uma linha | Entra em |
 |-------|----------------------|----------|
-<!-- uma linha por leitura, com link para docs/leituras/<chave>.md -->
+| [diestel2017graph](leituras/diestel2017graph.md) | Livro-texto de teoria dos grafos: definições e resultados usados na modelagem | [graph.py](../src/pixfraud/graph.py), [estudo 01](../estudos/01_fundamentos.ipynb) |
+| [easley2010networks](leituras/easley2010networks.md) | Redes, mercados e comportamento: centralidade, comunidades e mundo pequeno | [estudo 03](../estudos/03_metricas_de_centralidade.ipynb), [estudo 05](../estudos/05_modelos_de_redes.ipynb) |
+| [brandes2001faster](leituras/brandes2001faster.md) | Algoritmo de intermediação usado (em versão amostrada) nos atributos de grafo | [features.py](../src/pixfraud/features.py) |
+| [hagberg2008networkx](leituras/hagberg2008networkx.md) | A biblioteca NetworkX, usada para montar e medir os grafos | [graph.py](../src/pixfraud/graph.py), [algorithms.py](../src/pixfraud/algorithms.py) |
+| [akoglu2015graph](leituras/akoglu2015graph.md) | Survey de detecção de anomalias em grafos; origem do OddBall e da culpa por associação | [communities.py](../src/pixfraud/communities.py), [flow.py](../src/pixfraud/flow.py), [resultados](resultados.md) |
+| [weber2019aml](leituras/weber2019aml.md) | Elliptic (Bitcoin): compara atributos tabulares e de grafo, a mesma pergunta desta pesquisa | [resultados](resultados.md) |
+| [liu2008isolation](leituras/liu2008isolation.md) | Isolation Forest: isola pontos raros com partições aleatórias | [anomaly.py](../src/pixfraud/anomaly.py) |
+| [ester1996dbscan](leituras/ester1996dbscan.md) | DBSCAN: densidade e ruído; o ruído é o que tratamos como anomalia | [anomaly.py](../src/pixfraud/anomaly.py), [escolha do eps](../notebooks/01_analise_exploratoria.ipynb) |
+| [pedregosa2011sklearn](leituras/pedregosa2011sklearn.md) | scikit-learn: implementação dos detectores e da validação cruzada | [anomaly.py](../src/pixfraud/anomaly.py), [experiment.py](../src/pixfraud/experiment.py) |
+| [james2021isl](leituras/james2021isl.md) | Introdução ao aprendizado estatístico: validação e comparação de modelos | [teto supervisionado](resultados.md) |
+| [bishop2006pattern](leituras/bishop2006pattern.md) | Fundamentos de reconhecimento de padrões e modelos probabilísticos | [anomaly.py](../src/pixfraud/anomaly.py) |
+| [witten2011datamining](leituras/witten2011datamining.md) | Prática de mineração de dados; avaliação com classes desbalanceadas | [evaluation.py](../src/pixfraud/evaluation.py), [resultados](resultados.md) |
+| [bcb2024pix](leituras/bcb2024pix.md) | O arranjo Pix: regras, MED e bloqueio cautelar | [bcb.py](../src/pixfraud/bcb.py), [proposta](proposta.md) |
+| [bcb2024relatorio](leituras/bcb2024relatorio.md) | Relatório de gestão do Pix: números oficiais de uso e de fraude | [notebook 01](../notebooks/01_analise_exploratoria.ipynb) |
+| [bcb2026dadosabertos](leituras/bcb2026dadosabertos.md) | API de dados abertos do Pix: estatísticas de transações e de fraudes | [bcb.py](../src/pixfraud/bcb.py), [notebook 01](../notebooks/01_analise_exploratoria.ipynb), [dados](../data/README.md) |
+| [lopezrojas2016paysim](leituras/lopezrojas2016paysim.md) | PaySim: simulador de dinheiro móvel, referência para gerar dados sintéticos | [simulation.py](../src/pixfraud/simulation.py), [external.py](../src/pixfraud/external.py) |
+| [altman2023realistic](leituras/altman2023realistic.md) | AMLworld: transações sintéticas de lavagem com tipologias em grafo | [external.py](../src/pixfraud/external.py), [resultados, seção 8](resultados.md) |
