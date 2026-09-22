@@ -1,10 +1,12 @@
-"""Testes de fumaça dos scripts de avaliação com várias sementes, num dataset minúsculo."""
+"""Testes de fumaça dos scripts de avaliação, num dataset minúsculo."""
 
 import subprocess
 import sys
 from pathlib import Path
 
 import pandas as pd
+
+from pixfraud.simulation import SimulationConfig, generate_dataset, save_dataset
 
 ROOT = Path(__file__).parents[1]
 CONFIG = """
@@ -46,3 +48,23 @@ def test_avaliar_robustez(tmp_path):
     summary = pd.read_csv(tmp_path / "results" / "robustez_resumo.csv")
     assert set(summary["métrica"]) >= {"average_precision", "roc_auc"}
     assert (tmp_path / "figures" / "robustez_average_precision.png").exists()
+
+
+def test_avaliar_externo(tmp_path):
+    # um dataset sintético pequeno fazendo o papel de dataset externo, com o papel como "tipologia"
+    accounts, transactions = generate_dataset(SimulationConfig(n_people=200, n_merchants=10, n_days=6, n_rings=3,
+                                                               victims_per_ring=5))
+    data = tmp_path / "externo"
+    save_dataset(accounts, transactions, data)
+    fraud = accounts[accounts["is_fraud"]]
+    fraud[["account_id", "role"]].rename(columns={"role": "typology"}).to_csv(data / "patterns.csv", index=False)
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    _run("avaliar_externo.py", "--config", str(tmp_path / "config.yaml"), "--dados", str(data),
+         "--dias-janela", "2", "--min-fraudes", "1", "--saida", str(tmp_path / "saida"))
+
+    runs = pd.read_csv(tmp_path / "saida" / "results" / "externo_execucoes.csv")
+    assert runs["janela"].nunique() >= 1 and set(runs["modelo"]) == {"isolation_forest", "dbscan"}
+    typologies = pd.read_csv(tmp_path / "saida" / "results" / "externo_tipologias.csv")
+    assert set(typologies["typology"]) <= {"laranja", "intermediario", "coletor"}
+    assert typologies["recall_at_k"].between(0, 1).all()
+    assert (tmp_path / "saida" / "figures" / "externo_tipologias.png").exists()

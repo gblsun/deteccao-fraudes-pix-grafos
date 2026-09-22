@@ -176,11 +176,13 @@ def compare_runs(
     comparisons: list[tuple[str, str]],
     metrics: list[str],
     by: list[str] = (),
+    unit: str = "semente",
 ) -> pd.DataFrame:
     """Testes pareados entre conjuntos de atributos, semente a semente.
 
     ``runs`` tem uma linha por (semente, atributos, modelo), como a saída de
-    ``pixfraud.experiment.run_seeds``. Para cada métrica, modelo e par
+    ``pixfraud.experiment.run_seeds``; ``unit`` é a coluna que identifica a
+    repetição (as janelas de tempo, num dataset externo). Para cada métrica, modelo e par
     ``(a, b)`` de ``comparisons``, aplica ``paired_comparison`` a ``a - b``.
     Cada métrica (dentro de cada grupo de ``by``) é uma família de testes, e
     a correção de Holm vale dentro dela: com 10 sementes, o menor p possível
@@ -192,7 +194,7 @@ def compare_runs(
     for key, group in groups:
         for metric in metrics:
             for model in group["modelo"].unique():
-                wide = group[group["modelo"] == model].pivot(index="semente", columns="atributos", values=metric)
+                wide = group[group["modelo"] == model].pivot(index=unit, columns="atributos", values=metric)
                 for a, b in comparisons:
                     rows.append({
                         **dict(zip(by, key)),

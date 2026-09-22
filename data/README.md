@@ -94,18 +94,42 @@ um único mês.
 
 Para não avaliar os detectores só nos padrões que nós mesmos injetamos, `pixfraud.external`
 converte dois datasets públicos para o formato acima (`accounts.csv` e `transactions.csv`).
-Os arquivos originais ficam no Kaggle, que exige login: baixe-os à mão para `data/raw/` e
-anote aqui a versão e a data de acesso.
+Os arquivos originais ficam no Kaggle. Anote aqui a versão e a data de acesso.
 
 | Fonte | O que é | Arquivos | Observações |
 |-------|---------|----------|-------------|
-| **AMLworld** (IBM; Altman et al., 2023) | transações bancárias sintéticas com rótulo de lavagem e padrões em grafo (fan-in, fan-out, ciclos, cadeias...) | `HI-Small_Trans.csv`, `LI-Small_Trans.csv` etc. | grandes: recorte com `--dias` ou `--linhas`. Só pagamentos em dólar, por padrão (`--moeda`) |
+| **AMLworld** (IBM; Altman et al., 2023) | transações bancárias sintéticas com rótulo de lavagem e padrões em grafo (fan-in, fan-out, ciclos, cadeias...) | `HI-Small_Trans.csv`, `HI-Small_Patterns.txt`, `LI-Small_*` etc. | grandes: recorte com `--dias` ou `--linhas`. Só pagamentos em dólar, por padrão (`--moeda`) |
 | **PaySim** (Lopez-Rojas et al., 2016) | simulação de dinheiro móvel | `PS_20174392719_1491204439457_log.csv` | quase toda conta de origem aparece uma única vez, então a estrutura em grafo é fraca; serve de contraste |
 
+### Baixar pela API do Kaggle
+
+1. Em kaggle.com: foto do perfil → *Settings* → *API* → *Create New Token*. Salve o
+   `kaggle.json` em `C:\Users\<usuário>\.kaggle\kaggle.json` (Linux/macOS: `~/.kaggle/`).
+   O token é pessoal: **nunca** o coloque dentro do repositório.
+2. Com o ambiente ativado:
+
 ```powershell
-python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --dias 3
-python scripts/rodar_experimento.py --dados data/external/amlworld --saida reports/amlworld
+pip install kaggle
+kaggle datasets files ealtman2019/ibm-transactions-for-anti-money-laundering-aml
+kaggle datasets download ealtman2019/ibm-transactions-for-anti-money-laundering-aml -f HI-Small_Trans.csv -p data/raw --unzip
+kaggle datasets download ealtman2019/ibm-transactions-for-anti-money-laundering-aml -f HI-Small_Patterns.txt -p data/raw --unzip
 ```
 
-Nos dois casos não existe idade da conta: `account_age_days` fica 0 e deixa de informar.
+### Importar e avaliar
+
+```powershell
+# todas as formas de pagamento
+python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --padroes data/raw/HI-Small_Patterns.txt --saida data/external/amlworld
+# só transferências eletrônicas (ACH e Wire), as mais parecidas com o Pix
+python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --padroes data/raw/HI-Small_Patterns.txt --formatos ACH Wire --saida data/external/amlworld_pix
+
+# mesma configuração do sintético, janelas de 3 dias como repetições, recall por tipologia
+python scripts/avaliar_externo.py --dados data/external/amlworld_pix --saida reports/amlworld
+```
+
+`--padroes` grava `patterns.csv` (conta → tipologia de lavagem), usado para medir quais
+formatos cada abordagem encontra. Para um teste rápido, use `--max-janelas 1` no
+`avaliar_externo.py`, ou `--dias` na importação.
+
+Nos dois datasets não existe idade da conta: `account_age_days` fica 0 e deixa de informar.
 Os papéis também não existem: as contas envolvidas em fraude/lavagem recebem `role = suspeita`.

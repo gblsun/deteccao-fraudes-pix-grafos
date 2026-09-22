@@ -1,0 +1,147 @@
+"""Avalia os detectores num dataset externo (AMLworld), janela por janela.
+
+Usa a mesma configuração do dataset sintético (configs/experimento.yaml), sem
+reajustar nada. Cada janela de --dias-janela dias é uma repetição, no lugar das
+sementes: as comparações entre conjuntos de atributos são pareadas por janela.
+Se a pasta de dados tiver patterns.csv (importar_dataset.py --padroes), mede
+também o recall@k de cada tipologia de lavagem.
+
+Saídas em <saida>/results/, com o nome da pasta de dados como prefixo:
+    <nome>_execucoes.csv     uma linha por (janela, atributos, modelo)
+    <nome>_resumo.csv        média, desvio e IC 95% de cada métrica
+    <nome>_comparacoes.csv   testes pareados entre conjuntos de atributos
+    <nome>_tipologias.csv    recall@k por tipologia (se houver patterns.csv)
+e a figura <saida>/figures/<nome>_tipologias.png.
+
+Uso:
+    python scripts/avaliar_externo.py --dados data/external/amlworld_pix --saida reports/amlworld
+    python scripts/avaliar_externo.py --dados data/external/amlworld --max-janelas 1   # teste rápido
+"""
+
+import argparse
+import time
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+
+from pixfraud.anomaly import DETECTORS  # noqa: E402
+from pixfraud.evaluation import recall_by_group  # noqa: E402
+from pixfraud.experiment import (  # noqa: E402
+    COMPARISONS,
+    REPEATED_METRICS,
+    load_experiment_config,
+    prepare,
+    run_detectors,
+)
+from pixfraud.external import time_windows  # noqa: E402
+from pixfraud.features import FEATURE_SETS  # noqa: E402
+from pixfraud.simulation import load_dataset  # noqa: E402
+from pixfraud.stats import compare_runs, summarize_runs  # noqa: E402
+from pixfraud.visualization import INK, INK_SECONDARY, SEQUENTIAL_CMAP, SURFACE, plot_value_matrix  # noqa: E402
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Avalia os detectores num dataset externo, por janelas de tempo.")
+    parser.add_argument("--config", default="configs/experimento.yaml")
+    parser.add_argument("--dados", required=True, help="pasta com accounts.csv e transactions.csv (e patterns.csv)")
+    parser.add_argument("--dias-janela", type=int, default=3)
+    parser.add_argument("--min-fraudes", type=int, default=20, help="pula janelas com menos contas fraudulentas")
+    parser.add_argument("--max-janelas", type=int, help="para depois de N janelas avaliadas (teste rápido)")
+    parser.add_argument("--saida", default="reports/externo")
+    args = parser.parse_args()
+
+    config = load_experiment_config(args.config)
+    data = Path(args.dados)
+    _, transactions = load_dataset(data)
+    members = pd.read_csv(data / "patterns.csv") if (data / "patterns.csv").exists() else None
+
+    runs, recalls = [], []
+    for i, (start, accounts, tx) in enumerate(time_windows(transactions, args.dias_janela), start=1):
+        n_fraud = int(accounts["is_fraud"].sum())
+        if n_fraud < args.min_fraudes:
+            print(f"janela {i} ({start.date()}): {n_fraud} contas fraudulentas, pulada")
+            continue
+        began = time.time()
+        prepared = prepare(accounts, tx, config)
+        metrics, detections = run_detectors(prepared.features, prepared.labels, config["modelos"])
+        runs.append(metrics.assign(janela=i, inicio=start.date(), fraudes=n_fraud, contas=len(accounts)))
+        if members is not None:
+            fraud = members[members["account_id"].isin(prepared.labels.index[prepared.labels])]
+            for (set_name, model), detection in detections.items():
+                table = recall_by_group(fraud, detection.scores, k=n_fraud)
+                recalls.append(table.assign(janela=i, atributos=set_name, modelo=model))
+        print(f"janela {i} ({start.date()}): {len(accounts):,} contas, {len(tx):,} transações, "
+              f"{n_fraud} fraudulentas, {time.time() - began:.0f} s".replace(",", "."), flush=True)
+        if args.max_janelas and len(runs) >= args.max_janelas:
+            break
+    if not runs:
+        parser.error("nenhuma janela com contas fraudulentas suficientes (veja --min-fraudes)")
+
+    name = data.name
+    results, figures = Path(args.saida) / "results", Path(args.saida) / "figures"
+    results.mkdir(parents=True, exist_ok=True)
+    figures.mkdir(parents=True, exist_ok=True)
+    runs = pd.concat(runs, ignore_index=True)
+    first = ["janela", "inicio", "atributos", "modelo"]
+    runs = runs[first + [c for c in runs.columns if c not in first]]
+    runs.to_csv(results / f"{name}_execucoes.csv", index=False)
+    summary = pd.concat({m: summarize_runs(runs, m) for m in REPEATED_METRICS}, names=["métrica"])
+    summary.to_csv(results / f"{name}_resumo.csv")
+    print("\naverage precision média por janela:")
+    print(summary.loc["average_precision"].round(3).to_string())
+
+    if runs["janela"].nunique() > 1:
+        comparisons = compare_runs(runs, COMPARISONS, REPEATED_METRICS, unit="janela")
+        comparisons.to_csv(results / f"{name}_comparacoes.csv", index=False)
+        print("\ncomparações pareadas por janela (average precision):")
+        columns = ["modelo", "comparação", "diferença média", "a vence em", "n", "p Wilcoxon (Holm)"]
+        print(comparisons[comparisons["métrica"] == "average_precision"][columns].round(4).to_string(index=False))
+
+    if recalls:
+        typologies = _pool(pd.concat(recalls, ignore_index=True))
+        typologies.to_csv(results / f"{name}_tipologias.csv", index=False)
+        _plot_typologies(typologies, figures / f"{name}_tipologias.png", name)
+        print("\nrecall@k por tipologia (todas as janelas juntas):")
+        print(typologies.pivot_table(index="typology", columns=["modelo", "atributos"], values="recall_at_k")
+              .round(2).to_string())
+
+
+def _pool(recalls: pd.DataFrame) -> pd.DataFrame:
+    """Junta as janelas: acertos somados sobre contas somadas, por tipologia, atributos e modelo."""
+    recalls = recalls.assign(acertos=recalls["contas"] * recalls["recall_at_k"])
+    pooled = recalls.groupby(["typology", "atributos", "modelo"], as_index=False)[["contas", "acertos"]].sum()
+    pooled["recall_at_k"] = pooled["acertos"] / pooled["contas"]
+    return pooled.drop(columns="acertos")
+
+
+def _plot_typologies(typologies: pd.DataFrame, path: Path, name: str) -> None:
+    """Matriz tipologia × conjunto de atributos do recall@k, um painel por modelo."""
+    models = [m for m in DETECTORS if m in set(typologies["modelo"])]
+    sets = [s for s in FEATURE_SETS if s in set(typologies["atributos"])]
+    counts = typologies.groupby("typology")["contas"].max()
+    fig, axes = plt.subplots(len(models), 1, figsize=(2.8 + 0.95 * len(sets), 1.4 + 0.45 * len(counts) * len(models)),
+                             sharex=True, layout="constrained")
+    axes = np.atleast_1d(axes)
+    for ax, model in zip(axes, models):
+        matrix = typologies[typologies["modelo"] == model].pivot(index="typology", columns="atributos",
+                                                                 values="recall_at_k").reindex(columns=sets)
+        mesh = plot_value_matrix(matrix, SEQUENTIAL_CMAP, vmin=0, vmax=1, ax=ax)
+        ax.set_yticks(np.arange(len(matrix)) + 0.5, [f"{t} ({counts[t]})" for t in matrix.index], fontsize=8)
+        ax.set_title(model.replace("_", " "), color=INK, fontsize=10, loc="left")
+    colorbar = fig.colorbar(mesh, ax=axes, shrink=0.6, pad=0.02)
+    colorbar.set_label("recall@k", color=INK_SECONDARY)
+    colorbar.outline.set_visible(False)
+    fig.suptitle(f"{name}: fração das contas de cada tipologia entre as k mais suspeitas\n"
+                 "(k = nº de contas fraudulentas da janela; entre parênteses, nº de contas)", color=INK, fontsize=10)
+    fig.savefig(path, dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+
+
+if __name__ == "__main__":
+    main()

@@ -6,12 +6,20 @@ Depois de importar, o mesmo pipeline roda sobre os dados externos:
     python scripts/rodar_experimento.py --dados data/external/amlworld --saida reports/amlworld
     python scripts/visualizar_rede.py --dados data/external/amlworld --saida reports/amlworld/rede.html
 
-Os arquivos originais precisam ser baixados à mão do Kaggle (ver data/README.md).
+Para a avaliação por janelas e por tipologia (scripts/avaliar_externo.py), importe
+também o arquivo de padrões; --formatos ACH Wire mantém só as transferências
+parecidas com o Pix:
+
+    python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv \\
+        --padroes data/raw/HI-Small_Patterns.txt --formatos ACH Wire --saida data/external/amlworld_pix
+
+Os arquivos originais vêm do Kaggle (ver data/README.md).
 """
 
 import argparse
+from pathlib import Path
 
-from pixfraud.external import load_amlworld, load_paysim
+from pixfraud.external import load_amlworld, load_amlworld_patterns, load_paysim, pattern_accounts
 from pixfraud.simulation import save_dataset
 
 
@@ -23,18 +31,29 @@ def main() -> None:
     parser.add_argument("--linhas", type=int, help="lê só as primeiras N linhas do arquivo")
     parser.add_argument("--dias", type=int, help="AMLworld: mantém só os primeiros N dias")
     parser.add_argument("--moeda", default="US Dollar", help="AMLworld: moeda mantida ('todas' para não filtrar)")
+    parser.add_argument("--formatos", nargs="+",
+                        help="AMLworld: formas de pagamento mantidas (ex.: ACH Wire); padrão: todas")
+    parser.add_argument("--padroes", help="AMLworld: arquivo *_Patterns.txt, salvo como patterns.csv")
     args = parser.parse_args()
 
     if args.fonte == "amlworld":
         currency = None if args.moeda == "todas" else args.moeda
-        accounts, transactions = load_amlworld(args.arquivo, currency=currency, days=args.dias, nrows=args.linhas)
+        accounts, transactions = load_amlworld(args.arquivo, currency=currency, days=args.dias,
+                                               nrows=args.linhas, formats=args.formatos)
     else:
         accounts, transactions = load_paysim(args.arquivo, nrows=args.linhas)
-    out = args.saida or f"data/external/{args.fonte}"
+    out = Path(args.saida or f"data/external/{args.fonte}")
     save_dataset(accounts, transactions, out)
     print(f"{len(accounts):,} contas e {len(transactions):,} transações salvas em {out}".replace(",", "."))
     print(f"contas marcadas como fraude: {accounts['is_fraud'].sum()} ({accounts['is_fraud'].mean():.3%})")
     print(f"transações marcadas como fraude: {transactions['is_fraud'].sum()} ({transactions['is_fraud'].mean():.3%})")
+
+    if args.padroes:
+        members = pattern_accounts(load_amlworld_patterns(args.padroes))
+        members = members[members["account_id"].isin(accounts.loc[accounts["is_fraud"], "account_id"])]
+        members.to_csv(out / "patterns.csv", index=False)
+        print("contas fraudulentas por tipologia:")
+        print(members["typology"].value_counts().to_string())
 
 
 if __name__ == "__main__":

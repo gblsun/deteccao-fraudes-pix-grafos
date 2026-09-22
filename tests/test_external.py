@@ -1,4 +1,13 @@
-from pixfraud.external import load_amlworld, load_paysim
+import pandas as pd
+
+from pixfraud.external import (
+    PIX_LIKE_FORMATS,
+    load_amlworld,
+    load_amlworld_patterns,
+    load_paysim,
+    pattern_accounts,
+    time_windows,
+)
 from pixfraud.graph import build_graph
 
 AMLWORLD = """Timestamp,From Bank,Account,To Bank,Account,Amount Received,Receiving Currency,Amount Paid,Payment Currency,Payment Format,Is Laundering
@@ -11,6 +20,17 @@ AMLWORLD = """Timestamp,From Bank,Account,To Bank,Account,Amount Received,Receiv
 2022/09/02 10:00,70,100428660,1124,800825340,389769.39,US Dollar,389769.39,US Dollar,Cash,1
 2022/09/02 11:00,1124,800825340,1124,800825341,1000.00,Euro,1000.00,Euro,ACH,1
 2022/09/03 12:00,1,8000F5340,70,100428660,50.00,US Dollar,50.00,US Dollar,ACH,0
+"""
+
+PATTERNS = """BEGIN LAUNDERING ATTEMPT - FAN-OUT:  Max 2-degree Fan-Out
+2022/09/01 05:14,00952,8139F54E0,021174,800737690,2848.96,US Dollar,2848.96,US Dollar,ACH,1
+2022/09/01 07:00,00952,8139F54E0,01,8000F5340,1000.00,US Dollar,1000.00,US Dollar,ACH,1
+END LAUNDERING ATTEMPT - FAN-OUT
+
+BEGIN LAUNDERING ATTEMPT - CYCLE:  Max 3 hops
+2022/09/02 10:00,070,100428660,01124,800825340,389769.39,US Dollar,389769.39,US Dollar,Cash,1
+2022/09/02 11:00,01124,800825340,070,100428660,1000.00,US Dollar,1000.00,US Dollar,ACH,1
+END LAUNDERING ATTEMPT - CYCLE
 """
 
 PAYSIM = """step,type,amount,nameOrig,oldbalanceOrg,newbalanceOrig,nameDest,oldbalanceDest,newbalanceDest,isFraud,isFlaggedFraud
@@ -44,3 +64,44 @@ def test_load_paysim(tmp_path):
     assert info.loc["C553264065", "is_fraud"] and info.loc["C38997010", "is_fraud"]
     assert info.loc["C1305486145", "is_victim"] and not info.loc["C1305486145", "is_fraud"]
     assert tx["timestamp"].iloc[-1].hour == 2
+
+
+def test_amlworld_payment_formats(tmp_path):
+    path = tmp_path / "HI-Small_Trans.csv"
+    path.write_text(AMLWORLD, encoding="utf-8")
+    _, all_formats = load_amlworld(path)
+    _, pix_like = load_amlworld(path, formats=PIX_LIKE_FORMATS)
+    assert len(all_formats) == 3 and len(pix_like) == 1  # sobra só o ACH em dólar
+    assert pix_like["sender"].item() == "1_8000F5340"
+
+
+def test_load_amlworld_patterns(tmp_path):
+    path = tmp_path / "HI-Small_Patterns.txt"
+    path.write_text(PATTERNS, encoding="utf-8")
+    patterns = load_amlworld_patterns(path)
+    assert patterns["attempt"].tolist() == [1, 1, 2, 2]
+    assert patterns["typology"].tolist() == ["fan_out", "fan_out", "cycle", "cycle"]
+    # zeros à esquerda no código do banco são removidos, como no *_Trans.csv
+    assert patterns["sender"].iloc[0] == "952_8139F54E0" and patterns["receiver"].iloc[1] == "1_8000F5340"
+    assert patterns["amount"].iloc[0] == 2848.96
+    members = pattern_accounts(patterns)
+    assert set(members.loc[members["typology"] == "cycle", "account_id"]) == {"70_100428660", "1124_800825340"}
+    assert len(members) == 5
+
+
+def test_time_windows_relabel_each_window():
+    tx = pd.DataFrame({
+        "tx_id": ["T1", "T2", "T3"],
+        "timestamp": pd.to_datetime(["2022-09-01 10:00", "2022-09-02 10:00", "2022-09-04 09:00"]),
+        "sender": ["a", "b", "a"],
+        "receiver": ["b", "c", "d"],
+        "amount": [10.0, 20.0, 30.0],
+        "is_fraud": [False, False, True],
+        "scenario": ["ACH", "ACH", "lavagem"],
+    })
+    windows = list(time_windows(tx, days=2))
+    assert [start.day for start, _, _ in windows] == [1, 3]
+    _, first_accounts, first_tx = windows[0]
+    assert len(first_tx) == 2 and not first_accounts["is_fraud"].any()
+    _, second_accounts, _ = windows[1]
+    assert set(second_accounts.loc[second_accounts["is_fraud"], "account_id"]) == {"a", "d"}

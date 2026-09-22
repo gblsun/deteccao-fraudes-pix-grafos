@@ -6,6 +6,9 @@
   raras);
 * ``precision_at_k``: se um analista revisar as ``k`` contas mais suspeitas,
   que fração delas é fraude? Por padrão, ``k`` é o número de fraudes reais.
+
+``recall_by_group`` separa o acerto por grupo de contas (por exemplo, a
+tipologia de lavagem do AMLworld): quais formatos cada abordagem encontra?
 """
 
 from __future__ import annotations
@@ -35,3 +38,15 @@ def evaluate(y_true: pd.Series, detection: Detection, k: int | None = None) -> d
         "precision_at_k": float(y.loc[top_k].mean()),
         "n_flagged": int(detection.is_anomaly.sum()),
     }
+
+
+def recall_by_group(members: pd.DataFrame, scores: pd.Series, k: int, by: str = "typology") -> pd.DataFrame:
+    """Fração das contas de cada grupo que está entre as ``k`` de maior escore.
+
+    ``members`` tem as colunas ``account_id`` e ``by``; uma conta pode estar
+    em mais de um grupo. Contas fora de ``scores`` são ignoradas.
+    """
+    top = set(scores.nlargest(k).index)
+    present = members[members["account_id"].isin(scores.index)]
+    hits = present.assign(hit=present["account_id"].isin(top))
+    return hits.groupby(by)["hit"].agg(contas="size", recall_at_k="mean").reset_index()
