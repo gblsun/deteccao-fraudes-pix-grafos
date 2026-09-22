@@ -10,6 +10,7 @@ do projeto e o passo a passo para rodar estão no [README principal](../README.m
 | [Proposta](proposta.md) ([PDF original](proposta-original.pdf)) | objetivos, justificativa e metodologia planejada |
 | [Cronograma](cronograma.md) | etapas de 12 meses e o que cada uma entrega no repositório |
 | [Resultados](resultados.md) | o que os experimentos mostraram, com números, figuras e ressalvas |
+| [Modelos](modelos.md) | o que cada modelo faz, como está configurado e que outros caberiam |
 | [Revisão bibliográfica](revisao-bibliografica.md) | índice das leituras e sugestões; referências em [`referencias.bib`](referencias.bib) |
 
 ## Anotações
