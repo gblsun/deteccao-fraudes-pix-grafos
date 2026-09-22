@@ -42,6 +42,7 @@ from pixfraud.experiment import (  # noqa: E402
     load_experiment_config,
     prepare,
     run_detectors,
+    save_metadata,
 )
 from pixfraud.external import time_windows  # noqa: E402
 from pixfraud.features import FEATURE_SETS  # noqa: E402
@@ -62,6 +63,7 @@ def main() -> None:
     parser.add_argument("--saida", default="reports/externo")
     parser.add_argument("--refazer", action="store_true", help="recalcula as janelas já salvas")
     args = parser.parse_args()
+    began = time.time()
 
     config = load_experiment_config(args.config)
     data = Path(args.dados)
@@ -85,7 +87,7 @@ def main() -> None:
                 recalls.append(pd.read_csv(typology_file))
             print(f"janela {i} ({start.date()}): já calculada, reaproveitada", flush=True)
         else:
-            began = time.time()
+            window_began = time.time()
             prepared = prepare(accounts, tx, config)
             metrics, detections = run_detectors(prepared.features, prepared.labels, config["modelos"])
             metrics = metrics.assign(janela=i, inicio=start.date(), fraudes=n_fraud, contas=len(accounts))
@@ -100,8 +102,9 @@ def main() -> None:
                 recalls.append(window_recalls)
             metrics.to_csv(metrics_file, index=False)  # por último: marca a janela como pronta
             runs.append(metrics)
-            print(f"janela {i} ({start.date()}): {len(accounts):,} contas, {len(tx):,} transações, "
-                  f"{n_fraud} fraudulentas, {time.time() - began:.0f} s".replace(",", "."), flush=True)
+            size = f"{len(accounts):,} contas e {len(tx):,} transações".replace(",", ".")
+            print(f"janela {i} ({start.date()}): {size}, {n_fraud} fraudulentas, "
+                  f"{time.time() - window_began:.0f} s", flush=True)
         if args.max_janelas and len(runs) >= args.max_janelas:
             break
     if not runs:
@@ -116,6 +119,8 @@ def main() -> None:
     runs.to_csv(results / f"{name}_execucoes.csv", index=False)
     summary = pd.concat({m: summarize_runs(runs, m) for m in REPEATED_METRICS}, names=["métrica"])
     summary.to_csv(results / f"{name}_resumo.csv")
+    save_metadata(results / f"{name}_meta.json", config, dados=str(data), dias_janela=args.dias_janela,
+                  janelas=sorted(runs["janela"].unique().tolist()), duracao_s=round(time.time() - began))
     print("\naverage precision média por janela:")
     print(summary.loc["average_precision"].round(3).to_string())
 

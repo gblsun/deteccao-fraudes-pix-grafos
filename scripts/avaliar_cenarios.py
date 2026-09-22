@@ -20,6 +20,7 @@ Uso:
 """
 
 import argparse
+import time
 from pathlib import Path
 
 import matplotlib
@@ -37,6 +38,7 @@ from pixfraud.experiment import (  # noqa: E402
     load_experiment_config,
     load_scenarios,
     run_seeds,
+    save_metadata,
 )
 from pixfraud.features import FEATURE_SETS  # noqa: E402
 from pixfraud.simulation import load_config, with_overrides  # noqa: E402
@@ -61,6 +63,7 @@ def main() -> None:
     parser.add_argument("--so-figuras", action="store_true",
                         help="não roda nada: redesenha as figuras a partir dos CSVs já salvos em --saida")
     args = parser.parse_args()
+    began = time.time()
     results = Path(args.saida) / "results"
     figures = Path(args.saida) / "figures"
 
@@ -85,6 +88,8 @@ def main() -> None:
         summary.to_csv(results / "cenarios_resumo.csv")
         comparisons.to_csv(results / "cenarios_comparacoes.csv", index=False)
         effects.to_csv(results / "cenarios_efeitos.csv", index=False)
+        save_metadata(results / "cenarios_meta.json", config, cenarios={n: scenarios[n] for n in names},
+                      sementes=list(range(1, args.sementes + 1)), duracao_s=round(time.time() - began))
 
     figures.mkdir(parents=True, exist_ok=True)
     fraud_rate = (runs["fraudes"] / runs["contas"]).groupby(runs["cenario"]).mean()

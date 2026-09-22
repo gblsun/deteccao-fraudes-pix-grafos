@@ -22,6 +22,8 @@ dependencies = [
 dev = ["pytest>=8", "ruff>=0.6"]
 notebooks = ["jupyterlab>=4", "ipykernel"]
 app = ["streamlit>=1.30"]
+docs = ["pdoc>=14"]
+relatorio = ["pypandoc_binary>=1.13"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

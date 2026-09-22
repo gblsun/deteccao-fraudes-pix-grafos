@@ -466,10 +466,8 @@ def explain_account(
     ax_bars.set_title("Atributos: quanto mais longe de 0,5, mais incomum")
 
     position = int(risk.rank(ascending=False, method="min")[account])
-    lines = [
-        f"Posição no ranking de risco: {position}ª de {len(risk)} contas "
-        f"(mais suspeita que {1 - (position - 1) / len(risk):.0%} das contas)",
-    ]
+    above = f"{(len(risk) - position) / len(risk):.1%}".replace(".", ",")  # .1%: a 9ª de 2.136 não é "100%"
+    lines = [f"Posição no ranking de risco: {position}ª de {len(risk)} contas (mais suspeita que {above} das contas)"]
     if fraud is not None:
         lines.append("Rótulo verdadeiro: " + ("FRAUDE" if bool(fraud.get(account, False)) else "legítima"))
     ax_text.axis("off")

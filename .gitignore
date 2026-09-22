@@ -31,3 +31,16 @@ data/**/*
 !.obsidian/app.json
 !.obsidian/templates.json
 !.obsidian/daily-notes.json
+
+# Saída de scripts/reproduzir_tudo.ps1 -Rapido (conferência, não é resultado)
+reports_teste/
+
+# Referência da API gerada pelo pdoc (ver src/pixfraud/README.md)
+site/
+
+# Relatório gerado pelo Pandoc (pode conter dados pessoais acrescentados à mão)
+relatorio/saida/
+
+# Progresso salvo das avaliações longas: recalculável, serve só para retomar
+reports/**/online_cortes/
+reports/**/*_janelas/

@@ -18,6 +18,7 @@ Uso:
 """
 
 import argparse
+import time
 from pathlib import Path
 
 import matplotlib
@@ -27,7 +28,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from pixfraud.experiment import COMPARISONS, REPEATED_METRICS, load_experiment_config, run_seeds  # noqa: E402
+from pixfraud.experiment import (  # noqa: E402
+    COMPARISONS,
+    REPEATED_METRICS,
+    load_experiment_config,
+    run_seeds,
+    save_metadata,
+)
 from pixfraud.simulation import load_config  # noqa: E402
 from pixfraud.stats import compare_runs, summarize_runs  # noqa: E402
 
@@ -38,6 +45,7 @@ def main() -> None:
     parser.add_argument("--sementes", type=int, default=10, help="nº de repetições (sementes 1, 2, ...)")
     parser.add_argument("--saida", default="reports")
     args = parser.parse_args()
+    began = time.time()
 
     config = load_experiment_config(args.config)
     base = load_config(args.config)
@@ -58,6 +66,8 @@ def main() -> None:
 
     comparisons = compare_runs(runs, COMPARISONS, REPEATED_METRICS)
     comparisons.to_csv(results / "robustez_comparacoes.csv", index=False)
+    save_metadata(results / "robustez_meta.json", config, sementes=list(range(1, args.sementes + 1)),
+                  duracao_s=round(time.time() - began))
 
     _plot(summary.loc["average_precision"], figures / "robustez_average_precision.png", args.sementes)
     print("\naverage precision (média e IC 95%):")

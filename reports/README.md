@@ -18,7 +18,11 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `cenarios_comparacoes.csv` | `avaliar_cenarios.py` | (cenário, métrica, modelo, par de conjuntos) |
 | `cenarios_efeitos.csv` | `avaliar_cenarios.py` | (cenário, atributo): delta de Cliff médio |
 | `online_execucoes.csv`, `online_resumo.csv`, `online_comparacoes.csv` | `avaliar_deteccao_online.py` | (cenário, semente, atributos, modelo) e resumos |
-| `online_cortes/` | `avaliar_deteccao_online.py` | contas sinalizadas em cada ponto de corte (reaproveitadas) |
+| `online_cortes/` | `avaliar_deteccao_online.py` | contas sinalizadas em cada ponto de corte; **não versionado**, serve para retomar a execução |
+| `atributos_ablacao.csv`, `atributos_ablacao_resumo.csv` | `avaliar_atributos.py` | (cenário, semente, modelo, atributo removido) e a queda média de AP |
+| `atributos_teto.csv`, `atributos_teto_resumo.csv` | `avaliar_atributos.py` | AP dos detectores e do Random Forest supervisionado, por conjunto |
+| `propagacao_execucoes.csv`, `propagacao_resumo.csv`, `propagacao_comparacoes.csv` | `avaliar_propagacao.py` | (cenário, semente, fração conhecida, método): AP nas contas ainda desconhecidas |
+| `*_meta.json` | todos os scripts de avaliação | como o resultado foi gerado: commit, configuração, sementes, duração e versões |
 
 ### Colunas
 
@@ -38,6 +42,9 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `delta_medio`, `efeito` | delta de Cliff (fraude × normal; > 0 = maior nas fraudes) e rótulo do tamanho do efeito |
 | `detectadas_72h`, `atraso_mediano_h` | fração das contas fraudulentas sinalizadas até 72 h após o 1º golpe e o atraso mediano |
 | `recuperado_<prazo>` | fração do dinheiro roubado retida em contas bloqueadas, se o saque acontece após `<prazo>` |
+| `atributo`, `ap_sem`, `ap_com_todos`, `queda` | atributo removido, AP sem ele, AP com todos e a diferença (> 0: o atributo ajudava) |
+| `metodo`, `conhecidas` | método de pontuação (propagação, detector ou combinação) e fração das fraudes tratadas como já conhecidas |
+| `fraudes_conhecidas`, `fraudes_restantes` | contas fraudulentas usadas como ponto de partida e as que ficaram para ser encontradas |
 
 ## `figures/`: figuras
 
@@ -49,12 +56,15 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `cenarios_average_precision.png` | `avaliar_cenarios.py` | AP média por conjunto × cenário |
 | `cenarios_efeitos.png` | `avaliar_cenarios.py` | delta de Cliff de cada atributo × cenário |
 | `online_deteccao.png` | `avaliar_deteccao_online.py` | detectadas em 72 h e dinheiro recuperado |
+| `atributos_ablacao.png` | `avaliar_atributos.py` | queda de AP ao tirar cada atributo |
+| `atributos_teto.png` | `avaliar_atributos.py` | detectores não supervisionados × Random Forest com os rótulos |
+| `propagacao_average_precision.png` | `avaliar_propagacao.py` | AP da propagação de risco, dos detectores e da combinação |
 
 ## `amlworld/`: validação externa
 
 Saída de `avaliar_externo.py` sobre o AMLworld (ver [`data/README.md`](../data/README.md)):
 `results/<dataset>_execucoes.csv`, `_resumo.csv`, `_comparacoes.csv` e `_tipologias.csv`
-(recall@k por tipologia de lavagem), além de `<dataset>_janelas/` (cada janela salva) e
+(recall@k por tipologia de lavagem), além de `<dataset>_janelas/` (cada janela salva, **não versionada**) e
 `figures/<dataset>_tipologias.png`. O `<dataset>` é `amlworld_pix` (só ACH e Wire) ou
 `amlworld` (todas as formas de pagamento).
 

@@ -42,7 +42,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from pixfraud.anomaly import DETECTORS  # noqa: E402
-from pixfraud.experiment import COMPARISONS, load_experiment_config, load_scenarios  # noqa: E402
+from pixfraud.experiment import COMPARISONS, load_experiment_config, load_scenarios, save_metadata  # noqa: E402
 from pixfraud.features import FEATURE_SETS  # noqa: E402
 from pixfraud.online import (  # noqa: E402
     checkpoint_flags,
@@ -73,6 +73,7 @@ def main() -> None:
     parser.add_argument("--saida", default="reports")
     parser.add_argument("--refazer", action="store_true", help="recalcula as sinalizações já salvas")
     args = parser.parse_args()
+    began = time.time()
 
     config = load_experiment_config(args.config)
     base = load_config(args.config)
@@ -92,7 +93,7 @@ def main() -> None:
     for name in args.cenarios:
         simulation = with_overrides(base, scenarios[name])
         for seed in range(1, args.sementes + 1):
-            began = time.time()
+            seed_began = time.time()
             accounts, tx = generate_dataset(replace(simulation, seed=seed))
             fraud = accounts.loc[accounts["is_fraud"], "account_id"]
             exposure = exposure_times(tx, fraud)
@@ -120,7 +121,7 @@ def main() -> None:
             rows.append({**ids, "atributos": ORACLE, "modelo": ORACLE,
                          **_metrics(oracle, exposure, tx, fraud, horizon, args.saque)})
             print(f"{name}: semente {seed}/{args.sementes}, {len(checkpoints)} cortes, "
-                  f"{time.time() - began:.0f} s", flush=True)
+                  f"{time.time() - seed_began:.0f} s", flush=True)
 
     runs = pd.DataFrame(rows)
     results, figures = Path(args.saida) / "results", Path(args.saida) / "figures"
@@ -134,6 +135,9 @@ def main() -> None:
         paired = [m for m in metrics if m != "atraso_mediano_h"]
         comparisons = compare_runs(runs[runs["atributos"] != ORACLE], pairs, paired, by=["cenario"])
         comparisons.to_csv(results / "online_comparacoes.csv", index=False)
+    save_metadata(results / "online_meta.json", config, cenarios={n: scenarios[n] for n in args.cenarios},
+                  sementes=list(range(1, args.sementes + 1)), conjuntos=args.conjuntos, frequencia=args.frequencia,
+                  horizonte=args.horizonte, saque=args.saque, duracao_s=round(time.time() - began))
     _plot(summary, args.cenarios, list(feature_sets), figures / "online_deteccao.png", args)
 
     for metric in metrics:

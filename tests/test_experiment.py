@@ -1,11 +1,22 @@
 """Testes de `pixfraud.experiment`: várias sementes e leitura dos cenários."""
 
+import json
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
 import pytest
+from sklearn.metrics import average_precision_score
 
 from pixfraud.anomaly import DETECTORS
-from pixfraud.experiment import COMPARISONS, load_scenarios, run_seeds
+from pixfraud.experiment import (
+    COMPARISONS,
+    feature_ablation,
+    load_scenarios,
+    run_seeds,
+    save_metadata,
+    supervised_scores,
+)
 from pixfraud.features import FEATURE_SETS
 from pixfraud.simulation import SimulationConfig
 
@@ -42,3 +53,39 @@ def test_load_scenarios_rejects_unknown_parameter(tmp_path):
     path.write_text("ruim:\n  n_pessoas: 3\n", encoding="utf-8")
     with pytest.raises(ValueError, match="n_pessoas"):
         load_scenarios(path)
+
+
+def test_save_metadata(tmp_path):
+    path = save_metadata(tmp_path / "sub" / "x_meta.json", CONFIG, sementes=[1, 2])
+    meta = json.loads(path.read_text(encoding="utf-8"))
+    assert meta["sementes"] == [1, 2] and meta["configuracao"] == CONFIG
+    assert meta["commit"] is None or len(meta["commit"]) == 40  # sem git, fica None
+    assert set(meta["pacotes"]) >= {"numpy", "pandas", "networkx", "scikit-learn"}
+
+
+def _planted(n_normal=300, n_fraud=15, seed=0):
+    """Contas em que só ``sinal`` separa fraude de normal; ``ruido_*`` não informam nada."""
+    rng = np.random.default_rng(seed)
+    labels = pd.Series([False] * n_normal + [True] * n_fraud)
+    features = pd.DataFrame({
+        "sinal": np.r_[rng.lognormal(0, 0.3, n_normal), rng.lognormal(2.5, 0.3, n_fraud)],
+        "ruido_1": rng.lognormal(0, 1, n_normal + n_fraud),
+        "ruido_2": rng.lognormal(0, 1, n_normal + n_fraud),
+    })
+    return features, labels
+
+
+def test_feature_ablation_finds_the_informative_feature():
+    features, labels = _planted()
+    table = feature_ablation(features, labels, list(features.columns), {"isolation_forest": {"seed": 0}},
+                             models=["isolation_forest"])
+    assert len(table) == 3 and set(table["atributo"]) == {"sinal", "ruido_1", "ruido_2"}
+    assert table.set_index("atributo")["queda"].idxmax() == "sinal"
+    assert (table["queda"] == table["ap_com_todos"] - table["ap_sem"]).all()
+
+
+def test_supervised_scores_are_out_of_fold():
+    features, labels = _planted()
+    scores = supervised_scores(features, labels, seed=0)
+    assert scores.index.equals(features.index) and scores.between(0, 1).all()
+    assert average_precision_score(labels, scores) > 0.9  # o sinal é fácil: fraudes no topo

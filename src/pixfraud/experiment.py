@@ -1,20 +1,27 @@
 """Núcleo do experimento: transações -> grafo -> atributos -> detectores -> métricas.
 
-Usado por ``scripts/rodar_experimento.py``, ``scripts/avaliar_robustez.py``,
-``scripts/avaliar_cenarios.py`` e pelo explorador interativo
-(``app/explorador.py``).
+Usado pelos scripts de ``scripts/`` e pelo explorador interativo
+(``app/explorador.py``). ``save_metadata`` grava, ao lado de cada resultado, o
+que é preciso para refazê-lo (commit, configuração, sementes, versões).
 """
 
 from __future__ import annotations
 
 import copy
+import importlib.metadata
+import json
+import platform
+import subprocess
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, replace
+from datetime import datetime
 from pathlib import Path
 
 import networkx as nx
 import pandas as pd
 import yaml
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import StratifiedKFold, cross_val_predict
 
 from pixfraud.anomaly import DETECTORS, Detection
 from pixfraud.evaluation import evaluate
@@ -109,3 +116,78 @@ def load_scenarios(path: str | Path) -> dict[str, dict]:
     for overrides in scenarios.values():
         with_overrides(SimulationConfig(), overrides)
     return scenarios
+
+
+def feature_ablation(
+    features: pd.DataFrame,
+    labels: pd.Series,
+    columns: list[str],
+    models_config: dict,
+    models: list[str] | None = None,
+) -> pd.DataFrame:
+    """Quanto cada atributo contribui: a average precision cai quando ele sai?
+
+    Para cada detector, roda uma vez com todos os ``columns`` e depois tirando
+    um atributo de cada vez. ``queda`` > 0 quer dizer que o atributo ajudava;
+    < 0, que ele atrapalhava (ruído para aquele detector).
+    """
+    rows = []
+    for model in models or list(DETECTORS):
+        detect, params = DETECTORS[model], models_config.get(model, {})
+        full = evaluate(labels, detect(features[columns], **params))["average_precision"]
+        for column in columns:
+            rest = [c for c in columns if c != column]
+            ap = evaluate(labels, detect(features[rest], **params))["average_precision"]
+            rows.append({"modelo": model, "atributo": column, "ap_sem": ap, "ap_com_todos": full, "queda": full - ap})
+    return pd.DataFrame(rows)
+
+
+def supervised_scores(features: pd.DataFrame, labels: pd.Series, seed: int = 42, folds: int = 5) -> pd.Series:
+    """Probabilidade de fraude de cada conta dada por um Random Forest que **viu os rótulos**.
+
+    Serve de teto para os detectores não supervisionados: com validação
+    cruzada estratificada, cada conta recebe o escore de um modelo treinado
+    sem ela. Numa situação real esses rótulos não existiriam (ou seriam
+    poucos), então a distância até este teto mostra quanto se perde por não
+    tê-los.
+    """
+    y = labels.reindex(features.index).astype(bool).to_numpy()
+    model = RandomForestClassifier(n_estimators=300, class_weight="balanced_subsample", random_state=seed, n_jobs=-1)
+    splitter = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)
+    proba = cross_val_predict(model, features.to_numpy(dtype=float), y, cv=splitter, method="predict_proba")[:, 1]
+    return pd.Series(proba, index=features.index, name="score")
+
+
+def save_metadata(path: str | Path, config: dict | None = None, **extra) -> Path:
+    """Grava um ``*_meta.json`` com o que é preciso para refazer um resultado.
+
+    Guarda a data, o commit do git (e se havia alterações não commitadas, caso
+    em que o resultado pode não corresponder exatamente ao commit), a versão do
+    Python e dos pacotes principais e a configuração usada. ``extra`` acrescenta
+    o que for específico de cada script: sementes, cenários, duração...
+    """
+    commit = _git("rev-parse", "HEAD")
+    meta = {
+        "gerado_em": datetime.now().isoformat(timespec="seconds"),
+        "commit": commit,
+        "alteracoes_nao_commitadas": bool(_git("status", "--porcelain")) if commit else None,
+        "python": platform.python_version(),
+        "pacotes": {name: importlib.metadata.version(name)
+                    for name in ("numpy", "pandas", "networkx", "scikit-learn", "scipy")},
+        "configuracao": config,
+        **extra,
+    }
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(meta, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
+    return path
+
+
+def _git(*args: str) -> str | None:
+    """Saída de um comando do git no repositório do pacote, ou ``None`` se o git não estiver disponível."""
+    try:
+        done = subprocess.run(["git", *args], capture_output=True, text=True, check=True,
+                              cwd=Path(__file__).resolve().parent)
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return done.stdout.strip()

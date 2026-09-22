@@ -74,3 +74,16 @@ rodadas); `bcb.py` serve para calibrar e validar o gerador.
 
 Os nomes das colunas (`account_id`, `sender`, `receiver`, `amount`, `timestamp`,
 `is_fraud`...) estão descritos em [`data/README.md`](../../data/README.md).
+
+## Referência completa da API
+
+Todas as funções, com parâmetros e docstrings, numa página navegável (com busca e links
+entre as funções), gerada a partir do código:
+
+```powershell
+pip install -e ".[docs]"
+python -m pdoc pixfraud -d restructuredtext --math -o site/api
+start site/api/index.html
+```
+
+A pasta `site/` não é versionada: gere de novo sempre que quiser a versão atual.

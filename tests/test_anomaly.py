@@ -32,3 +32,11 @@ def test_evaluate_perfect_ranking(blob_with_outlier):
     assert metrics["roc_auc"] == 1.0
     assert metrics["precision_at_k"] == 1.0
     assert metrics["recall"] == 1.0
+
+
+def test_dbscan_handles_mostly_identical_accounts():
+    # 97% das contas idênticas: o eps automático seria 0, que o DBSCAN recusa
+    features = pd.DataFrame({"a": [1.0] * 97 + [5.0, 8.0, 50.0], "b": [2.0] * 97 + [1.0, 9.0, 40.0]})
+    detection = dbscan(features, min_samples=5)
+    assert not detection.is_anomaly.iloc[:97].any()
+    assert detection.is_anomaly.iloc[97:].all()

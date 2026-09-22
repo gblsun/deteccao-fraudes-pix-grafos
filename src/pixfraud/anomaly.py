@@ -63,7 +63,10 @@ def dbscan(
     distances, _ = NearestNeighbors(n_neighbors=min_samples).fit(X).kneighbors(X)
     k_distance = distances[:, -1]
     if eps == "auto":
-        eps = float(np.quantile(k_distance, eps_quantile))
+        # Com muitas contas idênticas (ex.: poucos atributos numa janela curta), o
+        # quantil pode ser 0, que o DBSCAN recusa. Um eps mínimo mantém as contas
+        # idênticas como vizinhas, e qualquer conta diferente delas vira ruído.
+        eps = max(float(np.quantile(k_distance, eps_quantile)), 1e-9)
     labels = DBSCAN(eps=eps, min_samples=min_samples).fit_predict(X)
     return Detection(
         scores=pd.Series(k_distance, index=features.index, name="score"),

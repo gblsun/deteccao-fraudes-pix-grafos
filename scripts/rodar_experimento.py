@@ -10,6 +10,7 @@ Uso:
 """
 
 import argparse
+import time
 from pathlib import Path
 
 import matplotlib
@@ -18,7 +19,7 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt  # noqa: E402
 
-from pixfraud.experiment import load_experiment_config, prepare, run_detectors  # noqa: E402
+from pixfraud.experiment import load_experiment_config, prepare, run_detectors, save_metadata  # noqa: E402
 from pixfraud.features import FEATURE_SETS  # noqa: E402
 from pixfraud.simulation import load_dataset  # noqa: E402
 from pixfraud.visualization import plot_heat_graph, plot_risk_heatmap  # noqa: E402
@@ -31,6 +32,7 @@ def main() -> None:
     parser.add_argument("--atributos", default="data/processed/features.csv")
     parser.add_argument("--saida", default="reports")
     args = parser.parse_args()
+    began = time.time()
 
     config = load_experiment_config(args.config)
     figures = Path(args.saida) / "figures"
@@ -59,6 +61,7 @@ def main() -> None:
         plt.close(fig)
 
     metrics.to_csv(results / "metricas.csv", index=False)
+    save_metadata(results / "metricas_meta.json", config, dados=args.dados, duracao_s=round(time.time() - began))
     print(metrics.round(3).to_string(index=False))
 
 
