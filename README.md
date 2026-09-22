@@ -25,9 +25,13 @@ desenhar e exportar grafos.
 │   ├── proposta.md            proposta da pesquisa (e proposta-original.pdf)
 │   ├── cronograma.md          etapas e acompanhamento
 │   ├── resultados.md          resultados e interpretação dos experimentos
-│   ├── revisao-bibliografica.md  fichamentos e sugestões de leitura
+│   ├── revisao-bibliografica.md  índice das leituras e sugestões
 │   ├── referencias.bib        referências em BibTeX
-│   └── reunioes/              atas das reuniões de orientação
+│   ├── obsidian.md            como usar o repositório como cofre do Obsidian
+│   ├── leituras/              um fichamento por leitura
+│   ├── diario/                diário de pesquisa (uma nota por dia)
+│   ├── reunioes/              atas das reuniões de orientação
+│   └── modelos/               modelos de fichamento, reunião e diário
 ├── estudos/                   notebooks de estudo, gabarito e cola de NetworkX
 ├── notebooks/                 análises exploratórias da pesquisa
 ├── reports/
@@ -163,7 +167,10 @@ reais, e os dados do Banco Central são estatísticas agregadas e públicas.
 
 - Etapas e andamento: [docs/cronograma.md](docs/cronograma.md)
 - Estudos: [estudos/README.md](estudos/README.md)
-- Leituras: [docs/revisao-bibliografica.md](docs/revisao-bibliografica.md)
-- Reuniões de orientação: copiar [docs/reunioes/modelo.md](docs/reunioes/modelo.md)
+- Leituras: [docs/revisao-bibliografica.md](docs/revisao-bibliografica.md) (índice) e um
+  fichamento por leitura em `docs/leituras/`
+- Diário de pesquisa: `docs/diario/AAAA-MM-DD.md`, a partir de [docs/modelos/diario.md](docs/modelos/diario.md)
+- Reuniões de orientação: `docs/reunioes/AAAA-MM-DD.md`, a partir de [docs/modelos/reuniao.md](docs/modelos/reuniao.md)
+- Notas no Obsidian: o repositório já é um cofre configurado, ver [docs/obsidian.md](docs/obsidian.md)
 - Novos notebooks: prefixo numérico e nome descritivo (`02_perfis_de_fraude.ipynb`).
   Código reaproveitável vai para `src/pixfraud/`, com teste em `tests/`.

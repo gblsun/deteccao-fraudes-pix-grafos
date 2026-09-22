@@ -24,3 +24,10 @@ data/**/*
 !data/**/
 !data/**/.gitkeep
 !data/README.md
+
+# Obsidian: versiona só a configuração compartilhada (links, modelos e diário);
+# layout das janelas, plugins e aparência ficam só na máquina de cada um.
+.obsidian/*
+!.obsidian/app.json
+!.obsidian/templates.json
+!.obsidian/daily-notes.json

@@ -1,24 +1,16 @@
 # Revisão bibliográfica
 
-Registro das leituras. Cada entrada usa a chave do `referencias.bib`, o que facilita citar
-depois no relatório.
+Índice das leituras. Cada leitura tem o seu fichamento em `docs/leituras/<chave-bibtex>.md`,
+com o nome igual à chave do [`referencias.bib`](referencias.bib), o que facilita citar depois
+no relatório.
 
-## Modelo de fichamento
+## Como fichar uma leitura
 
-Copie o bloco abaixo para cada leitura.
-
-```markdown
-### <chave-bibtex>: <título curto>
-
-- **Tipo:** artigo / livro / capítulo / relatório / curso
-- **Problema:** o que o trabalho tenta resolver?
-- **Dados:** reais, sintéticos, públicos? Tamanho? Taxa de fraude?
-- **Método:** representação (tabular, grafo...), algoritmos, atributos usados
-- **Avaliação:** métricas e principais resultados
-- **Limitações:** o que os autores (ou eu) apontam como fraqueza
-- **Relação com o projeto:** o que aproveito? Em que objetivo específico entra?
-- **Citações úteis:** trechos com página
-```
+1. Acrescente a referência ao `referencias.bib` (o Zotero com Better BibTeX exporta pronto).
+2. Crie `docs/leituras/<chave-bibtex>.md` a partir do modelo
+   [`docs/modelos/fichamento.md`](modelos/fichamento.md). No Obsidian: nova nota na pasta
+   `leituras` com a chave como nome e depois *Inserir modelo* (ver [obsidian.md](obsidian.md)).
+3. Acrescente uma linha na tabela "Fichamentos" abaixo.
 
 ## Sugestões de leitura
 
@@ -35,4 +27,6 @@ Não constam na proposta original, mas são próximas do tema. Todas já estão 
 
 ## Fichamentos
 
-<!-- adicione as leituras abaixo -->
+| Chave | Assunto em uma linha | Entra em |
+|-------|----------------------|----------|
+<!-- uma linha por leitura, com link para docs/leituras/<chave>.md -->
