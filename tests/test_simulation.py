@@ -1,9 +1,10 @@
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-from pixfraud.simulation import FRAUD_ROLES, SimulationConfig, generate_dataset, load_config
+from pixfraud.simulation import FRAUD_HOURS, FRAUD_ROLES, SimulationConfig, generate_dataset, load_config, with_overrides
 
 SMALL = SimulationConfig(n_people=200, n_merchants=10, n_days=5, n_rings=2, victims_per_ring=5)
 
@@ -57,3 +58,39 @@ def test_dataset_without_rings_has_only_legit_accounts():
 def test_repository_config_is_valid():
     cfg = load_config(Path(__file__).parents[1] / "configs" / "experimento.yaml")
     assert cfg.n_people > 0
+
+
+def test_with_overrides_validates_names():
+    assert with_overrides(SMALL, {"n_rings": 0}).n_rings == 0
+    assert SMALL.n_rings == 2
+    with pytest.raises(ValueError, match="desconhecidos"):
+        with_overrides(SMALL, {"n_pessoas": 3})
+    with pytest.raises(ValueError, match="fraud_hours"):
+        with_overrides(SMALL, {"fraud_hours": "madrugada"})
+
+
+def test_commercial_hours_remove_the_night_signal():
+    night = {}
+    for hours in FRAUD_HOURS:
+        _, tx = generate_dataset(replace(SMALL, victims_per_ring=100, fraud_hours=hours))
+        scams = tx[tx["scenario"].isin(["falso_suporte", "clonagem_whatsapp"])]
+        night[hours] = (scams["timestamp"].dt.hour < 6).mean()
+    # uniforme: 6 de 24 horas (25%); comercial: o perfil legítimo (~3%)
+    assert night["uniforme"] > 0.15
+    assert night["comercial"] < 0.10
+
+
+@pytest.mark.parametrize("p_new, young", [(0.0, False), (1.0, True)])
+def test_fraud_account_age_follows_parameter(p_new, young):
+    accounts, _ = generate_dataset(replace(SMALL, p_new_fraud_account=p_new))
+    age = accounts.loc[accounts["is_fraud"], "account_age_days"]
+    assert (age < 60).all() if young else (age >= 30).all()
+
+
+def test_quiet_people_send_fewer_pix():
+    def share_almost_inactive(cfg):
+        accounts, tx = generate_dataset(cfg)
+        people = accounts.loc[accounts["role"] == "normal", "account_id"]
+        return (tx.groupby("sender").size().reindex(people, fill_value=0) <= 1).mean()
+
+    assert share_almost_inactive(replace(SMALL, quiet_fraction=0.5)) > share_almost_inactive(SMALL) + 0.2

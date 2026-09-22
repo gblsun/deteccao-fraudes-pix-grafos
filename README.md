@@ -16,30 +16,42 @@ desenhar e exportar grafos.
 ## Estrutura
 
 ```
-├── configs/experimento.yaml   parâmetros da simulação, dos atributos e dos modelos
+├── app/explorador.py          explorador interativo (Streamlit)
+├── configs/
+│   ├── experimento.yaml       parâmetros da simulação, dos atributos e dos modelos
+│   └── cenarios.yaml          cenários de dificuldade (desligam os atalhos do gerador)
 ├── data/                      dados (não versionados), ver data/README.md
 ├── docs/
 │   ├── proposta.md            proposta da pesquisa (e proposta-original.pdf)
 │   ├── cronograma.md          etapas e acompanhamento
+│   ├── resultados.md          resultados e interpretação dos experimentos
 │   ├── revisao-bibliografica.md  fichamentos e sugestões de leitura
 │   ├── referencias.bib        referências em BibTeX
 │   └── reunioes/              atas das reuniões de orientação
 ├── estudos/                   notebooks de estudo, gabarito e cola de NetworkX
 ├── notebooks/                 análises exploratórias da pesquisa
 ├── reports/
-│   ├── figures/               grafos de calor e heatmaps de risco
-│   ├── estudos/               grafos gerados nos estudos
+│   ├── figures/               grafos de calor, heatmaps de risco, robustez e cenários
+│   ├── estudos/               grafos gerados nos estudos (inclui a rede inteira em HTML)
 │   └── results/               métricas dos experimentos
-├── scripts/                   pontos de entrada (pipeline e criar_grafo.py)
+├── scripts/                   pontos de entrada (ver "Pipeline")
 ├── src/pixfraud/              código da pesquisa (pacote Python)
 │   ├── simulation.py          gerador do dataset sintético de transações PIX
 │   ├── bcb.py                 acesso aos dados abertos do PIX (Banco Central)
+│   ├── external.py            datasets públicos (AMLworld, PaySim) no formato do projeto
 │   ├── graph.py               criação de grafos, trilha do dinheiro, resumo
+│   ├── temporal.py            caminhos que respeitam a ordem dos Pix, tempo de permanência
+│   ├── communities.py         comunidades (Louvain), k-núcleos, subgrafo denso, OddBall
+│   ├── flow.py                fluxo máximo, corte mínimo ("onde bloquear"), propagação de risco
+│   ├── algorithms.py          ramificação máxima, caminho gargalo, VF2, HITS, SimRank
 │   ├── patterns.py            padrões de fraude (fan-in, cadeia, ciclo...) e injeção
-│   ├── features.py            atributos tabulares e de grafo por conta
+│   ├── features.py            atributos por conta, em conjuntos (tabular, grafo...)
 │   ├── anomaly.py             Isolation Forest e DBSCAN
 │   ├── evaluation.py          métricas de desempenho
-│   └── visualization.py       desenho, HTML interativo, Gephi, grafo de calor, heatmap
+│   ├── stats.py               testes estatísticos, bootstrap, comparações pareadas, modelo nulo
+│   ├── experiment.py          núcleo do experimento (uma semente ou várias)
+│   ├── visualization.py       desenho, HTML interativo, Gephi, grafo de calor, heatmap
+│   └── explorer.py            página da rede inteira (sigma.js), com filtros e linha do tempo
 └── tests/                     testes automatizados (pytest)
 ```
 
@@ -50,7 +62,7 @@ Requer Python 3.10 ou superior. No PowerShell:
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -e ".[dev,notebooks]"
+pip install -e ".[dev,notebooks,app]"
 pytest
 ```
 
@@ -75,13 +87,31 @@ python scripts/criar_grafo.py csv data/synthetic/transactions.csv --conta C00033
 ```
 
 O formato de saída de `criar_grafo.py` vem da extensão: `.png`/`.svg`/`.pdf`, `.html`
-(interativo, abre no navegador) ou `.gexf`/`.graphml` (Gephi).
+(interativo, abre no navegador) ou `.gexf`/`.graphml` (Gephi). `criar_grafo.py fluxo`
+calcula o fluxo máximo e as contas a bloquear entre origens e um destino.
+
+```powershell
+# repete o experimento com 10 sementes: médias, intervalos de confiança e testes pareados
+python scripts/avaliar_robustez.py --sementes 10
+
+# repete em cada cenário de configs/cenarios.yaml (do mais fácil ao mais difícil)
+python scripts/avaliar_cenarios.py --sementes 10
+
+# a rede inteira numa página HTML, com busca, filtros e linha do tempo
+python scripts/visualizar_rede.py
+
+# explorador interativo: rede, ficha da conta, padrões, fluxo e resultados
+streamlit run app/explorador.py
+
+# o mesmo pipeline sobre um dataset público (ver data/README.md)
+python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --dias 3
+```
 
 Todos os parâmetros ficam em [configs/experimento.yaml](configs/experimento.yaml). Com a
 mesma configuração e a mesma semente, o resultado é idêntico.
 
-O experimento compara **2 detectores × 3 conjuntos de atributos** (tabular, grafo e
-combinado) e grava:
+O experimento compara **2 detectores × 6 conjuntos de atributos** (tabular, grafo,
+combinado, temporal, grafo avançado e completo) e grava:
 
 - `reports/results/metricas.csv`: precision, recall, F1, ROC-AUC, average precision e
   precision@k de cada combinação;
@@ -89,6 +119,10 @@ combinado) e grava:
   coloridas pelo risco;
 - `reports/figures/heatmap_risco_*.png`: os atributos que explicam o risco de cada conta
   suspeita.
+
+Um único dataset não basta para afirmar que uma abordagem é melhor: `avaliar_robustez.py`
+e `avaliar_cenarios.py` repetem tudo com várias sementes e aplicam testes pareados. Os
+resultados e sua interpretação estão em [docs/resultados.md](docs/resultados.md).
 
 ## Atributos
 
@@ -102,6 +136,15 @@ combinado) e grava:
 | Repasse rápido (conta laranja)  | `pass_through`                                             | tabular  |
 | Comportamento temporal          | `night_ratio`                                              | tabular  |
 | Perfil da conta                 | `account_age_days`                                         | tabular  |
+| Velocidade de repasse           | `dwell_time_min` (mediana do tempo até o próximo Pix enviado) | temporal |
+| Picos de recebimento            | `max_daily_in_degree` (maior nº de pagadores distintos num dia) | temporal |
+| Coesão estrutural               | `core_number` (k-núcleo)                                   | grafo avançado |
+| Ponte entre comunidades         | `participation` (coeficiente de participação, Louvain)     | grafo avançado |
+| Egonet fora do padrão (OddBall) | `oddball_en` (estrela ou quase clique), `oddball_ew` (dinheiro demais para a vizinhança) | grafo avançado |
+
+Os conjuntos (`FEATURE_SETS` em `features.py`) são **tabular**, **grafo**, **combinado**
+(tabular + grafo), **temporal**, **grafo_avancado** (grafo + grafo avançado) e
+**completo** (todos).
 
 ## Dados
 

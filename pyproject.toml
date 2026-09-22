@@ -21,6 +21,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 notebooks = ["jupyterlab>=4", "ipykernel"]
+app = ["streamlit>=1.30"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

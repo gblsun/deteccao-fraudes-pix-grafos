@@ -14,8 +14,8 @@ Marque `[x]` quando a etapa for concluída.
 | [ ]    | Aplicação de técnicas de machine learning                       | 7–8     | `src/pixfraud/anomaly.py`                                 |
 | [ ]    | Desenvolvimento de visualizações em grafos e heatmaps           | 8–9     | `src/pixfraud/visualization.py`, `reports/figures/`       |
 | [ ]    | Análise de perfis de fraude e interpretação dos resultados      | 9–10    | notebooks                                                 |
-| [ ]    | Comparação entre abordagem tabular e grafos                     | 10–11   | `reports/results/metricas.csv`                            |
-| [ ]    | Avaliação dos modelos e métricas de desempenho                  | 11–12   | `src/pixfraud/evaluation.py`, `reports/results/`          |
+| [ ]    | Comparação entre abordagem tabular e grafos                     | 10–11   | `reports/results/metricas.csv`, `cenarios_*.csv`, `docs/resultados.md` |
+| [ ]    | Avaliação dos modelos e métricas de desempenho                  | 11–12   | `src/pixfraud/evaluation.py`, `src/pixfraud/stats.py`, `reports/results/robustez_*.csv` |
 | [ ]    | Escrita, revisão e finalização do relatório científico          | 11–12   | relatório final                                           |
 
 ```mermaid

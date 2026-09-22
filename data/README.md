@@ -8,6 +8,7 @@ qualquer momento pelos scripts, a partir da configuração e da semente.
 | `synthetic/` | Dataset sintético (`accounts.csv`, `transactions.csv`) | `python scripts/gerar_dataset.py`               |
 | `processed/` | Atributos por conta (`features.csv`)                   | `python scripts/rodar_experimento.py`           |
 | `bcb/`       | Estatísticas públicas do PIX (Banco Central)           | `python scripts/baixar_dados_bcb.py <recurso> <AAAAMM>` |
+| `external/`  | Datasets públicos convertidos para o formato do projeto | `python scripts/importar_dataset.py <fonte> <arquivo>` |
 | `raw/`       | Qualquer outro dado bruto obtido manualmente           | anotar a origem e a data de acesso aqui          |
 
 ## Dataset sintético
@@ -56,21 +57,22 @@ vítimas ──golpe──▶ contas laranja ──repasse──▶ [intermediá
 
 O gerador **embute** hipóteses sobre como as fraudes acontecem, e um detector que as
 encontra está, em parte, apenas redescobrindo essas hipóteses. Ao interpretar os
-resultados, lembre-se de que, na versão atual:
+resultados, lembre-se de que, com a configuração padrão:
 
-* os golpes acontecem em **qualquer horário com a mesma probabilidade**, enquanto os Pix
-  legítimos seguem o perfil horário `HOUR_WEIGHTS`. Por isso `night_ratio` é um sinal
-  forte **por construção**;
-* 70% das contas fraudulentas são recém-abertas (`account_age_days` < 60);
-* comércios só recebem (não pagam fornecedores nem salários);
-* toda pessoa legítima é razoavelmente ativa (~18 Pix enviados por mês). Contas quietas
-  são raras, então qualquer conta com poucos Pix já parece anômala. Veja o exercício 4 do
-  notebook `estudos/04_padroes_de_fraude.ipynb`;
-* a taxa de fraude (~2% das contas) é muito maior que a real. Segundo o BCB, há cerca de
-  5 contestações aceitas a cada 100 mil Pix. A taxa foi inflada de propósito para haver
-  exemplos suficientes; vale testar cenários mais realistas via `configs/experimento.yaml`.
+| Limitação | Efeito | Como desligar (`simulacao`) |
+|-----------|--------|-----------------------------|
+| os golpes acontecem em **qualquer horário com a mesma probabilidade**, enquanto os Pix legítimos seguem o perfil horário `HOUR_WEIGHTS` | `night_ratio` é um sinal forte **por construção** | `fraud_hours: comercial` |
+| 70% das contas fraudulentas são recém-abertas (`account_age_days` < 60) | a idade da conta denuncia a fraude | `p_new_fraud_account: 0.0` |
+| toda pessoa legítima é razoavelmente ativa (~18 Pix enviados por mês) | qualquer conta com poucos Pix já parece anômala (exercício 4 de `estudos/04_padroes_de_fraude.ipynb`) | `quiet_fraction: 0.3` |
+| a taxa de fraude (~2% das contas) é muito maior que a real: segundo o BCB, há cerca de 5 contestações aceitas a cada 100 mil Pix | métricas mais altas do que num cenário real | menos quadrilhas (`n_rings`) ou mais pessoas (`n_people`) |
+| as laranjas repassam em ~30 min | o tempo de permanência (`dwell_time_min`) é um sinal forte | `forward_delay_min: 360` |
+| comércios só recebem (não pagam fornecedores nem salários) | comércios nunca parecem contas de passagem | ainda não configurável |
 
-Validar e calibrar essas escolhas faz parte da etapa de análise exploratória.
+A taxa de fraude foi inflada de propósito, para haver exemplos suficientes. Os cenários
+de [`configs/cenarios.yaml`](../configs/cenarios.yaml) combinam esses parâmetros, do mais
+fácil ao mais difícil, e `python scripts/avaliar_cenarios.py` mede o quanto cada
+resultado depende deles (ver [`docs/resultados.md`](../docs/resultados.md)). Validar e
+calibrar essas escolhas faz parte da etapa de análise exploratória.
 
 ## Dados públicos do Banco Central
 
@@ -87,3 +89,23 @@ transações individuais, então elas não formam um grafo). Recursos disponíve
 
 Sem filtro, `transacoes` tem mais de 50 MB. Use `--filtro "AnoMes eq 202506"` para baixar
 um único mês.
+
+## Datasets públicos externos
+
+Para não avaliar os detectores só nos padrões que nós mesmos injetamos, `pixfraud.external`
+converte dois datasets públicos para o formato acima (`accounts.csv` e `transactions.csv`).
+Os arquivos originais ficam no Kaggle, que exige login: baixe-os à mão para `data/raw/` e
+anote aqui a versão e a data de acesso.
+
+| Fonte | O que é | Arquivos | Observações |
+|-------|---------|----------|-------------|
+| **AMLworld** (IBM; Altman et al., 2023) | transações bancárias sintéticas com rótulo de lavagem e padrões em grafo (fan-in, fan-out, ciclos, cadeias...) | `HI-Small_Trans.csv`, `LI-Small_Trans.csv` etc. | grandes: recorte com `--dias` ou `--linhas`. Só pagamentos em dólar, por padrão (`--moeda`) |
+| **PaySim** (Lopez-Rojas et al., 2016) | simulação de dinheiro móvel | `PS_20174392719_1491204439457_log.csv` | quase toda conta de origem aparece uma única vez, então a estrutura em grafo é fraca; serve de contraste |
+
+```powershell
+python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --dias 3
+python scripts/rodar_experimento.py --dados data/external/amlworld --saida reports/amlworld
+```
+
+Nos dois casos não existe idade da conta: `account_age_days` fica 0 e deixa de informar.
+Os papéis também não existem: as contas envolvidas em fraude/lavagem recebem `role = suspeita`.

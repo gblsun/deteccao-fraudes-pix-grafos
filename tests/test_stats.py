@@ -7,6 +7,7 @@ from pixfraud.stats import (
     bootstrap_metric,
     cliffs_delta,
     compare_groups,
+    compare_runs,
     contingency_test,
     effect_size_label,
     holm_correction,
@@ -57,6 +58,28 @@ def test_paired_comparison_and_summary():
     runs = pd.DataFrame({"atributos": ["x"] * 10 + ["y"] * 10, "modelo": "m", "ap": np.r_[a, b]})
     summary = summarize_runs(runs, "ap")
     assert summary.index[0] == ("x", "m") and summary["count"].tolist() == [10, 10]
+
+
+def test_compare_runs_and_summary_by_scenario():
+    rng = np.random.default_rng(3)
+    rows = []
+    for cenario, gap in [("facil", 0.2), ("dificil", 0.0)]:
+        for seed in range(1, 11):
+            base = rng.uniform(0.3, 0.5)
+            for atributos, value in [("tabular", base), ("grafo", base + gap + rng.normal(0, 0.01))]:
+                rows.append({"cenario": cenario, "semente": seed, "atributos": atributos, "modelo": "m", "ap": value})
+    runs = pd.DataFrame(rows)
+
+    table = compare_runs(runs, [("grafo", "tabular")], ["ap"], by=["cenario"]).set_index("cenario")
+    assert table.loc["facil", "comparação"] == "grafo - tabular"
+    assert table.loc["facil", "diferença média"] == pytest.approx(0.2, abs=0.02)
+    assert table.loc["facil", "a vence em"] == 10 and table.loc["facil", "p Wilcoxon (Holm)"] < 0.01
+    assert table.loc["dificil", "p Wilcoxon"] > 0.05
+
+    summary = summarize_runs(runs, "ap", by=["cenario"])
+    assert summary.index.names == ["cenario", "atributos", "modelo"]
+    assert summary.index.get_level_values("cenario").unique().tolist() == ["facil", "dificil"]
+    assert summary.loc["facil"].index[0] == ("grafo", "m")  # ordenado pela média dentro do cenário
 
 
 def test_null_model_detects_excess_reciprocity():

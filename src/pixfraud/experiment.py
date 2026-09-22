@@ -1,12 +1,15 @@
 """Núcleo do experimento: transações -> grafo -> atributos -> detectores -> métricas.
 
-Usado por ``scripts/rodar_experimento.py``, ``scripts/avaliar_robustez.py`` e
-pelo explorador interativo (``app/explorador.py``).
+Usado por ``scripts/rodar_experimento.py``, ``scripts/avaliar_robustez.py``,
+``scripts/avaliar_cenarios.py`` e pelo explorador interativo
+(``app/explorador.py``).
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import copy
+from collections.abc import Iterable, Iterator
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import networkx as nx
@@ -17,6 +20,18 @@ from pixfraud.anomaly import DETECTORS, Detection
 from pixfraud.evaluation import evaluate
 from pixfraud.features import FEATURE_SETS, build_features
 from pixfraud.graph import build_graph
+from pixfraud.simulation import SimulationConfig, generate_dataset, with_overrides
+
+# Pares (a, b) de conjuntos de atributos comparados nos estudos com várias
+# sementes: "a - b" > 0 quer dizer que ``a`` foi melhor.
+COMPARISONS = [
+    ("grafo", "tabular"),
+    ("combinado", "tabular"),
+    ("grafo_avancado", "grafo"),
+    ("completo", "combinado"),
+    ("completo", "tabular"),
+]
+REPEATED_METRICS = ["average_precision", "precision_at_k", "roc_auc", "f1"]
 
 
 @dataclass
@@ -57,3 +72,37 @@ def run_detectors(
             detections[(set_name, model_name)] = detection
             rows.append({"atributos": set_name, "modelo": model_name, **evaluate(labels, detection)})
     return pd.DataFrame(rows), detections
+
+
+def run_seeds(
+    simulation: SimulationConfig,
+    config: dict,
+    seeds: Iterable[int],
+    feature_sets: dict[str, list[str]] = FEATURE_SETS,
+) -> Iterator[tuple[int, Prepared, pd.DataFrame]]:
+    """Repete o experimento com várias sementes, uma de cada vez.
+
+    Cada semente gera um dataset sintético diferente e muda a semente do
+    Isolation Forest. Produz ``(semente, preparado, métricas)``, com a coluna
+    ``semente`` já incluída nas métricas.
+    """
+    for seed in seeds:
+        accounts, transactions = generate_dataset(replace(simulation, seed=seed))
+        prepared = prepare(accounts, transactions, config)
+        models = copy.deepcopy(config["modelos"])
+        models.setdefault("isolation_forest", {})["seed"] = seed
+        metrics, _ = run_detectors(prepared.features, prepared.labels, models, feature_sets)
+        yield seed, prepared, metrics.assign(semente=seed)
+
+
+def load_scenarios(path: str | Path) -> dict[str, dict]:
+    """Lê os cenários de ``configs/cenarios.yaml``: nome -> parâmetros da simulação a trocar.
+
+    Os nomes dos parâmetros são validados aqui, para um erro de digitação não
+    aparecer só no meio de uma execução longa.
+    """
+    with open(path, encoding="utf-8") as f:
+        scenarios = {name: overrides or {} for name, overrides in yaml.safe_load(f).items()}
+    for overrides in scenarios.values():
+        with_overrides(SimulationConfig(), overrides)
+    return scenarios

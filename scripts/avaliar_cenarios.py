@@ -1,0 +1,199 @@
+"""Avalia os detectores em cenários de dificuldade (configs/cenarios.yaml).
+
+O gerador sintético embute sinais "fáceis" por construção (golpes a qualquer
+hora, contas fraudulentas recém-abertas, pessoas sempre ativas). Cada cenário
+desliga parte deles; o script repete o experimento com várias sementes em
+cada cenário para mostrar quais conclusões sobrevivem, em especial a
+comparação entre atributos tabulares e de grafo.
+
+Saídas em reports/results/:
+    cenarios_execucoes.csv    uma linha por (cenário, semente, atributos, modelo)
+    cenarios_resumo.csv       média, desvio e IC 95% de cada métrica, por cenário
+    cenarios_comparacoes.csv  testes pareados entre conjuntos de atributos, por cenário
+    cenarios_efeitos.csv      delta de Cliff (fraude × normal) de cada atributo, por cenário
+e as figuras reports/figures/cenarios_average_precision.png e cenarios_efeitos.png.
+
+Uso:
+    python scripts/avaliar_cenarios.py --sementes 10
+    python scripts/avaliar_cenarios.py --cenarios base realista --sementes 3
+    python scripts/avaliar_cenarios.py --so-figuras    # redesenha as figuras sem rodar de novo
+"""
+
+import argparse
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+from matplotlib.colors import LinearSegmentedColormap, to_rgb  # noqa: E402
+
+from pixfraud.anomaly import DETECTORS  # noqa: E402
+from pixfraud.experiment import (  # noqa: E402
+    COMPARISONS,
+    REPEATED_METRICS,
+    load_experiment_config,
+    load_scenarios,
+    run_seeds,
+)
+from pixfraud.features import FEATURE_SETS  # noqa: E402
+from pixfraud.simulation import load_config, with_overrides  # noqa: E402
+from pixfraud.stats import compare_groups, compare_runs, effect_size_label, summarize_runs  # noqa: E402
+
+# Cores das figuras: rampa sequencial azul (magnitude) e par divergente azul/vermelho
+# com meio cinza (sinal do efeito). Tinta e superfície neutras.
+SEQUENTIAL = ["#f0efec", "#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
+DIVERGING = ["#184f95", "#6da7ec", "#f0efec", "#ec8a89", "#a82f2f"]
+INK, INK_SECONDARY, SURFACE = "#0b0b0b", "#52514e", "#fcfcfb"
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Repete o experimento em cenários de dificuldade.")
+    parser.add_argument("--config", default="configs/experimento.yaml")
+    parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
+    parser.add_argument("--cenarios", nargs="+", help="cenários a rodar (padrão: todos, na ordem do arquivo)")
+    parser.add_argument("--sementes", type=int, default=10, help="nº de repetições por cenário (sementes 1, 2, ...)")
+    parser.add_argument("--saida", default="reports")
+    parser.add_argument("--so-figuras", action="store_true",
+                        help="não roda nada: redesenha as figuras a partir dos CSVs já salvos em --saida")
+    args = parser.parse_args()
+    results = Path(args.saida) / "results"
+    figures = Path(args.saida) / "figures"
+
+    if args.so_figuras:
+        runs = pd.read_csv(results / "cenarios_execucoes.csv")
+        summary = pd.read_csv(results / "cenarios_resumo.csv", index_col=[0, 1, 2, 3]).sort_index()
+        comparisons = pd.read_csv(results / "cenarios_comparacoes.csv")
+        effects = pd.read_csv(results / "cenarios_efeitos.csv")
+        names = list(dict.fromkeys(runs["cenario"]))
+    else:
+        config = load_experiment_config(args.config)
+        base = load_config(args.config)
+        scenarios = load_scenarios(args.arquivo_cenarios)
+        names = args.cenarios or list(scenarios)
+        unknown = [n for n in names if n not in scenarios]
+        if unknown:
+            parser.error(f"cenários desconhecidos: {', '.join(unknown)} (existem: {', '.join(scenarios)})")
+        runs, summary, comparisons, effects = _evaluate(config, base, {n: scenarios[n] for n in names},
+                                                        args.sementes)
+        results.mkdir(parents=True, exist_ok=True)
+        runs.to_csv(results / "cenarios_execucoes.csv", index=False)
+        summary.to_csv(results / "cenarios_resumo.csv")
+        comparisons.to_csv(results / "cenarios_comparacoes.csv", index=False)
+        effects.to_csv(results / "cenarios_efeitos.csv", index=False)
+
+    figures.mkdir(parents=True, exist_ok=True)
+    fraud_rate = (runs["fraudes"] / runs["contas"]).groupby(runs["cenario"]).mean()
+    _plot_metric(summary.loc["average_precision"], names, fraud_rate, figures / "cenarios_average_precision.png",
+                 runs["semente"].nunique())
+    _plot_effects(effects, names, figures / "cenarios_efeitos.png")
+
+    ap = summary.loc["average_precision", "mean"].unstack("cenario")[names]
+    ap = ap.reindex(list(FEATURE_SETS), level="atributos")
+    print("\naverage precision média por cenário:")
+    print(ap.round(3).to_string())
+    print("\ncomparações pareadas (average precision, p com correção de Holm):")
+    key = comparisons[(comparisons["métrica"] == "average_precision")
+                      & comparisons["comparação"].isin(["grafo - tabular", "completo - tabular"])]
+    columns = ["cenario", "modelo", "comparação", "diferença média", "ic_inferior", "ic_superior", "p Wilcoxon (Holm)"]
+    print(key[columns].round(4).to_string(index=False))
+
+
+def _evaluate(config: dict, base, scenarios: dict[str, dict], n_seeds: int):
+    """Roda cada cenário com ``n_seeds`` sementes; devolve execuções, resumo, comparações e efeitos."""
+    runs, effects = [], []
+    for name, overrides in scenarios.items():
+        simulation = with_overrides(base, overrides)
+        for seed, prepared, metrics in run_seeds(simulation, config, range(1, n_seeds + 1)):
+            n_fraud = int(prepared.labels.sum())
+            runs.append(metrics.assign(cenario=name, fraudes=n_fraud, contas=len(prepared.labels)))
+            delta = compare_groups(prepared.features, prepared.labels)["delta de Cliff"]
+            effects.append(delta.rename_axis("atributo").reset_index().assign(cenario=name, semente=seed))
+            print(f"{name}: semente {seed}/{n_seeds} concluída ({n_fraud} contas fraudulentas)", flush=True)
+
+    runs = pd.concat(runs, ignore_index=True)
+    first = ["cenario", "semente", "atributos", "modelo"]
+    runs = runs[first + [c for c in runs.columns if c not in first]]
+    summary = pd.concat(
+        {m: summarize_runs(runs, m, by=["cenario"]) for m in REPEATED_METRICS}, names=["métrica"]
+    )
+    comparisons = compare_runs(runs, COMPARISONS, REPEATED_METRICS, by=["cenario"])
+    effects = (
+        pd.concat(effects, ignore_index=True)
+        .groupby(["cenario", "atributo"], sort=False)["delta de Cliff"]
+        .agg(delta_medio="mean", desvio="std")
+        .reset_index()
+    )
+    effects["efeito"] = effects["delta_medio"].map(effect_size_label)
+    return runs, summary, comparisons, effects
+
+
+def _plot_metric(summary: pd.DataFrame, names: list, fraud_rate: pd.Series, path: Path, n: int) -> None:
+    """Matriz conjunto de atributos × cenário da média da métrica, um painel por modelo."""
+    mean = summary["mean"]
+    models = [m for m in DETECTORS if m in set(mean.index.get_level_values("modelo"))]
+    sets = [s for s in FEATURE_SETS if s in set(mean.index.get_level_values("atributos"))]
+    cmap = LinearSegmentedColormap.from_list("sequencial", SEQUENTIAL)
+    fig, axes = plt.subplots(len(models), 1, figsize=(2.6 + 1.05 * len(names), 1.4 + 3.1 * len(models)),
+                             sharex=True, layout="constrained")
+    axes = np.atleast_1d(axes)
+    for ax, model in zip(axes, models):
+        matrix = mean.xs(model, level="modelo").unstack("cenario").reindex(index=sets, columns=names)
+        mesh = _matrix(ax, matrix, cmap, vmin=0, vmax=1, fmt="{:.2f}")
+        ax.set_title(model.replace("_", " "), color=INK, fontsize=10, loc="left")
+        ax.set_yticks(np.arange(len(sets)) + 0.5, sets, fontsize=9)
+    axes[-1].set_xticks(np.arange(len(names)) + 0.5,
+                        [f"{c}\n{fraud_rate[c]:.1%} fraude".replace(".", ",") for c in names], fontsize=8)
+    colorbar = fig.colorbar(mesh, ax=axes, shrink=0.6, pad=0.02)
+    colorbar.set_label("average precision", color=INK_SECONDARY)
+    colorbar.outline.set_visible(False)
+    fig.suptitle(f"Average precision média ({n} sementes por cenário)\n"
+                 "ao acaso, ela é igual à % de fraude", color=INK, fontsize=10)
+    fig.savefig(path, dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+
+
+def _plot_effects(effects: pd.DataFrame, names: list, path: Path) -> None:
+    """Matriz atributo × cenário do delta de Cliff médio (> 0: maior nas contas fraudulentas)."""
+    matrix = effects.pivot(index="atributo", columns="cenario", values="delta_medio")[names]
+    order = [c for s in FEATURE_SETS.values() for c in s]
+    matrix = matrix.reindex([c for c in dict.fromkeys(order) if c in matrix.index])
+    cmap = LinearSegmentedColormap.from_list("divergente", DIVERGING)
+    fig, ax = plt.subplots(figsize=(2.6 + 1.05 * len(names), 0.34 * len(matrix) + 1.6), layout="constrained")
+    mesh = _matrix(ax, matrix, cmap, vmin=-1, vmax=1, fmt="{:+.2f}")
+    ax.set_xticks(np.arange(len(names)) + 0.5, names, fontsize=8)
+    ax.set_yticks(np.arange(len(matrix)) + 0.5, matrix.index, fontsize=8)
+    colorbar = fig.colorbar(mesh, ax=ax, shrink=0.6, pad=0.02)
+    colorbar.set_label("delta de Cliff: fraude × normal", color=INK_SECONDARY)
+    colorbar.outline.set_visible(False)
+    ax.set_title("Delta de Cliff, fraude × normal\n"
+                 "vermelho: maior nas fraudes · azul: menor\n|δ| ≥ 0,47: efeito grande",
+                 color=INK, fontsize=9, loc="left")
+    fig.savefig(path, dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+
+
+def _matrix(ax, matrix: pd.DataFrame, cmap, vmin: float, vmax: float, fmt: str):
+    """Células com 2px de respiro entre si e o valor escrito em cada uma."""
+    values = matrix.to_numpy(dtype=float)
+    mesh = ax.pcolormesh(values, cmap=cmap, vmin=vmin, vmax=vmax, edgecolors=SURFACE, linewidth=2)
+    for (i, j), value in np.ndenumerate(values):
+        if np.isnan(value):
+            continue
+        r, g, b = to_rgb(cmap((value - vmin) / (vmax - vmin)))
+        dark = 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.5
+        ax.text(j + 0.5, i + 0.5, fmt.format(value).replace(".", ","), ha="center", va="center",
+                fontsize=8, color="#ffffff" if dark else INK)
+    ax.invert_yaxis()
+    ax.set_facecolor(SURFACE)
+    ax.tick_params(length=0, colors=INK_SECONDARY)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    return mesh
+
+
+if __name__ == "__main__":
+    main()

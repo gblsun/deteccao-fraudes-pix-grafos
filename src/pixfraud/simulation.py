@@ -17,11 +17,16 @@ injetados padrões de fraude conhecidos:
 Os parâmetros ficam em ``configs/experimento.yaml`` e a semente torna o dataset
 reprodutível. Os valores padrão são ilustrativos e devem ser calibrados na
 etapa de análise exploratória (ver ``pixfraud.bcb``).
+
+Por padrão o gerador embute sinais "fáceis" (golpes a qualquer hora, contas
+fraudulentas recém-abertas, pessoas sempre ativas). Os parâmetros
+``fraud_hours``, ``p_new_fraud_account`` e ``quiet_fraction`` desligam esses
+atalhos; os cenários de ``configs/cenarios.yaml`` os combinam.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, fields, replace
 from pathlib import Path
 
 import numpy as np
@@ -29,6 +34,7 @@ import pandas as pd
 import yaml
 
 FRAUD_ROLES = ("laranja", "intermediario", "coletor")
+FRAUD_HOURS = ("uniforme", "comercial")
 COLUMNS = ["t", "sender", "receiver", "amount", "scenario"]
 
 # Peso relativo de cada hora do dia (0h a 23h): pouco uso de madrugada, picos
@@ -64,16 +70,30 @@ class SimulationConfig:
     fraud_amount_shift: float = 1.5
     forward_delay_min: float = 30.0
     camouflage_tx: float = 3.0
+    # realismo: estes parâmetros desligam sinais que o gerador embute por construção
+    fraud_hours: str = "uniforme"   # "uniforme" ou "comercial" (mesmo perfil horário dos Pix legítimos)
+    p_new_fraud_account: float = 0.7  # fração das contas fraudulentas recém-abertas (< 60 dias)
+    quiet_fraction: float = 0.0     # fração de pessoas legítimas pouco ativas
+    quiet_activity: float = 0.1     # atividade das pessoas pouco ativas, relativa às demais
+
+    def __post_init__(self):
+        if self.fraud_hours not in FRAUD_HOURS:
+            raise ValueError(f"fraud_hours deve ser um de {FRAUD_HOURS}")
 
 
 def load_config(path: str | Path) -> SimulationConfig:
     """Lê a seção ``simulacao`` do arquivo YAML de experimento."""
     with open(path, encoding="utf-8") as f:
         section = yaml.safe_load(f).get("simulacao") or {}
-    unknown = set(section) - {f.name for f in fields(SimulationConfig)}
+    return with_overrides(SimulationConfig(), section)
+
+
+def with_overrides(cfg: SimulationConfig, overrides: dict) -> SimulationConfig:
+    """Cópia de ``cfg`` com alguns parâmetros trocados (usado pelos cenários de ``configs/cenarios.yaml``)."""
+    unknown = set(overrides) - {f.name for f in fields(SimulationConfig)}
     if unknown:
         raise ValueError(f"Parâmetros desconhecidos em 'simulacao': {sorted(unknown)}")
-    return SimulationConfig(**section)
+    return replace(cfg, **overrides)
 
 
 def generate_dataset(cfg: SimulationConfig) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -107,7 +127,7 @@ def generate_dataset(cfg: SimulationConfig) -> tuple[pd.DataFrame, pd.DataFrame]
     tx.insert(0, "tx_id", [f"T{i:07d}" for i in range(len(tx))])
     tx = tx[["tx_id", "timestamp", "sender", "receiver", "amount", "is_fraud", "scenario"]]
 
-    return _accounts_table(rng, people, merchants, roles, victims), tx
+    return _accounts_table(rng, people, merchants, roles, victims, cfg.p_new_fraud_account), tx
 
 
 def save_dataset(accounts: pd.DataFrame, transactions: pd.DataFrame, out_dir: str | Path) -> None:
@@ -135,6 +155,9 @@ def _normal_transactions(rng, cfg, people, merchants, community) -> pd.DataFrame
     """Pagamentos a comércios e transferências P2P, em geral dentro do círculo de contatos."""
     n_people = len(people)
     activity = cfg.tx_per_person_day * rng.lognormal(0.0, 0.5, n_people)
+    if cfg.quiet_fraction > 0:
+        # Pessoas que quase não usam o Pix: sem elas, ter poucos Pix já parece anômalo.
+        activity[rng.random(n_people) < cfg.quiet_fraction] *= cfg.quiet_activity
     sender = np.repeat(np.arange(n_people), rng.poisson(activity * cfg.n_days))
     n = sender.size
 
@@ -188,7 +211,10 @@ def _fraud_ring(rng, cfg, people, community, fraud_pool):
             contacts = np.flatnonzero((community == community[cloned]) & (np.arange(len(people)) != cloned))
             n_payers = min(int(rng.integers(2, 5)), contacts.size)
             payers = people[rng.choice(contacts, size=n_payers, replace=False)]
-        t = ring_start + rng.uniform(0, 2 * 86400)
+        if cfg.fraud_hours == "uniforme":
+            t = ring_start + rng.uniform(0, 2 * 86400)
+        else:
+            t = ring_start + _random_seconds(rng, 1, 2)[0]
         for payer in payers:
             t += rng.exponential(600)
             amount = rng.lognormal(cfg.amount_mu + cfg.fraud_amount_shift, 0.6 * cfg.amount_sigma)
@@ -223,12 +249,13 @@ def _camouflage_transactions(rng, cfg, accounts, people, merchants) -> pd.DataFr
     })
 
 
-def _accounts_table(rng, people, merchants, roles, victims) -> pd.DataFrame:
+def _accounts_table(rng, people, merchants, roles, victims, p_new_fraud_account) -> pd.DataFrame:
     n_fraud = len(roles)
     role = np.array(["normal"] * len(people) + ["comercio"] * len(merchants) + list(roles.values()))
     # Contas usadas em fraudes tendem a ser recém-abertas; parte delas, porém,
-    # são contas antigas cedidas ou invadidas.
-    fraud_age = np.where(rng.random(n_fraud) < 0.7, rng.integers(1, 60, n_fraud), rng.integers(30, 3650, n_fraud))
+    # são contas antigas cedidas ou invadidas, com a mesma idade das contas comuns.
+    new = rng.random(n_fraud) < p_new_fraud_account
+    fraud_age = np.where(new, rng.integers(1, 60, n_fraud), rng.integers(30, 3650, n_fraud))
     accounts = pd.DataFrame({
         "account_id": np.concatenate([people, merchants, np.array(list(roles), dtype=people.dtype)]),
         "account_type": np.where(role == "comercio", "PJ", "PF"),

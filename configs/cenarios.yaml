@@ -1,0 +1,41 @@
+# Cenários de dificuldade para scripts/avaliar_cenarios.py.
+#
+# Cada cenário troca alguns parâmetros da seção `simulacao` de
+# configs/experimento.yaml (o resto fica igual). A pergunta é: a vantagem de um
+# conjunto de atributos sobrevive quando o gerador deixa de embutir sinais
+# "fáceis" por construção? (ver "Limitações conhecidas" em data/README.md)
+#
+# Os cenários vão do mais fácil ao mais difícil; os do meio desligam um
+# atalho de cada vez, para saber qual deles sustentava cada resultado. O
+# último testa se os atributos temporais dependem do repasse rápido (~30 min),
+# que também é uma hipótese do gerador.
+
+base: {}                        # o gerador como está
+
+sem_horario:
+  fraud_hours: comercial        # golpes seguem o perfil horário dos Pix legítimos
+
+sem_idade:
+  p_new_fraud_account: 0.0      # contas fraudulentas têm a idade das legítimas
+
+sem_atalhos:                    # os dois atalhos desligados
+  fraud_hours: comercial
+  p_new_fraud_account: 0.0
+
+com_inativos:                   # + 30% das pessoas quase não usam Pix
+  fraud_hours: comercial
+  p_new_fraud_account: 0.0
+  quiet_fraction: 0.3
+
+realista:                       # + fraudes 3x mais raras (ainda bem acima da taxa real)
+  fraud_hours: comercial
+  p_new_fraud_account: 0.0
+  quiet_fraction: 0.3
+  n_rings: 2
+
+repasse_lento:                  # teste de estresse: + laranjas esperam ~6 h antes de repassar
+  fraud_hours: comercial
+  p_new_fraud_account: 0.0
+  quiet_fraction: 0.3
+  n_rings: 2
+  forward_delay_min: 360

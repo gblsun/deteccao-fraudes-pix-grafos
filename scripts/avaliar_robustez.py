@@ -4,7 +4,8 @@ Cada semente gera um dataset sintético diferente (e muda a semente do
 Isolation Forest). Para cada conjunto de atributos e modelo, o script calcula
 a média e o intervalo de confiança das métricas. Depois compara abordagens
 com testes pareados (a mesma semente é avaliada pelas duas abordagens), com
-correção de Holm para as várias comparações de cada métrica.
+correção de Holm para as várias comparações de cada métrica. Para repetir a
+avaliação em cenários de dificuldade diferentes, use ``avaliar_cenarios.py``.
 
 Saídas em reports/results/:
     robustez_execucoes.csv    uma linha por (semente, atributos, modelo)
@@ -17,8 +18,6 @@ Uso:
 """
 
 import argparse
-import copy
-import dataclasses
 from pathlib import Path
 
 import matplotlib
@@ -28,18 +27,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from pixfraud.experiment import load_experiment_config, prepare, run_detectors  # noqa: E402
-from pixfraud.simulation import generate_dataset, load_config  # noqa: E402
-from pixfraud.stats import holm_correction, paired_comparison, summarize_runs  # noqa: E402
-
-COMPARISONS = [
-    ("grafo", "tabular"),
-    ("combinado", "tabular"),
-    ("grafo_avancado", "grafo"),
-    ("completo", "combinado"),
-    ("completo", "tabular"),
-]
-METRICS = ["average_precision", "precision_at_k", "roc_auc", "f1"]
+from pixfraud.experiment import COMPARISONS, REPEATED_METRICS, load_experiment_config, run_seeds  # noqa: E402
+from pixfraud.simulation import load_config  # noqa: E402
+from pixfraud.stats import compare_runs, summarize_runs  # noqa: E402
 
 
 def main() -> None:
@@ -52,13 +42,8 @@ def main() -> None:
     config = load_experiment_config(args.config)
     base = load_config(args.config)
     runs = []
-    for seed in range(1, args.sementes + 1):
-        accounts, transactions = generate_dataset(dataclasses.replace(base, seed=seed))
-        prepared = prepare(accounts, transactions, config)
-        models = copy.deepcopy(config["modelos"])
-        models["isolation_forest"]["seed"] = seed
-        metrics, _ = run_detectors(prepared.features, prepared.labels, models)
-        runs.append(metrics.assign(semente=seed))
+    for seed, _, metrics in run_seeds(base, config, range(1, args.sementes + 1)):
+        runs.append(metrics)
         print(f"semente {seed}/{args.sementes} concluída")
     runs = pd.concat(runs, ignore_index=True)
 
@@ -68,23 +53,10 @@ def main() -> None:
     figures.mkdir(parents=True, exist_ok=True)
     runs.to_csv(results / "robustez_execucoes.csv", index=False)
 
-    summary = pd.concat({m: summarize_runs(runs, m) for m in METRICS}, names=["métrica"])
+    summary = pd.concat({m: summarize_runs(runs, m) for m in REPEATED_METRICS}, names=["métrica"])
     summary.to_csv(results / "robustez_resumo.csv")
 
-    rows = []
-    for metric in METRICS:
-        for model in runs["modelo"].unique():
-            wide = runs[runs["modelo"] == model].pivot(index="semente", columns="atributos", values=metric)
-            for a, b in COMPARISONS:
-                rows.append({"métrica": metric, "modelo": model, "comparação": f"{a} - {b}",
-                             **paired_comparison(wide[a], wide[b])})
-    comparisons = pd.DataFrame(rows)
-    # Cada métrica é uma família de testes: a correção de Holm vale dentro dela.
-    # (Com 10 sementes, o menor p possível no Wilcoxon exato é 2/1024 ≈ 0,002;
-    # corrigir por todas as métricas juntas tornaria qualquer diferença "não significativa".)
-    comparisons["p Wilcoxon (Holm)"] = comparisons.groupby("métrica")["p Wilcoxon"].transform(
-        lambda p: holm_correction(p.to_numpy())
-    )
+    comparisons = compare_runs(runs, COMPARISONS, REPEATED_METRICS)
     comparisons.to_csv(results / "robustez_comparacoes.csv", index=False)
 
     _plot(summary.loc["average_precision"], figures / "robustez_average_precision.png", args.sementes)

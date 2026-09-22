@@ -7,7 +7,8 @@
   (reamostrando as contas).
 * ``paired_comparison``: duas abordagens avaliadas nas mesmas sementes (ex.:
   tabular × grafo). Diferença média com IC, teste de Wilcoxon pareado e teste
-  t pareado.
+  t pareado. ``compare_runs`` aplica o teste a vários pares de conjuntos de
+  atributos, com correção de Holm, e ``summarize_runs`` resume as execuções.
 * ``null_model_test``: uma estatística do grafo (reciprocidade, triângulos…) é
   maior do que o esperado por acaso? Compara com grafos aleatórios que
   preservam os graus (modelo nulo) e dá o escore z e o p-valor empírico.
@@ -151,15 +152,60 @@ def paired_comparison(a: pd.Series, b: pd.Series, confidence: float = 0.95) -> d
     }
 
 
-def summarize_runs(runs: pd.DataFrame, metric: str, confidence: float = 0.95) -> pd.DataFrame:
-    """Média, desvio e IC t de ``metric`` por (atributos, modelo) em várias execuções."""
-    grouped = runs.groupby(["atributos", "modelo"])[metric]
+def summarize_runs(runs: pd.DataFrame, metric: str, confidence: float = 0.95, by: list[str] = ()) -> pd.DataFrame:
+    """Média, desvio e IC t de ``metric`` por (atributos, modelo) em várias execuções.
+
+    ``by`` acrescenta colunas ao agrupamento (ex.: ``["cenario"]``); nesse caso
+    a ordenação pela média é feita dentro de cada grupo.
+    """
+    grouped = runs.groupby([*by, "atributos", "modelo"], sort=not by)[metric]
     summary = grouped.agg(["mean", "std", "count"])
     t_crit = stats.t.ppf(0.5 + confidence / 2, df=summary["count"] - 1)
     half = t_crit * summary["std"] / np.sqrt(summary["count"])
     summary["ic_inferior"] = summary["mean"] - half
     summary["ic_superior"] = summary["mean"] + half
-    return summary.sort_values("mean", ascending=False)
+    if not by:
+        return summary.sort_values("mean", ascending=False)
+    return summary.groupby(list(by), sort=False, group_keys=False).apply(
+        lambda group: group.sort_values("mean", ascending=False)
+    )
+
+
+def compare_runs(
+    runs: pd.DataFrame,
+    comparisons: list[tuple[str, str]],
+    metrics: list[str],
+    by: list[str] = (),
+) -> pd.DataFrame:
+    """Testes pareados entre conjuntos de atributos, semente a semente.
+
+    ``runs`` tem uma linha por (semente, atributos, modelo), como a saída de
+    ``pixfraud.experiment.run_seeds``. Para cada métrica, modelo e par
+    ``(a, b)`` de ``comparisons``, aplica ``paired_comparison`` a ``a - b``.
+    Cada métrica (dentro de cada grupo de ``by``) é uma família de testes, e
+    a correção de Holm vale dentro dela: com 10 sementes, o menor p possível
+    no Wilcoxon exato é 2/1024 ≈ 0,002, e corrigir por todas as métricas juntas
+    tornaria qualquer diferença "não significativa".
+    """
+    rows = []
+    groups = runs.groupby(list(by), sort=False) if by else [((), runs)]
+    for key, group in groups:
+        for metric in metrics:
+            for model in group["modelo"].unique():
+                wide = group[group["modelo"] == model].pivot(index="semente", columns="atributos", values=metric)
+                for a, b in comparisons:
+                    rows.append({
+                        **dict(zip(by, key)),
+                        "métrica": metric,
+                        "modelo": model,
+                        "comparação": f"{a} - {b}",
+                        **paired_comparison(wide[a], wide[b]),
+                    })
+    table = pd.DataFrame(rows)
+    table["p Wilcoxon (Holm)"] = table.groupby([*by, "métrica"])["p Wilcoxon"].transform(
+        lambda p: holm_correction(p.to_numpy())
+    )
+    return table
 
 
 def null_model_test(
