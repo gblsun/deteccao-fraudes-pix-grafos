@@ -11,7 +11,7 @@ Marque `[x]` quando a etapa for concluída.
 | [ ]    | Análise exploratória de dados e validação do dataset            | 4–5     | `notebooks/01_analise_exploratoria.ipynb`                 |
 | [ ]    | Modelagem das transações em grafos                              | 5–6     | `src/pixfraud/graph.py`                                   |
 | [ ]    | Extração de métricas estruturais dos grafos                     | 6–7     | `src/pixfraud/features.py`                                |
-| [ ]    | Aplicação de técnicas de machine learning                       | 7–8     | `src/pixfraud/anomaly.py`                                 |
+| [ ]    | Aplicação de técnicas de machine learning                       | 7–8     | `src/pixfraud/anomaly.py`, [`docs/modelos.md`](modelos.md) |
 | [ ]    | Desenvolvimento de visualizações em grafos e heatmaps           | 8–9     | `src/pixfraud/visualization.py`, `reports/figures/`       |
 | [ ]    | Análise de perfis de fraude e interpretação dos resultados      | 9–10    | notebooks, `reports/amlworld/` (recall por tipologia)     |
 | [ ]    | Comparação entre abordagem tabular e grafos                     | 10–11   | `reports/results/metricas.csv`, `cenarios_*.csv`, `docs/resultados.md` |
