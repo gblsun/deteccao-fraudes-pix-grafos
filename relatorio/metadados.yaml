@@ -1,0 +1,10 @@
+# Metadados do relatório para o Pandoc (usados por scripts/gerar_relatorio.py).
+# Sem autor, orientador ou curso: o repositório acompanha a submissão anônima. Acrescente
+# esses dados só no arquivo final gerado, em relatorio/saida/ (fora do git).
+title: "Detecção de Fraudes em Transações PIX utilizando Teoria dos Grafos e Machine Learning"
+subtitle: "Relatório final de iniciação científica (rascunho)"
+lang: pt-BR
+link-citations: true
+reference-section-title: "Referências"
+toc-title: "Sumário"
+figureTitle: "Figura"

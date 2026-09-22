@@ -40,6 +40,7 @@ desenhar e exportar grafos.
 │   ├── figures/               grafos de calor, heatmaps de risco, robustez e cenários
 │   ├── estudos/               grafos gerados nos estudos (inclui a rede inteira em HTML)
 │   └── results/               métricas dos experimentos
+├── relatorio/                 esqueleto do relatório final (Markdown + Pandoc)
 ├── scripts/                   pontos de entrada (ver "Pipeline")
 ├── src/pixfraud/              código da pesquisa (pacote Python)
 │   ├── simulation.py          gerador do dataset sintético de transações PIX
@@ -184,5 +185,7 @@ reais, e os dados do Banco Central são estatísticas agregadas e públicas.
 - Diário de pesquisa: `docs/diario/AAAA-MM-DD.md`, a partir de [docs/modelos/diario.md](docs/modelos/diario.md)
 - Reuniões de orientação: `docs/reunioes/AAAA-MM-DD.md`, a partir de [docs/modelos/reuniao.md](docs/modelos/reuniao.md)
 - Notas no Obsidian: o repositório já é um cofre configurado, ver [docs/obsidian.md](docs/obsidian.md)
+- Relatório final: capítulos em [relatorio/](relatorio/README.md), gerados com
+  `python scripts/gerar_relatorio.py`
 - Novos notebooks: prefixo numérico e nome descritivo (`02_perfis_de_fraude.ipynb`).
   Código reaproveitável vai para `src/pixfraud/`, com teste em `tests/`.

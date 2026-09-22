@@ -34,6 +34,7 @@ Como usar tudo isso no Obsidian: [obsidian.md](obsidian.md).
 | [`notebooks/`](../notebooks/README.md) | análises da pesquisa |
 | [`estudos/`](../estudos/README.md) | material de estudo de teoria dos grafos |
 | [`app/`](../app/README.md) | o explorador interativo |
+| [`relatorio/`](../relatorio/README.md) | esqueleto do relatório final em Markdown, gerado em DOCX/PDF pelo Pandoc |
 | [`tests/`](../tests/README.md) | o que cada teste verifica |
 
 Regra para tudo o que fica no repositório: **nenhum nome de pessoa, orientador ou

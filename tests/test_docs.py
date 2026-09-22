@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).parents[1]
-FOLDERS_WITH_README = ["app", "configs", "data", "docs", "estudos", "notebooks", "reports", "scripts",
+FOLDERS_WITH_README = ["app", "configs", "data", "docs", "estudos", "notebooks", "relatorio", "reports", "scripts",
                        "src/pixfraud", "tests"]
 MARKDOWN = sorted({ROOT / "README.md", *(p for f in FOLDERS_WITH_README for p in (ROOT / f).rglob("*.md"))})
 CODE = re.compile(r"(`{3,}).*?\1|`[^`\n]*`", re.DOTALL)  # blocos e trechos de código: exemplos, não links
