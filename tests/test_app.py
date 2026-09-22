@@ -11,6 +11,7 @@ from streamlit.testing.v1 import AppTest  # noqa: E402
 from pixfraud.simulation import SimulationConfig, generate_dataset, save_dataset  # noqa: E402
 
 APP = Path(__file__).parents[1] / "app" / "explorador.py"
+pytestmark = pytest.mark.lento
 
 
 def test_app_runs_all_tabs(tmp_path, monkeypatch):
@@ -19,5 +20,6 @@ def test_app_runs_all_tabs(tmp_path, monkeypatch):
     app = AppTest.from_file(str(APP), default_timeout=300)
     app.run()
     assert not app.exception
-    assert [t.label for t in app.tabs] == ["Rede inteira", "Conta", "Padrões de fraude", "Fluxo e bloqueio", "Resultados"]
+    tabs = ["Rede inteira", "Conta", "Padrões de fraude", "Fluxo e bloqueio", "Resultados"]
+    assert [t.label for t in app.tabs] == tabs
     assert app.metric[0].label == "Fluxo máximo"

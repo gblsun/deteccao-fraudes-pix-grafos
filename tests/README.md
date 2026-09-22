@@ -7,6 +7,8 @@ Testes automatizados com [pytest](https://docs.pytest.org). Rodam no GitHub a ca
 pytest                            # todos
 pytest tests/test_simulation.py   # um arquivo
 pytest -k online                  # só os testes com "online" no nome
+pytest -m "not lento"             # pula os que rodam scripts inteiros e o app (~15 s no total)
+ruff check .                      # estilo e erros comuns (configuração no pyproject.toml)
 ```
 
 Os testes usam datasets minúsculos gerados na hora (centenas de contas, poucos dias),

@@ -312,7 +312,8 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
   header { padding: 10px 16px; border-bottom: 1px solid #ddd; background: #fff; }
   h1 { font-size: 16px; margin: 0 0 6px; }
   .legend span { margin-right: 14px; font-size: 13px; white-space: nowrap; }
-  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%;
+              margin-right: 5px; vertical-align: -1px; }
   #graph { width: 100%; height: calc(100vh - 70px); }
   div.vis-tooltip { white-space: pre-line; font-size: 13px; }
 </style>
@@ -456,7 +457,8 @@ def explain_account(
 
     percentile = features.rank(pct=True).loc[account].sort_values()
     colormap = plt.get_cmap(CMAP)
-    ax_bars.barh(percentile.index, percentile.to_numpy(), color=[colormap(0.15 + 0.85 * abs(p - 0.5) * 2) for p in percentile])
+    colors = [colormap(0.15 + 0.85 * abs(p - 0.5) * 2) for p in percentile]
+    ax_bars.barh(percentile.index, percentile.to_numpy(), color=colors)
     ax_bars.axvline(0.5, color="#888888", lw=0.8, ls="--")
     ax_bars.set_xlim(0, 1)
     ax_bars.set_xlabel("percentil entre todas as contas (0 = menor valor, 1 = maior)")

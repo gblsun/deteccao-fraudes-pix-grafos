@@ -4,7 +4,7 @@
 |---|---|---|
 | ``money_backbone`` | ramificação máxima (Edmonds) | qual a principal origem do dinheiro de cada conta? |
 | ``widest_path`` | caminho gargalo (Dijkstra modificado) | qual o maior valor que passa por uma única rota? |
-| ``laundering_depth`` / ``longest_chain`` | condensação + maior caminho em DAG | por quantas camadas o dinheiro ainda passa? |
+| ``laundering_depth``, ``longest_chain`` | condensação + maior caminho em DAG | por quantas camadas o dinheiro passa? |
 | ``find_pattern`` | monomorfismo de subgrafos (VF2) | onde este formato aparece na rede? |
 | ``hubs_authorities`` | HITS | quem distribui e quem concentra? |
 | ``similar_accounts`` | Jaccard / SimRank | que contas se parecem com esta? |

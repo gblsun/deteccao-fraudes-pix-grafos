@@ -8,7 +8,7 @@ escolhidos (padrão: DBSCAN com o conjunto "completo").
 Uso:
     python scripts/visualizar_rede.py
     python scripts/visualizar_rede.py --modelo isolation_forest --atributos grafo_avancado --saida reports/estudos/rede_if.html
-"""
+"""  # noqa: E501 (exemplos de comando ficam numa linha só, para copiar e colar)
 
 import argparse
 

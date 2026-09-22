@@ -93,6 +93,8 @@ def test_checkpoint_flags_budget():
     assert set(flags["modelo"]) == {"isolation_forest", "dbscan"}
     assert (flags.groupby(["corte", "modelo"]).size() == 7).all()
     # só entram contas que já tinham feito ou recebido Pix antes do corte
-    first_seen = pd.concat([tx[["sender", "timestamp"]].rename(columns={"sender": "c"}),
-                            tx[["receiver", "timestamp"]].rename(columns={"receiver": "c"})]).groupby("c")["timestamp"].min()
+    first_seen = pd.concat([
+        tx[["sender", "timestamp"]].rename(columns={"sender": "c"}),
+        tx[["receiver", "timestamp"]].rename(columns={"receiver": "c"}),
+    ]).groupby("c")["timestamp"].min()
     assert (first_seen.loc[flags["account_id"]].to_numpy() < flags["corte"].to_numpy()).all()

@@ -6,8 +6,11 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from pixfraud.simulation import SimulationConfig, generate_dataset, save_dataset
+
+pytestmark = pytest.mark.lento  # cada teste roda um script inteiro
 
 ROOT = Path(__file__).parents[1]
 CONFIG = """

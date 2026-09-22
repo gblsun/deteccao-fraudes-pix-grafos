@@ -113,7 +113,8 @@ roles = roles_with_victims(info)
 st.sidebar.title("Explorador Pix")
 st.sidebar.caption(f"{len(accounts):,} contas · {len(transactions):,} Pix".replace(",", "."))
 model = st.sidebar.selectbox("Detector", sorted(DETECTORS), index=sorted(DETECTORS).index("dbscan"))
-feature_set = st.sidebar.selectbox("Conjunto de atributos", list(FEATURE_SETS), index=list(FEATURE_SETS).index("completo"))
+feature_set = st.sidebar.selectbox("Conjunto de atributos", list(FEATURE_SETS),
+                                   index=list(FEATURE_SETS).index("completo"))
 risk = risk_scores(data_dir, model, feature_set)
 
 tab_net, tab_account, tab_patterns, tab_flow, tab_results = st.tabs(
@@ -146,8 +147,8 @@ with tab_account:
     if temporal and DIRECTIONS[direction] == "both":
         st.info("A trilha temporal é feita numa direção de cada vez; usando 'para frente'.")
     if temporal:
-        trail = temporal_trail(transactions, account, direction="backward" if DIRECTIONS[direction] == "backward" else "forward",
-                               max_hops=hops)
+        way = "backward" if DIRECTIONS[direction] == "backward" else "forward"
+        trail = temporal_trail(transactions, account, direction=way, max_hops=hops)
         trail.add_node(account)
     else:
         trail = money_trail(data.graph, account, max_hops=hops, direction=DIRECTIONS[direction])

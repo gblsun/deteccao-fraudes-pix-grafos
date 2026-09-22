@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+dev = ["pytest>=8", "ruff>=0.6"]
 notebooks = ["jupyterlab>=4", "ipykernel"]
 app = ["streamlit>=1.30"]
 
@@ -28,3 +28,17 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["lento: testes que rodam scripts inteiros ou o app (pule com -m \"not lento\")"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["*.ipynb"]  # notebooks são material de estudo e análise, já executados
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# modelo HTML/JS da página e CSVs de exemplo embutidos: linhas longas de propósito
+"src/pixfraud/explorer.py" = ["E501"]
+"tests/test_external.py" = ["E501"]

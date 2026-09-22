@@ -22,7 +22,7 @@ Exemplos:
 
     # fluxo máximo e o que bloquear entre contas de origem e um destino
     python scripts/criar_grafo.py fluxo estudos/dados/exemplo_transacoes.csv --de carla fabio --para conta_z --saida fluxo.png
-"""
+"""  # noqa: E501 (exemplos de comando ficam numa linha só, para copiar e colar)
 
 import argparse
 from pathlib import Path
@@ -35,7 +35,7 @@ import networkx as nx  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from pixfraud.communities import detect_communities  # noqa: E402
-from pixfraud.flow import relevant_accounts, blocking_accounts, blocking_cut, max_money_flow  # noqa: E402
+from pixfraud.flow import blocking_accounts, blocking_cut, max_money_flow, relevant_accounts  # noqa: E402
 from pixfraud.graph import describe, graph_from_csv, money_trail  # noqa: E402
 from pixfraud.patterns import PATTERNS  # noqa: E402
 from pixfraud.temporal import temporal_trail  # noqa: E402
@@ -96,7 +96,8 @@ def main() -> None:
         to_block = blocking_accounts(graph, args.de, args.para)
         print(f"fluxo máximo: R$ {value:,.2f} | corte mínimo: R$ {cut_value:,.2f}")
         print("Pix do corte mínimo:", ", ".join(f"{u} -> {v} (R$ {a:,.2f})" for u, v, a in cut) or "nenhum")
-        print("contas a bloquear:", "impossível (pagamento direto)" if to_block is None else (", ".join(to_block) or "nenhuma"))
+        blocked = "impossível (pagamento direto)" if to_block is None else (", ".join(to_block) or "nenhuma")
+        print("contas a bloquear:", blocked)
         graph = graph.subgraph(relevant_accounts(graph, args.de, args.para) or set(args.de)).copy()
         title = f"Fluxo de {', '.join(args.de)} até {args.para}: R$ {value:,.0f}".replace(",", ".")
         print()
@@ -117,7 +118,10 @@ def main() -> None:
                 direction = "backward" if args.direcao == "tras" else "forward"
                 trail = temporal_trail(tx, args.conta, direction=direction, max_hops=args.saltos, max_delay=args.espera)
                 trail.add_node(args.conta)
-                graph = graph.subgraph(trail.nodes).edge_subgraph(trail.edges).copy() if trail.edges else graph.subgraph([args.conta]).copy()
+                if trail.edges:
+                    graph = graph.subgraph(trail.nodes).edge_subgraph(trail.edges).copy()
+                else:
+                    graph = graph.subgraph([args.conta]).copy()
                 title = f"{args.conta}: trilha temporal ({'para trás' if direction == 'backward' else 'para frente'})"
             else:
                 graph = money_trail(graph, args.conta, args.saltos, DIRECTIONS[args.direcao])
