@@ -1,5 +1,6 @@
 """Testes de fumaça dos scripts de avaliação, num dataset minúsculo."""
 
+import json
 import os
 import subprocess
 import sys
@@ -33,6 +34,16 @@ def _run(script: str, *args: str) -> str:
     return done.stdout.decode("utf-8")
 
 
+def _check_metadata(path, cenarios=None) -> dict:
+    """O *_meta.json existe e tem o que é preciso para refazer o resultado."""
+    meta = json.loads(path.read_text(encoding="utf-8"))
+    assert {"gerado_em", "commit", "python", "pacotes", "configuracao", "duracao_s"} <= set(meta)
+    assert meta["configuracao"]["modelos"]["dbscan"] == {"min_samples": 5}
+    if cenarios:
+        assert set(meta["cenarios"]) == cenarios
+    return meta
+
+
 def test_avaliar_cenarios(tmp_path):
     (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
     (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
@@ -44,6 +55,7 @@ def test_avaliar_cenarios(tmp_path):
     comparisons = pd.read_csv(tmp_path / "results" / "cenarios_comparacoes.csv")
     assert {"cenario", "comparação", "p Wilcoxon (Holm)"} <= set(comparisons.columns)
     effects = pd.read_csv(tmp_path / "results" / "cenarios_efeitos.csv")
+    _check_metadata(tmp_path / "results" / "cenarios_meta.json", cenarios={"base", "dificil"})
     assert effects["delta_medio"].between(-1, 1).all()
     for figure in ("cenarios_average_precision.png", "cenarios_efeitos.png"):
         assert (tmp_path / "figures" / figure).stat().st_size > 0
@@ -55,6 +67,7 @@ def test_avaliar_robustez(tmp_path):
     summary = pd.read_csv(tmp_path / "results" / "robustez_resumo.csv")
     assert set(summary["métrica"]) >= {"average_precision", "roc_auc"}
     assert (tmp_path / "figures" / "robustez_average_precision.png").exists()
+    assert _check_metadata(tmp_path / "results" / "robustez_meta.json")["sementes"] == [1, 2]
 
 
 def test_avaliar_externo(tmp_path):
@@ -78,6 +91,7 @@ def test_avaliar_externo(tmp_path):
     assert set(typologies["typology"]) <= {"laranja", "intermediario", "coletor"}
     assert typologies["recall_at_k"].between(0, 1).all()
     assert (tmp_path / "saida" / "figures" / "externo_tipologias.png").exists()
+    _check_metadata(tmp_path / "saida" / "results" / "externo_meta.json")
 
 
 def test_avaliar_deteccao_online(tmp_path):
@@ -94,3 +108,44 @@ def test_avaliar_deteccao_online(tmp_path):
     assert (runs["recuperado_1h"] <= runs["recuperado_24h"] + 1e-9).all()  # mais prazo, mais dinheiro retido
     assert len(list((tmp_path / "results" / "online_cortes").glob("*.csv"))) == 2
     assert (tmp_path / "figures" / "online_deteccao.png").exists()
+    assert _check_metadata(tmp_path / "results" / "online_meta.json")["saque"] == ["1h", "6h", "24h"]
+
+
+def test_avaliar_atributos(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("avaliar_atributos.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "dificil", "--sementes", "2", "--conjunto", "grafo",
+         "--saida", str(tmp_path))
+    ablation = pd.read_csv(tmp_path / "results" / "atributos_ablacao.csv")
+    assert len(ablation) == 2 * 2 * 6  # sementes × detectores × atributos do conjunto "grafo"
+    ceiling = pd.read_csv(tmp_path / "results" / "atributos_teto.csv")
+    assert set(ceiling["modelo"]) == {"isolation_forest", "dbscan", "random_forest"}
+    assert ceiling["average_precision"].between(0, 1).all()
+    _check_metadata(tmp_path / "results" / "atributos_meta.json", cenarios={"dificil"})
+    for figure in ("atributos_ablacao.png", "atributos_teto.png"):
+        assert (tmp_path / "figures" / figure).exists()
+
+
+def test_avaliar_propagacao(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("avaliar_propagacao.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "dificil", "--sementes", "2", "--fracoes", "0.25",
+         "--saida", str(tmp_path))
+    runs = pd.read_csv(tmp_path / "results" / "propagacao_execucoes.csv")
+    assert set(runs["metodo"]) == {"propagacao", "propagacao_relativa", "completo_dbscan", "temporal_if", "combinado"}
+    assert runs["average_precision"].between(0, 1).all()
+    assert (runs["fraudes_conhecidas"] >= 1).all()
+    comparisons = pd.read_csv(tmp_path / "results" / "propagacao_comparacoes.csv")
+    assert "combinado - completo_dbscan" in set(comparisons["comparação"])
+    _check_metadata(tmp_path / "results" / "propagacao_meta.json", cenarios={"dificil"})
+    assert (tmp_path / "figures" / "propagacao_average_precision.png").exists()
+
+
+def test_gerar_relatorio(tmp_path):
+    pytest.importorskip("pypandoc")
+    out = tmp_path / "relatorio.html"
+    _run("gerar_relatorio.py", "--formato", "html", "--saida", str(out))
+    html = out.read_text(encoding="utf-8")
+    assert "Referências" in html and "???" not in html  # "???" = chave de citação que não existe no .bib
