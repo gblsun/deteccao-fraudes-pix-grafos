@@ -4,7 +4,9 @@
   pequenos (estudo, padrões de fraude, vizinhança de uma conta);
 * ``plot_heat_graph`` e ``plot_risk_heatmap``: interpretar os resultados dos
   detectores. Os escores de modelos diferentes têm escalas diferentes, por
-  isso as cores usam o percentil do risco (0 = menos suspeita, 1 = mais).
+  isso as cores usam o percentil do risco (0 = menos suspeita, 1 = mais);
+* ``plot_value_matrix``: tabela colorida de resultados (conjunto de atributos
+  × cenário, tipologia × modelo...), com o valor escrito em cada célula.
 """
 
 from __future__ import annotations
@@ -31,6 +33,16 @@ ROLE_COLORS = {
 }
 LAYOUTS = ("auto", "flow", "spring", "circular", "kamada_kawai", "shell")
 VIS_NETWORK_URL = "https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"
+
+# Figuras de resultados: rampa sequencial azul (magnitude) e par divergente
+# azul/vermelho com meio cinza (sinal de um efeito). Tinta e superfície neutras.
+SEQUENTIAL_CMAP = mcolors.LinearSegmentedColormap.from_list(
+    "sequencial", ["#f0efec", "#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
+)
+DIVERGING_CMAP = mcolors.LinearSegmentedColormap.from_list(
+    "divergente", ["#184f95", "#6da7ec", "#f0efec", "#ec8a89", "#a82f2f"]
+)
+INK, INK_SECONDARY, SURFACE = "#0b0b0b", "#52514e", "#fcfcfb"
 
 
 def flow_layout(graph: nx.DiGraph) -> dict:
@@ -461,3 +473,38 @@ def explain_account(
     ax_text.axis("off")
     ax_text.text(0, 0.6, "\n".join(lines), fontsize=10, va="center")
     return fig
+
+
+def plot_value_matrix(
+    matrix: pd.DataFrame,
+    cmap=SEQUENTIAL_CMAP,
+    vmin: float = 0.0,
+    vmax: float = 1.0,
+    fmt: str = "{:.2f}",
+    ax: plt.Axes | None = None,
+):
+    """Matriz de resultados: uma célula colorida por valor, com o número escrito nela.
+
+    As células têm 2px de respiro entre si; o texto fica branco nas células
+    escuras. Os rótulos vêm do índice (linhas) e das colunas de ``matrix``
+    (troque-os depois com ``ax.set_xticks`` se precisar). Devolve a malha,
+    para a barra de cores.
+    """
+    ax = ax or plt.gca()
+    values = matrix.to_numpy(dtype=float)
+    mesh = ax.pcolormesh(values, cmap=cmap, vmin=vmin, vmax=vmax, edgecolors=SURFACE, linewidth=2)
+    for (i, j), value in np.ndenumerate(values):
+        if np.isnan(value):
+            continue
+        r, g, b = mcolors.to_rgb(cmap((value - vmin) / (vmax - vmin)))
+        dark = 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.5
+        ax.text(j + 0.5, i + 0.5, fmt.format(value).replace(".", ","), ha="center", va="center",
+                fontsize=8, color="#ffffff" if dark else INK)
+    ax.set_xticks(np.arange(values.shape[1]) + 0.5, [str(c) for c in matrix.columns], fontsize=8)
+    ax.set_yticks(np.arange(values.shape[0]) + 0.5, [str(i) for i in matrix.index], fontsize=8)
+    ax.set_ylim(values.shape[0], 0)  # primeira linha em cima (sem inverter: eixos compartilhados inverteriam de novo)
+    ax.set_facecolor(SURFACE)
+    ax.tick_params(length=0, colors=INK_SECONDARY)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    return mesh

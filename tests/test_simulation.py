@@ -4,7 +4,15 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from pixfraud.simulation import FRAUD_HOURS, FRAUD_ROLES, SimulationConfig, generate_dataset, load_config, with_overrides
+from pixfraud.simulation import (
+    FRAUD_HOURS,
+    FRAUD_ROLES,
+    SimulationConfig,
+    _after_activity,
+    generate_dataset,
+    load_config,
+    with_overrides,
+)
 
 SMALL = SimulationConfig(n_people=200, n_merchants=10, n_days=5, n_rings=2, victims_per_ring=5)
 
@@ -78,6 +86,25 @@ def test_commercial_hours_remove_the_night_signal():
     # uniforme: 6 de 24 horas (25%); comercial: o perfil legítimo (~3%)
     assert night["uniforme"] > 0.15
     assert night["comercial"] < 0.10
+
+
+def test_commercial_hours_also_apply_to_slow_forwards():
+    cfg = replace(SMALL, victims_per_ring=100, forward_delay_min=360)
+    night = {}
+    for hours in FRAUD_HOURS:
+        _, tx = generate_dataset(replace(cfg, fraud_hours=hours))
+        forwards = tx[tx["scenario"].isin(["repasse_laranja", "lavagem_em_cadeia"])]
+        night[hours] = (forwards["timestamp"].dt.hour < 6).mean()
+    assert night["uniforme"] > 0.15
+    assert night["comercial"] < 0.10
+
+
+def test_activity_clock():
+    for t in [0.0, 3 * 3600 + 120, 12 * 3600, 5 * 86400 + 23.5 * 3600]:
+        assert _after_activity(t, 0) == pytest.approx(t)
+        assert _after_activity(t, 86400) == pytest.approx(t + 86400)  # um dia de atividade = um dia
+    # 6 h de atividade a partir das 22h só terminam na manhã seguinte
+    assert 30 * 3600 < _after_activity(22 * 3600, 6 * 3600) < 36 * 3600
 
 
 @pytest.mark.parametrize("p_new, young", [(0.0, False), (1.0, True)])

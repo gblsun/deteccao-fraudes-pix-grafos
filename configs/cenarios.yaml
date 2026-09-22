@@ -22,6 +22,11 @@ sem_atalhos:                    # os dois atalhos desligados
   fraud_hours: comercial
   p_new_fraud_account: 0.0
 
+sem_valor:                      # sem_atalhos + golpes do tamanho de um Pix comum (e não ~4,5x)
+  fraud_hours: comercial
+  p_new_fraud_account: 0.0
+  fraud_amount_shift: 0.0
+
 com_inativos:                   # + 30% das pessoas quase não usam Pix
   fraud_hours: comercial
   p_new_fraud_account: 0.0

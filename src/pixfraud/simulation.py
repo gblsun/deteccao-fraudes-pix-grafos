@@ -71,7 +71,7 @@ class SimulationConfig:
     forward_delay_min: float = 30.0
     camouflage_tx: float = 3.0
     # realismo: estes parâmetros desligam sinais que o gerador embute por construção
-    fraud_hours: str = "uniforme"   # "uniforme" ou "comercial" (mesmo perfil horário dos Pix legítimos)
+    fraud_hours: str = "uniforme"   # "uniforme" ou "comercial" (golpes e repasses no perfil horário legítimo)
     p_new_fraud_account: float = 0.7  # fração das contas fraudulentas recém-abertas (< 60 dias)
     quiet_fraction: float = 0.0     # fração de pessoas legítimas pouco ativas
     quiet_activity: float = 0.1     # atividade das pessoas pouco ativas, relativa às demais
@@ -149,6 +149,29 @@ def _random_seconds(rng: np.random.Generator, n: int, n_days: int) -> np.ndarray
     day = rng.integers(0, n_days, n)
     hour = rng.choice(24, size=n, p=HOUR_WEIGHTS / HOUR_WEIGHTS.sum())
     return (day * 24 + hour) * 3600.0 + rng.uniform(0, 3600, n)
+
+
+# "Relógio de atividade": corre mais rápido nas horas movimentadas e mais devagar de
+# madrugada (taxa = peso da hora / peso médio, então um dia inteiro vale 24 h).
+_HOUR_RATE = HOUR_WEIGHTS / HOUR_WEIGHTS.mean()
+_ACTIVITY_AT_HOUR = np.concatenate([[0.0], np.cumsum(_HOUR_RATE * 3600.0)])
+
+
+def _after_activity(t: float, delay: float) -> float:
+    """Instante em que ``delay`` segundos de atividade terão passado a partir de ``t``.
+
+    Um repasse que levaria 6 h começando às 22h não cai às 4h: o relógio quase
+    para de madrugada, e o repasse sai no meio da manhã seguinte. Em horário
+    comercial, as esperas ficam um pouco mais curtas. Usado quando
+    ``fraud_hours="comercial"``, para os repasses seguirem o mesmo perfil
+    horário dos golpes.
+    """
+    day, second = divmod(t, 86400.0)
+    hour = int(second // 3600)
+    target = day * 86400.0 + _ACTIVITY_AT_HOUR[hour] + _HOUR_RATE[hour] * (second - 3600.0 * hour) + delay
+    day, remainder = divmod(target, 86400.0)
+    hour = int(np.searchsorted(_ACTIVITY_AT_HOUR, remainder, side="right")) - 1
+    return day * 86400.0 + 3600.0 * hour + (remainder - _ACTIVITY_AT_HOUR[hour]) / _HOUR_RATE[hour]
 
 
 def _normal_transactions(rng, cfg, people, merchants, community) -> pd.DataFrame:
@@ -229,7 +252,8 @@ def _launder(rng, cfg, t, amount, path):
     scenario = "lavagem_em_cadeia" if len(path) > 2 else "repasse_laranja"
     rows = []
     for sender, receiver in zip(path[:-1], path[1:]):
-        t += rng.exponential(cfg.forward_delay_min * 60)
+        delay = rng.exponential(cfg.forward_delay_min * 60)
+        t = t + delay if cfg.fraud_hours == "uniforme" else _after_activity(t, delay)
         amount *= rng.uniform(0.90, 0.99)
         rows.append((t, sender, receiver, amount, scenario))
     return rows

@@ -29,7 +29,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
-from matplotlib.colors import LinearSegmentedColormap, to_rgb  # noqa: E402
 
 from pixfraud.anomaly import DETECTORS  # noqa: E402
 from pixfraud.experiment import (  # noqa: E402
@@ -42,12 +41,14 @@ from pixfraud.experiment import (  # noqa: E402
 from pixfraud.features import FEATURE_SETS  # noqa: E402
 from pixfraud.simulation import load_config, with_overrides  # noqa: E402
 from pixfraud.stats import compare_groups, compare_runs, effect_size_label, summarize_runs  # noqa: E402
-
-# Cores das figuras: rampa sequencial azul (magnitude) e par divergente azul/vermelho
-# com meio cinza (sinal do efeito). Tinta e superfície neutras.
-SEQUENTIAL = ["#f0efec", "#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
-DIVERGING = ["#184f95", "#6da7ec", "#f0efec", "#ec8a89", "#a82f2f"]
-INK, INK_SECONDARY, SURFACE = "#0b0b0b", "#52514e", "#fcfcfb"
+from pixfraud.visualization import (  # noqa: E402
+    DIVERGING_CMAP,
+    INK,
+    INK_SECONDARY,
+    SEQUENTIAL_CMAP,
+    SURFACE,
+    plot_value_matrix,
+)
 
 
 def main() -> None:
@@ -136,13 +137,12 @@ def _plot_metric(summary: pd.DataFrame, names: list, fraud_rate: pd.Series, path
     mean = summary["mean"]
     models = [m for m in DETECTORS if m in set(mean.index.get_level_values("modelo"))]
     sets = [s for s in FEATURE_SETS if s in set(mean.index.get_level_values("atributos"))]
-    cmap = LinearSegmentedColormap.from_list("sequencial", SEQUENTIAL)
     fig, axes = plt.subplots(len(models), 1, figsize=(2.6 + 1.05 * len(names), 1.4 + 3.1 * len(models)),
                              sharex=True, layout="constrained")
     axes = np.atleast_1d(axes)
     for ax, model in zip(axes, models):
         matrix = mean.xs(model, level="modelo").unstack("cenario").reindex(index=sets, columns=names)
-        mesh = _matrix(ax, matrix, cmap, vmin=0, vmax=1, fmt="{:.2f}")
+        mesh = plot_value_matrix(matrix, SEQUENTIAL_CMAP, vmin=0, vmax=1, fmt="{:.2f}", ax=ax)
         ax.set_title(model.replace("_", " "), color=INK, fontsize=10, loc="left")
         ax.set_yticks(np.arange(len(sets)) + 0.5, sets, fontsize=9)
     axes[-1].set_xticks(np.arange(len(names)) + 0.5,
@@ -161,11 +161,8 @@ def _plot_effects(effects: pd.DataFrame, names: list, path: Path) -> None:
     matrix = effects.pivot(index="atributo", columns="cenario", values="delta_medio")[names]
     order = [c for s in FEATURE_SETS.values() for c in s]
     matrix = matrix.reindex([c for c in dict.fromkeys(order) if c in matrix.index])
-    cmap = LinearSegmentedColormap.from_list("divergente", DIVERGING)
     fig, ax = plt.subplots(figsize=(2.6 + 1.05 * len(names), 0.34 * len(matrix) + 1.6), layout="constrained")
-    mesh = _matrix(ax, matrix, cmap, vmin=-1, vmax=1, fmt="{:+.2f}")
-    ax.set_xticks(np.arange(len(names)) + 0.5, names, fontsize=8)
-    ax.set_yticks(np.arange(len(matrix)) + 0.5, matrix.index, fontsize=8)
+    mesh = plot_value_matrix(matrix, DIVERGING_CMAP, vmin=-1, vmax=1, fmt="{:+.2f}", ax=ax)
     colorbar = fig.colorbar(mesh, ax=ax, shrink=0.6, pad=0.02)
     colorbar.set_label("delta de Cliff: fraude × normal", color=INK_SECONDARY)
     colorbar.outline.set_visible(False)
@@ -174,25 +171,6 @@ def _plot_effects(effects: pd.DataFrame, names: list, path: Path) -> None:
                  color=INK, fontsize=9, loc="left")
     fig.savefig(path, dpi=150, facecolor=SURFACE)
     plt.close(fig)
-
-
-def _matrix(ax, matrix: pd.DataFrame, cmap, vmin: float, vmax: float, fmt: str):
-    """Células com 2px de respiro entre si e o valor escrito em cada uma."""
-    values = matrix.to_numpy(dtype=float)
-    mesh = ax.pcolormesh(values, cmap=cmap, vmin=vmin, vmax=vmax, edgecolors=SURFACE, linewidth=2)
-    for (i, j), value in np.ndenumerate(values):
-        if np.isnan(value):
-            continue
-        r, g, b = to_rgb(cmap((value - vmin) / (vmax - vmin)))
-        dark = 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.5
-        ax.text(j + 0.5, i + 0.5, fmt.format(value).replace(".", ","), ha="center", va="center",
-                fontsize=8, color="#ffffff" if dark else INK)
-    ax.invert_yaxis()
-    ax.set_facecolor(SURFACE)
-    ax.tick_params(length=0, colors=INK_SECONDARY)
-    for spine in ax.spines.values():
-        spine.set_visible(False)
-    return mesh
 
 
 if __name__ == "__main__":
