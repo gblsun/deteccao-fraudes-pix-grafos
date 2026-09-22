@@ -1,11 +1,14 @@
 """Atributos por conta usados pelos detectores de anomalia.
 
-Os atributos são separados em dois conjuntos para permitir a comparação entre
-a abordagem tabular e a abordagem baseada em grafos:
+Os atributos são separados em grupos para permitir a comparação entre a
+abordagem tabular e a abordagem baseada em grafos:
 
 * tabulares: agregados das transações de cada conta, sem olhar para a
   estrutura da rede;
-* de grafo: métricas estruturais calculadas sobre o grafo de transações.
+* temporais: velocidade de repasse e picos de recebimento (``pixfraud.temporal``);
+* de grafo: métricas estruturais clássicas calculadas sobre o grafo;
+* estruturais avançados: k-núcleo, participação entre comunidades e OddBall
+  (``pixfraud.communities``).
 """
 
 from __future__ import annotations
@@ -13,6 +16,9 @@ from __future__ import annotations
 import networkx as nx
 import numpy as np
 import pandas as pd
+
+from pixfraud.communities import STRUCTURAL_EXTRA, structural_features
+from pixfraud.temporal import temporal_features
 
 TABULAR_FEATURES = [
     "account_age_days",
@@ -32,10 +38,14 @@ GRAPH_FEATURES = [
     "clustering",
     "avg_neighbor_degree",
 ]
+TEMPORAL_FEATURES = ["dwell_time_min", "max_daily_in_degree"]
 FEATURE_SETS = {
     "tabular": TABULAR_FEATURES,
     "grafo": GRAPH_FEATURES,
     "combinado": TABULAR_FEATURES + GRAPH_FEATURES,
+    "temporal": TEMPORAL_FEATURES,
+    "grafo_avancado": GRAPH_FEATURES + STRUCTURAL_EXTRA,
+    "completo": TABULAR_FEATURES + TEMPORAL_FEATURES + GRAPH_FEATURES + STRUCTURAL_EXTRA,
 }
 
 
@@ -95,7 +105,9 @@ def build_features(
     betweenness_k: int | None = 500,
     seed: int = 42,
 ) -> pd.DataFrame:
-    """Tabela com todos os atributos (tabulares e de grafo), indexada por conta."""
+    """Tabela com todos os atributos (de todos os grupos), indexada por conta."""
     tabular = tabular_features(transactions, accounts)
+    temporal = temporal_features(transactions, accounts)
     structural = graph_features(graph, betweenness_k=betweenness_k, seed=seed)
-    return tabular.join(structural).fillna(0.0)
+    extra = structural_features(graph, seed=seed)
+    return tabular.join([temporal, structural, extra]).fillna(0.0)

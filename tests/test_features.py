@@ -38,5 +38,7 @@ def test_features(chain):
     assert features.loc["A", "betweenness"] == 0
     assert features.loc["C", "pass_through"] == pytest.approx(90 / 95)
     assert features.loc["C", "night_ratio"] == pytest.approx(0.5)
-    # conta sem transações: tudo zero, exceto a idade e o PageRank (que distribui uma massa mínima a todos)
-    assert (features.loc["F"].drop(["account_age_days", "pagerank"]) == 0).all()
+    # conta sem transações: tudo zero, exceto a idade, o PageRank (que distribui uma massa mínima a
+    # todos) e o tempo de permanência (quem nunca repassa recebe o valor máximo)
+    assert (features.loc["F"].drop(["account_age_days", "pagerank", "dwell_time_min"]) == 0).all()
+    assert features.loc["F", "dwell_time_min"] == features["dwell_time_min"].max()

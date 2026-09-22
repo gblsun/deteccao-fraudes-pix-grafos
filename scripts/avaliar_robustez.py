@@ -1,0 +1,117 @@
+"""Avalia a robustez do experimento repetindo-o com várias sementes.
+
+Cada semente gera um dataset sintético diferente (e muda a semente do
+Isolation Forest). Para cada conjunto de atributos e modelo, o script calcula
+a média e o intervalo de confiança das métricas. Depois compara abordagens
+com testes pareados (a mesma semente é avaliada pelas duas abordagens), com
+correção de Holm para as várias comparações de cada métrica.
+
+Saídas em reports/results/:
+    robustez_execucoes.csv    uma linha por (semente, atributos, modelo)
+    robustez_resumo.csv       média, desvio e IC de cada métrica
+    robustez_comparacoes.csv  testes pareados entre conjuntos de atributos
+e a figura reports/figures/robustez_<métrica>.png.
+
+Uso:
+    python scripts/avaliar_robustez.py --sementes 10
+"""
+
+import argparse
+import copy
+import dataclasses
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt  # noqa: E402
+import pandas as pd  # noqa: E402
+
+from pixfraud.experiment import load_experiment_config, prepare, run_detectors  # noqa: E402
+from pixfraud.simulation import generate_dataset, load_config  # noqa: E402
+from pixfraud.stats import holm_correction, paired_comparison, summarize_runs  # noqa: E402
+
+COMPARISONS = [
+    ("grafo", "tabular"),
+    ("combinado", "tabular"),
+    ("grafo_avancado", "grafo"),
+    ("completo", "combinado"),
+    ("completo", "tabular"),
+]
+METRICS = ["average_precision", "precision_at_k", "roc_auc", "f1"]
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Repete o experimento com várias sementes.")
+    parser.add_argument("--config", default="configs/experimento.yaml")
+    parser.add_argument("--sementes", type=int, default=10, help="nº de repetições (sementes 1, 2, ...)")
+    parser.add_argument("--saida", default="reports")
+    args = parser.parse_args()
+
+    config = load_experiment_config(args.config)
+    base = load_config(args.config)
+    runs = []
+    for seed in range(1, args.sementes + 1):
+        accounts, transactions = generate_dataset(dataclasses.replace(base, seed=seed))
+        prepared = prepare(accounts, transactions, config)
+        models = copy.deepcopy(config["modelos"])
+        models["isolation_forest"]["seed"] = seed
+        metrics, _ = run_detectors(prepared.features, prepared.labels, models)
+        runs.append(metrics.assign(semente=seed))
+        print(f"semente {seed}/{args.sementes} concluída")
+    runs = pd.concat(runs, ignore_index=True)
+
+    results = Path(args.saida) / "results"
+    figures = Path(args.saida) / "figures"
+    results.mkdir(parents=True, exist_ok=True)
+    figures.mkdir(parents=True, exist_ok=True)
+    runs.to_csv(results / "robustez_execucoes.csv", index=False)
+
+    summary = pd.concat({m: summarize_runs(runs, m) for m in METRICS}, names=["métrica"])
+    summary.to_csv(results / "robustez_resumo.csv")
+
+    rows = []
+    for metric in METRICS:
+        for model in runs["modelo"].unique():
+            wide = runs[runs["modelo"] == model].pivot(index="semente", columns="atributos", values=metric)
+            for a, b in COMPARISONS:
+                rows.append({"métrica": metric, "modelo": model, "comparação": f"{a} - {b}",
+                             **paired_comparison(wide[a], wide[b])})
+    comparisons = pd.DataFrame(rows)
+    # Cada métrica é uma família de testes: a correção de Holm vale dentro dela.
+    # (Com 10 sementes, o menor p possível no Wilcoxon exato é 2/1024 ≈ 0,002;
+    # corrigir por todas as métricas juntas tornaria qualquer diferença "não significativa".)
+    comparisons["p Wilcoxon (Holm)"] = comparisons.groupby("métrica")["p Wilcoxon"].transform(
+        lambda p: holm_correction(p.to_numpy())
+    )
+    comparisons.to_csv(results / "robustez_comparacoes.csv", index=False)
+
+    _plot(summary.loc["average_precision"], figures / "robustez_average_precision.png", args.sementes)
+    print("\naverage precision (média e IC 95%):")
+    print(summary.loc["average_precision"].round(3).to_string())
+    print("\ncomparações pareadas (average precision):")
+    columns = ["modelo", "comparação", "diferença média", "ic_inferior", "ic_superior", "p Wilcoxon (Holm)"]
+    print(comparisons[comparisons["métrica"] == "average_precision"][columns].round(4).to_string(index=False))
+
+
+def _plot(summary: pd.DataFrame, path: Path, n: int) -> None:
+    table = summary.reset_index()
+    order = table.groupby("atributos")["mean"].max().sort_values().index
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    for offset, (model, group) in zip((-0.15, 0.15), table.groupby("modelo")):
+        group = group.set_index("atributos").loc[order]
+        y = range(len(order))
+        ax.errorbar(group["mean"], [i + offset for i in y],
+                    xerr=[group["mean"] - group["ic_inferior"], group["ic_superior"] - group["mean"]],
+                    fmt="o", capsize=3, label=model)
+    ax.set_yticks(range(len(order)), order)
+    ax.set_xlabel(f"average precision (média e IC 95%, {n} sementes)")
+    ax.legend(frameon=False)
+    ax.grid(axis="x", alpha=0.3)
+    fig.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
+if __name__ == "__main__":
+    main()

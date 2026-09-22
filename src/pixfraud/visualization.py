@@ -191,8 +191,17 @@ def to_html(
 
     Abre em qualquer navegador; precisa de internet para carregar a biblioteca
     vis-network. Passe o mouse sobre um vértice para ver papel, graus e
-    valores; o tamanho do vértice é proporcional ao grau.
+    valores; o tamanho do vértice é proporcional ao grau. Para a rede inteira
+    (milhares de contas), use ``pixfraud.explorer``.
     """
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(graph_html(graph, color_by=color_by, title=title, cmap=cmap), encoding="utf-8")
+    return path
+
+
+def graph_html(graph: nx.Graph, color_by="role", title: str = "Grafo de transações", cmap: str = CMAP) -> str:
+    """O HTML interativo de ``to_html`` como texto (para embutir, por exemplo, no app Streamlit)."""
     colors, legend = _node_colors(graph, color_by, cmap)
     directed = graph.is_directed()
     nodes = []
@@ -236,10 +245,7 @@ def to_html(
     }
     for key, value in replacements.items():
         page = page.replace(key, value)
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(page, encoding="utf-8")
-    return path
+    return page
 
 
 def save_graph(graph: nx.Graph, path: str | Path, **draw_kwargs) -> Path:
@@ -397,3 +403,61 @@ def plot_risk_heatmap(
     ax.figure.colorbar(image, ax=ax, label="percentil do atributo", shrink=0.8)
     ax.set_title(f"Heatmap de risco: {top_k} contas mais suspeitas")
     return ax
+
+
+def explain_account(
+    graph: nx.DiGraph,
+    features: pd.DataFrame,
+    risk: pd.Series,
+    account,
+    fraud: pd.Series | None = None,
+    max_neighbors: int = 12,
+    color_by="role",
+) -> plt.Figure:
+    """Ficha da conta: por que ela foi considerada suspeita?
+
+    * à esquerda, a vizinhança (as ``max_neighbors`` contas com quem ela mais
+      movimentou dinheiro);
+    * à direita, o percentil de cada atributo da conta em relação a todas as
+      contas (barras perto de 0 ou de 1 são os valores extremos que chamaram
+      a atenção do detector);
+    * embaixo, a posição da conta no ranking de risco.
+    """
+    volume: dict = {}
+    for u, _, data in graph.in_edges(account, data=True):
+        volume[u] = volume.get(u, 0.0) + data.get("amount", 1.0)
+    for _, v, data in graph.out_edges(account, data=True):
+        volume[v] = volume.get(v, 0.0) + data.get("amount", 1.0)
+    keep = sorted(volume, key=volume.get, reverse=True)[:max_neighbors]
+    neighborhood = graph.subgraph([account, *keep])
+
+    fig = plt.figure(figsize=(13, 6.5), layout="constrained")
+    grid = fig.add_gridspec(2, 2, width_ratios=[1.25, 1], height_ratios=[4, 1])
+    ax_graph, ax_bars, ax_text = fig.add_subplot(grid[:, 0]), fig.add_subplot(grid[0, 1]), fig.add_subplot(grid[1, 1])
+
+    has_roles = any("role" in data for _, data in neighborhood.nodes(data=True))
+    draw_graph(
+        neighborhood, color_by=color_by if has_roles else risk.rank(pct=True).rename("percentil de risco"),
+        layout="kamada_kawai", edge_labels="amount", ax=ax_graph,
+        title=f"Vizinhança de {account} ({len(keep)} de {len(volume)} contas)",
+    )
+
+    percentile = features.rank(pct=True).loc[account].sort_values()
+    colormap = plt.get_cmap(CMAP)
+    ax_bars.barh(percentile.index, percentile.to_numpy(), color=[colormap(0.15 + 0.85 * abs(p - 0.5) * 2) for p in percentile])
+    ax_bars.axvline(0.5, color="#888888", lw=0.8, ls="--")
+    ax_bars.set_xlim(0, 1)
+    ax_bars.set_xlabel("percentil entre todas as contas (0 = menor valor, 1 = maior)")
+    ax_bars.tick_params(axis="y", labelsize=8)
+    ax_bars.set_title("Atributos: quanto mais longe de 0,5, mais incomum")
+
+    position = int(risk.rank(ascending=False, method="min")[account])
+    lines = [
+        f"Posição no ranking de risco: {position}ª de {len(risk)} contas "
+        f"(mais suspeita que {1 - (position - 1) / len(risk):.0%} das contas)",
+    ]
+    if fraud is not None:
+        lines.append("Rótulo verdadeiro: " + ("FRAUDE" if bool(fraud.get(account, False)) else "legítima"))
+    ax_text.axis("off")
+    ax_text.text(0, 0.6, "\n".join(lines), fontsize=10, va="center")
+    return fig
