@@ -1,4 +1,15 @@
-"""Detectores de anomalia não supervisionados aplicados aos atributos das contas."""
+"""Detectores de anomalia não supervisionados aplicados aos atributos das contas.
+
+Os três partem da mesma matriz (``prepare_matrix``: log1p e padronização) e
+devolvem um ``Detection``: um escore contínuo, que ordena as contas, e um
+rótulo binário. O que muda é a ideia de "anômalo":
+
+* ``isolation_forest``: a conta é isolada com poucos cortes aleatórios;
+* ``dbscan``: a conta está fora das regiões densas (raio único para todos);
+* ``local_outlier_factor``: a vizinhança da conta é menos densa que a dos
+  seus vizinhos, o que acha anomalias **locais**, em regiões de densidade
+  diferente, que um raio único não pega.
+"""
 
 from __future__ import annotations
 
@@ -8,7 +19,7 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import DBSCAN
 from sklearn.ensemble import IsolationForest
-from sklearn.neighbors import NearestNeighbors
+from sklearn.neighbors import LocalOutlierFactor, NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 
 
@@ -91,4 +102,29 @@ def dbscan(
     )
 
 
-DETECTORS = {"isolation_forest": isolation_forest, "dbscan": dbscan}
+def local_outlier_factor(features: pd.DataFrame, n_neighbors: int = 20) -> Detection:
+    """Local Outlier Factor: compara a densidade da conta com a dos seus vizinhos.
+
+    Enquanto o DBSCAN usa o mesmo raio para toda a base, o LOF olha para cada
+    conta em relação à sua vizinhança: uma conta em região esparsa não é
+    anômala se os vizinhos também estão espalhados. O escore é o fator de
+    outlier (1 = igual aos vizinhos; quanto maior, mais isolada), e o rótulo
+    binário é o do próprio LOF.
+
+    Gasta memória proporcional a ``n_neighbors`` por conta, e não ao quadrado
+    do número de contas como o rótulo exato do DBSCAN.
+    """
+    X = prepare_matrix(features)
+    model = LocalOutlierFactor(n_neighbors=min(n_neighbors, len(X) - 1))
+    labels = model.fit_predict(X)
+    return Detection(
+        scores=pd.Series(-model.negative_outlier_factor_, index=features.index, name="score"),
+        is_anomaly=pd.Series(labels == -1, index=features.index, name="is_anomaly"),
+    )
+
+
+DETECTORS = {
+    "isolation_forest": isolation_forest,
+    "dbscan": dbscan,
+    "local_outlier_factor": local_outlier_factor,
+}

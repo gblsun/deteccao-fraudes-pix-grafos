@@ -59,6 +59,7 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `atributos_ablacao.png` | `avaliar_atributos.py` | queda de AP ao tirar cada atributo |
 | `atributos_teto.png` | `avaliar_atributos.py` | detectores não supervisionados × Random Forest com os rótulos |
 | `propagacao_average_precision.png` | `avaliar_propagacao.py` | AP da propagação de risco, dos detectores e da combinação |
+| `padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | `gerar_ilustracoes.py` | ilustrações do README: os padrões injetados, o dinheiro percorrendo a quadrilha e a fraude dentro do movimento normal |
 
 ## `amlworld/`: validação externa
 

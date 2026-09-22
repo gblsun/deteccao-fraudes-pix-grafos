@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pixfraud.anomaly import dbscan, isolation_forest, prepare_matrix
+from pixfraud.anomaly import dbscan, isolation_forest, local_outlier_factor, prepare_matrix
 from pixfraud.evaluation import evaluate
 
 
@@ -56,3 +56,17 @@ def test_dbscan_falls_back_to_core_points_on_big_datasets():
 def test_prepare_matrix_rejects_negative_features():
     with pytest.raises(ValueError, match="negativos"):
         prepare_matrix(pd.DataFrame({"ok": [1.0, 2.0], "ruim": [-1.0, 2.0]}))
+
+
+def test_local_outlier_factor_flags_the_point_in_the_sparse_region():
+    # dois aglomerados com densidades diferentes: o LOF compara cada conta com a vizinhança
+    rng = np.random.default_rng(0)
+    denso = rng.normal(10, 0.2, (100, 2))
+    esparso = rng.normal(30, 2.0, (40, 2))
+    fora = np.array([[22.0, 22.0]])  # entre os dois, longe de ambos
+    features = pd.DataFrame(np.vstack([denso, esparso, fora]) , columns=["a", "b"])
+    detection = local_outlier_factor(features, n_neighbors=15)
+    assert detection.scores.idxmax() == len(features) - 1  # o ponto do meio é o mais anômalo
+    assert detection.is_anomaly.iloc[-1]
+    assert detection.scores.iloc[:100].mean() < detection.scores.iloc[-1]
+    assert np.isfinite(detection.scores).all()

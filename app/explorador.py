@@ -68,7 +68,7 @@ def risk_scores(data_dir: str, model: str, feature_set: str) -> pd.Series:
     """Escore de risco de cada conta para o detector e o conjunto escolhidos na barra lateral."""
     data = prepared(data_dir)
     config = load_experiment_config(CONFIG)
-    return DETECTORS[model](data.features[FEATURE_SETS[feature_set]], **config["modelos"][model]).scores
+    return DETECTORS[model](data.features[FEATURE_SETS[feature_set]], **config["modelos"].get(model, {})).scores
 
 
 @st.cache_data(show_spinner="Desenhando a rede inteira...")

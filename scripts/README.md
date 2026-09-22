@@ -20,6 +20,7 @@ com exemplos de uso.
 | [`baixar_dados_bcb.py`](baixar_dados_bcb.py) | baixa estatísticas do Pix do Banco Central | API do BCB | `data/bcb/` | segundos |
 | [`visualizar_rede.py`](visualizar_rede.py) | página HTML da rede inteira, com filtros e linha do tempo | `data/synthetic/` | `reports/estudos/rede_completa.html` | ~1 min |
 | [`reproduzir_tudo.ps1`](reproduzir_tudo.ps1) | refaz todos os resultados na ordem certa (ver abaixo) | configuração | `reports/` | algumas horas |
+| [`gerar_ilustracoes.py`](gerar_ilustracoes.py) | figuras explicativas do README: padrões, GIF da quadrilha e recorte da rede | configuração | `reports/figures/padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | ~1 min |
 | [`criar_grafo.py`](criar_grafo.py) | grafos avulsos: padrões, CSVs quaisquer, trilha do dinheiro, fluxo | CSV ou padrão | o arquivo de `--saida` | segundos |
 
 As avaliações longas (`avaliar_externo.py` e `avaliar_deteccao_online.py`) salvam cada

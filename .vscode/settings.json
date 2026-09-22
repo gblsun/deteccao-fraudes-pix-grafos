@@ -1,0 +1,18 @@
+{
+  // O projeto usa Ruff (configuração no pyproject.toml, linhas de até 120 colunas).
+  // O Black quebraria em 88 e reescreveria arquivos inteiros.
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+  // Formatar ao salvar fica desligado de propósito: o código atual nunca passou pelo
+  // "ruff format", então ligar isso reescreveria arquivos inteiros de uma vez.
+  "editor.formatOnSave": false,
+  "python.defaultInterpreterPath": ".venv/Scripts/python.exe",
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["tests"],
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}

@@ -52,3 +52,5 @@ modelos:
     # concordância no sintético) e o escore não muda: average precision e
     # precision@k ficam idênticas. Aumente se tiver RAM sobrando.
     max_exact: 20000
+  local_outlier_factor:
+    n_neighbors: 20        # tamanho da vizinhança comparada; não gasta memória quadrática

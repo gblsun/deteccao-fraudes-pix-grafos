@@ -1,11 +1,19 @@
 # Detecção de Fraudes em Transações PIX utilizando Teoria dos Grafos e Machine Learning
 
+[![testes](https://github.com/gblsun/deteccao-fraudes-pix-grafos/actions/workflows/testes.yml/badge.svg)](https://github.com/gblsun/deteccao-fraudes-pix-grafos/actions/workflows/testes.yml)
+
 Repositório da pesquisa de iniciação científica que investiga como a teoria dos grafos e
 métodos de detecção de anomalias podem identificar e **explicar** fraudes em transações
 PIX. As contas são modeladas como vértices e as transferências como arestas. Métricas
 estruturais (grau, centralidade, intermediação) alimentam detectores não supervisionados
-(Isolation Forest e DBSCAN), e os resultados são interpretados com grafos de calor e
+(Isolation Forest, DBSCAN e LOF), e os resultados são interpretados com grafos de calor e
 heatmaps de risco.
+
+![Uma quadrilha dentro do movimento normal](reports/figures/rede_exemplo.png)
+
+*O problema em uma imagem: as contas da quadrilha (laranja, roxo e vermelho) e as vítimas
+(verde) estão misturadas ao movimento normal (cinza e azul). O que as denuncia não é o que
+cada conta faz sozinha, e sim o formato que elas desenham na rede.*
 
 Texto completo da proposta: [docs/proposta.md](docs/proposta.md) ([PDF original](docs/proposta-original.pdf)).
 **Mapa de toda a documentação**: [docs/README.md](docs/README.md). Cada pasta tem o seu
@@ -14,6 +22,43 @@ README (por exemplo, [scripts/](scripts/README.md) e [reports/](reports/README.m
 **Para estudar:** a pasta [estudos/](estudos/) tem notebooks sobre teoria dos grafos aplicada
 a fraudes no Pix, com exercícios e gabarito, além das ferramentas para criar, recortar,
 desenhar e exportar grafos.
+
+## Como o dinheiro se move
+
+A vítima paga uma conta **laranja**, que repassa em minutos para **intermediários** até
+chegar à conta **coletora**. Cada quadro é uma hora:
+
+![O dinheiro percorrendo uma quadrilha](reports/figures/quadrilha.gif)
+
+O gerador injeta esses formatos na rede, e são eles que os atributos de grafo tentam
+capturar ([`pixfraud.patterns`](src/pixfraud/patterns.py)):
+
+![Padrões de fraude](reports/figures/padroes_de_fraude.png)
+
+## O caminho da análise
+
+```mermaid
+flowchart LR
+    dados["Pix (gerador sintético<br/>ou AMLworld)"] --> grafo["grafo de contas"]
+    grafo --> atributos["atributos por conta:<br/>tabulares, temporais e de grafo"]
+    atributos --> detectores["detectores não supervisionados<br/>(Isolation Forest, DBSCAN, LOF)"]
+    detectores --> risco["escore de risco por conta"]
+    risco --> avaliacao["avaliação: AP, precision@k,<br/>cenários, detecção a tempo"]
+    risco --> figuras["explicação: grafo de calor,<br/>ficha da conta, rede interativa"]
+```
+
+Cada modelo está explicado em [docs/modelos.md](docs/modelos.md); os resultados, em
+[docs/resultados.md](docs/resultados.md).
+
+## O que a pesquisa mostrou até aqui
+
+![Average precision por cenário](reports/figures/cenarios_average_precision.png)
+
+No cenário fácil (`base`), os atributos tabulares parecem bastar. Quando o gerador deixa de
+entregar os sinais "de graça" (golpes só de madrugada, contas recém-abertas), a ordem se
+inverte: **os atributos de grafo vencem em todas as sementes**, e a combinação de todos é a
+mais robusta. Detalhes, ressalvas e as outras análises (detecção a tempo, culpa por
+associação, validação no AMLworld) estão em [docs/resultados.md](docs/resultados.md).
 
 ## Estrutura
 

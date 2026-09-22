@@ -13,7 +13,10 @@ venv/
 .env
 
 # Editores / sistema
-.vscode/
+# .vscode/: só a configuração compartilhada do projeto (formatador e testes) é versionada
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 .DS_Store
 Thumbs.db

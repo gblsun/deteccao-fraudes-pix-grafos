@@ -32,7 +32,7 @@ def main() -> None:
     accounts, transactions = load_dataset(args.dados)
     prepared = prepare(accounts, transactions, config)
     detect = DETECTORS[args.modelo]
-    risk = detect(prepared.features[FEATURE_SETS[args.atributos]], **config["modelos"][args.modelo]).scores
+    risk = detect(prepared.features[FEATURE_SETS[args.atributos]], **config["modelos"].get(args.modelo, {})).scores
 
     info = accounts.set_index("account_id")
     roles = info["role"].where(~info["is_victim"], "vitima")
