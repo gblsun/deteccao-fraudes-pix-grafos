@@ -7,6 +7,7 @@ da pesquisa em si.
 | Notebook | Etapa do cronograma | Conteúdo |
 |----------|---------------------|----------|
 | [`01_analise_exploratoria.ipynb`](01_analise_exploratoria.ipynb) | análise exploratória e validação do dataset | o gerador comparado com o BCB (natureza dos pagamentos, valores, taxa e valor dos golpes, destino do dinheiro contestado no MED), horários, estrutura da rede, atributos por papel e escolha do `eps` do DBSCAN |
+| [`02_perfis_de_fraude.ipynb`](02_perfis_de_fraude.ipynb) | análise de perfis de fraude e interpretação | o que distingue laranja, intermediário e coletora; que papéis cada detector encontra (e se confunde vítimas); fichas de contas exemplares; tipologias do AMLworld |
 
 ## Convenções
 
