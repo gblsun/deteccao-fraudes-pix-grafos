@@ -16,11 +16,12 @@ do projeto e o passo a passo para rodar estão no [README principal](../README.m
 
 | Pasta | Conteúdo | Modelo |
 |-------|----------|--------|
-| [`leituras/`](leituras/) | um fichamento por leitura, com a chave do `.bib` como nome | [fichamento](modelos/fichamento.md) |
-| [`diario/`](diario/) | diário de pesquisa, uma nota por dia: o que rodou, o que foi decidido e por quê | [diário](modelos/diario.md) |
-| [`reunioes/`](reunioes/) | atas das reuniões de orientação | [reunião](modelos/reuniao.md) |
+| [`leituras/`](leituras/README.md) | um fichamento por leitura, com a chave do `.bib` como nome; o [mapa das leituras](leituras/README.md) agrupa por tema | [fichamento](modelos/fichamento.md) |
+| [`diario/`](diario/README.md) | diário de pesquisa, uma nota por dia: o que rodou, o que foi decidido e por quê | [diário](modelos/diario.md) |
+| [`reunioes/`](reunioes/README.md) | atas das reuniões de orientação | [reunião](modelos/reuniao.md) |
 
-Como usar tudo isso no Obsidian: [obsidian.md](obsidian.md).
+Como usar tudo isso no Obsidian: [obsidian.md](obsidian.md). Para ver a **rede Pix** (e
+não o grafo das notas) sem sair do cofre: [rede-pix.md](rede-pix.md).
 
 ## Documentação do código e dos dados
 
