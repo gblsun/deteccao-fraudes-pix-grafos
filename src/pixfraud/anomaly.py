@@ -26,7 +26,11 @@ class Detection:
 
 def prepare_matrix(features: pd.DataFrame) -> np.ndarray:
     """Aplica log1p (os atributos são não negativos e de cauda pesada) e padroniza cada coluna."""
-    return StandardScaler().fit_transform(np.log1p(features.to_numpy(dtype=float)))
+    values = features.to_numpy(dtype=float)
+    negativas = features.columns[(values < 0).any(axis=0)]
+    if len(negativas):  # log1p de valor negativo vira NaN, e o erro só apareceria lá na frente
+        raise ValueError(f"atributos com valores negativos não são aceitos: {list(negativas)}")
+    return StandardScaler().fit_transform(np.log1p(values))
 
 
 def isolation_forest(
@@ -49,6 +53,7 @@ def dbscan(
     eps: float | str = "auto",
     min_samples: int = 10,
     eps_quantile: float = 0.95,
+    max_exact: int = 20_000,
 ) -> Detection:
     """DBSCAN: contas classificadas como ruído (fora de regiões densas) são anômalas.
 
@@ -58,6 +63,15 @@ def dbscan(
     ``eps="auto"``, ``eps`` é o quantil ``eps_quantile`` dessas distâncias.
     Isso é só uma heurística; o ideal é escolher ``eps`` pelo gráfico de
     k-distance (ver notebook de análise exploratória).
+
+    ``max_exact``: acima desse número de contas, o rótulo binário deixa de sair
+    do DBSCAN e passa a ser "não é ponto de núcleo" (k-distance > ``eps``). O
+    motivo é memória: o DBSCAN guarda a vizinhança de **cada** ponto e, com
+    ``eps`` no quantil 0,95, cada conta tem ~20% das contas como vizinhas, o
+    que cresce com o quadrado do número de contas (7 MB com 2 mil contas,
+    ~16 GB com 100 mil). Os escores não mudam, então average precision e
+    precision@k são idênticas; muda só o rótulo binário, que passa a incluir os
+    pontos de borda (97,6% de concordância no dataset sintético).
     """
     X = prepare_matrix(features)
     distances, _ = NearestNeighbors(n_neighbors=min_samples).fit(X).kneighbors(X)
@@ -67,10 +81,13 @@ def dbscan(
         # quantil pode ser 0, que o DBSCAN recusa. Um eps mínimo mantém as contas
         # idênticas como vizinhas, e qualquer conta diferente delas vira ruído.
         eps = max(float(np.quantile(k_distance, eps_quantile)), 1e-9)
-    labels = DBSCAN(eps=eps, min_samples=min_samples).fit_predict(X)
+    if len(X) <= max_exact:
+        is_anomaly = DBSCAN(eps=eps, min_samples=min_samples).fit_predict(X) == -1
+    else:
+        is_anomaly = k_distance > eps  # aproximação barata: não é ponto de núcleo
     return Detection(
         scores=pd.Series(k_distance, index=features.index, name="score"),
-        is_anomaly=pd.Series(labels == -1, index=features.index, name="is_anomaly"),
+        is_anomaly=pd.Series(is_anomaly, index=features.index, name="is_anomaly"),
     )
 
 

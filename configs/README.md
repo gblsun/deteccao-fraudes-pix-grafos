@@ -8,10 +8,17 @@ com a mesma configuração e a mesma semente, o resultado é idêntico.
 | [`experimento.yaml`](experimento.yaml) | todos os scripts | `simulacao` (o gerador sintético), `atributos` (intermediação aproximada) e `modelos` (Isolation Forest e DBSCAN) |
 | [`cenarios.yaml`](cenarios.yaml) | `avaliar_cenarios.py`, `avaliar_deteccao_online.py` | cenários de dificuldade: cada um troca alguns parâmetros de `simulacao` |
 
-Os comentários dentro de cada arquivo explicam os parâmetros. Os de realismo
-(`fraud_hours`, `p_new_fraud_account`, `quiet_fraction`...) desligam sinais que o gerador
-embute por construção; a tabela de "Limitações conhecidas" em
-[`data/README.md`](../data/README.md) mostra qual parâmetro desliga qual sinal.
+Os comentários dentro de cada arquivo explicam os parâmetros. Um deles decide quanta
+memória o experimento pode usar: `modelos.dbscan.max_exact` é o número de contas até o
+qual o rótulo binário vem do DBSCAN completo (que guarda a vizinhança de cada conta, e
+por isso gasta memória proporcional ao **quadrado** do nº de contas). Acima disso, o
+rótulo passa a ser "não é ponto de núcleo", e as métricas principais (average precision e
+precision@k) não mudam, porque dependem só do escore.
+
+Os parâmetros de realismo da simulação (`fraud_hours`, `p_new_fraud_account`,
+`quiet_fraction`...) desligam sinais que o gerador embute por construção; a tabela de
+"Limitações conhecidas" em [`data/README.md`](../data/README.md) mostra qual parâmetro
+desliga qual sinal.
 
 ## Criar um cenário
 

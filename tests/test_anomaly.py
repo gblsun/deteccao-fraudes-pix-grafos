@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pixfraud.anomaly import dbscan, isolation_forest
+from pixfraud.anomaly import dbscan, isolation_forest, prepare_matrix
 from pixfraud.evaluation import evaluate
 
 
@@ -40,3 +40,19 @@ def test_dbscan_handles_mostly_identical_accounts():
     detection = dbscan(features, min_samples=5)
     assert not detection.is_anomaly.iloc[:97].any()
     assert detection.is_anomaly.iloc[97:].all()
+
+
+def test_dbscan_falls_back_to_core_points_on_big_datasets():
+    rng = np.random.default_rng(0)
+    features = pd.DataFrame({"a": np.r_[rng.lognormal(0, 0.5, 500), [400.0]],
+                             "b": np.r_[rng.lognormal(0, 0.5, 500), [400.0]]})
+    exato = dbscan(features, min_samples=5)
+    aproximado = dbscan(features, min_samples=5, max_exact=100)  # força a aproximação
+    assert exato.scores.equals(aproximado.scores)  # o escore (k-distance) é o mesmo
+    assert exato.is_anomaly.iloc[-1] and aproximado.is_anomaly.iloc[-1]  # o ponto isolado é anômalo nos dois
+    assert (exato.is_anomaly == aproximado.is_anomaly).mean() > 0.9
+
+
+def test_prepare_matrix_rejects_negative_features():
+    with pytest.raises(ValueError, match="negativos"):
+        prepare_matrix(pd.DataFrame({"ok": [1.0, 2.0], "ruim": [-1.0, 2.0]}))
