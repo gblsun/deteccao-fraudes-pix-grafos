@@ -77,3 +77,84 @@ Saída de `avaliar_externo.py` sobre o AMLworld (ver [`data/README.md`](../data/
 
 Saídas de `criar_grafo.py` e de `visualizar_rede.py` (`rede_completa.html`: a rede
 inteira; abra no navegador). São material de estudo, não resultados da pesquisa.
+
+## Lista de figuras
+
+Galeria na ordem em que a pesquisa é contada, no estilo de uma lista de figuras de TCC.
+Os arquivos ficam versionados em `figures/` e `amlworld/figures/`, e podem ser refeitos a
+partir da configuração e das sementes (ver o `*_meta.json` de cada script, na tabela
+acima). A interpretação de cada uma está em [`docs/resultados.md`](../docs/resultados.md).
+
+**Figura 1** — Os padrões de fraude injetados pelo simulador (conta laranja,
+intermediário, coletora), separados por papel.
+*Fonte: `gerar_ilustracoes.py`.*
+![Padrões de fraude](figures/padroes_de_fraude.png)
+
+**Figura 2** — Uma quadrilha dentro do movimento normal: o que a denuncia não é o que
+cada conta faz sozinha, e sim o formato que desenha na rede.
+*Fonte: `gerar_ilustracoes.py`.*
+![Quadrilha dentro do movimento normal](figures/rede_exemplo.png)
+
+**Figura 3** — Average precision média e intervalo de confiança de 95%, por conjunto de
+atributos e modelo, em 10 sementes.
+*Fonte: `avaliar_robustez.py`.*
+![Robustez: average precision](figures/robustez_average_precision.png)
+
+**Figura 4** — Average precision média por conjunto de atributos × cenário (fácil, base,
+difícil, realista).
+*Fonte: `avaliar_cenarios.py`.*
+![Cenários: average precision](figures/cenarios_average_precision.png)
+
+**Figura 5** — Delta de Cliff de cada atributo, fraude × normal, em cada cenário: o
+tamanho do efeito que separa as duas classes.
+*Fonte: `avaliar_cenarios.py`.*
+![Cenários: efeitos](figures/cenarios_efeitos.png)
+
+**Figura 6** — Queda de average precision ao remover cada atributo, um de cada vez
+(ablação).
+*Fonte: `avaliar_atributos.py`.*
+![Ablação de atributos](figures/atributos_ablacao.png)
+
+**Figura 7** — Os detectores não supervisionados contra o teto do Random Forest treinado
+com os rótulos: a distância entre os dois é o custo de não ter rótulos.
+*Fonte: `avaliar_atributos.py`.*
+![Teto supervisionado](figures/atributos_teto.png)
+
+**Figura 8** — Average precision da propagação de risco (PageRank personalizado a partir
+de fraudes já conhecidas), dos detectores sozinhos e da combinação dos dois.
+*Fonte: `avaliar_propagacao.py`.*
+![Propagação de risco](figures/propagacao_average_precision.png)
+
+**Figura 9** — Fração das contas fraudulentas detectadas até 72 h após o primeiro golpe e
+fração do dinheiro roubado retida, simulando o bloqueio cautelar (MED).
+*Fonte: `avaliar_deteccao_online.py`.*
+![Detecção em tempo](figures/online_deteccao.png)
+
+**Figura 10** — Grafo de calor: as contas mais suspeitas e sua vizinhança, coloridas pelo
+risco (DBSCAN, conjunto de atributos completo). As demais combinações de modelo ×
+conjunto de atributos seguem o mesmo padrão e ficam em `grafo_de_calor_<modelo>_<atributos>.png`.
+*Fonte: `rodar_experimento.py`.*
+![Grafo de calor](figures/grafo_de_calor_dbscan_completo.png)
+
+**Figura 11** — Heatmap de risco: os atributos que explicam o risco de cada conta
+suspeita (DBSCAN, conjunto completo). As demais combinações ficam em
+`heatmap_risco_<modelo>_<atributos>.png`.
+*Fonte: `rodar_experimento.py`.*
+![Heatmap de risco](figures/heatmap_risco_dbscan_completo.png)
+
+**Figura 12** — Recall@k por tipologia de lavagem de dinheiro, na validação externa com o
+AMLworld (versão só com ACH e Wire, mais próxima do Pix).
+*Fonte: `avaliar_externo.py`.*
+![Validação externa: tipologias do AMLworld](amlworld/figures/amlworld_pix_tipologias.png)
+
+## Material interativo
+
+Não são figuras estáticas, então ficam fora da lista numerada acima:
+
+- [`quadrilha.gif`](figures/quadrilha.gif): o dinheiro percorrendo a quadrilha, do golpe
+  ao saque.
+- [`estudos/rede_completa.html`](estudos/rede_completa.html): toda a rede sintética, com
+  busca, filtro por papel, cor por papel/risco/comunidade e linha do tempo dia a dia
+  (embutida em [`docs/rede-pix.md`](../docs/rede-pix.md)).
+- [`estudos/trilha_coletor.png`](estudos/trilha_coletor.png): a trilha do dinheiro em
+  volta de uma conta coletora (`criar_grafo.py`), usada também em `docs/rede-pix.md`.
