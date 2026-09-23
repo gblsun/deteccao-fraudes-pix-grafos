@@ -1,0 +1,56 @@
+# Detecção de Fraudes em Transações PIX utilizando Teoria dos Grafos e Machine Learning
+
+> Pesquisa de iniciação científica: contas PIX viram vértices, transferências viram
+> arestas, e detectores não supervisionados (Isolation Forest, DBSCAN, LOF), atributos
+> estruturais (grau, PageRank, intermediação, comunidades, OddBall) e propagação de
+> risco por PageRank personalizado tentam achar e **explicar** fraude sem usar rótulos.
+> O código é o pacote Python `pixfraud`; o repositório inteiro é também um cofre do
+> Obsidian (ver `docs/obsidian.md`), então cada pasta documentada tem uma nota-mapa com
+> nome próprio além do `README.md` que o GitHub mostra.
+
+Regra que vale para qualquer edição feita por um agente neste repositório: **nenhum nome
+de pessoa, orientador ou curso** em nada do conteúdo — a proposta é submetida de forma
+anônima. Citar autores externos em referências bibliográficas é normal; a regra é sobre a
+identidade de quem faz esta pesquisa.
+
+## Comece por aqui
+
+- [README.md](README.md): visão geral, como instalar e rodar, imagens do problema.
+- [docs/mapa-da-pesquisa.md](docs/mapa-da-pesquisa.md): índice de toda a documentação.
+- [docs/proposta.md](docs/proposta.md): objetivos, justificativa e metodologia planejada.
+- [docs/modelos.md](docs/modelos.md): o que cada modelo faz, como está configurado e que
+  outros caberiam (com uma ordem de prioridade sugerida).
+- [docs/resultados.md](docs/resultados.md): o que os experimentos mostraram, com números
+  e ressalvas.
+
+## Código e reprodução
+
+- [src/pixfraud/README.md](src/pixfraud/README.md): os módulos do pacote e como se
+  encaixam (simulação, grafo, atributos, detectores, avaliação, propagação de risco).
+- [scripts/mapa-dos-scripts.md](scripts/mapa-dos-scripts.md): cada script, o que lê e
+  grava, e a ordem para reproduzir os resultados do zero.
+- [configs/parametros-dos-experimentos.md](configs/parametros-dos-experimentos.md):
+  parâmetros dos experimentos e cenários, incluindo os que afetam tempo e memória.
+- [reports/mapa-dos-resultados.md](reports/mapa-dos-resultados.md): cada tabela e figura
+  gerada, com dicionário de colunas e a lista de figuras da pesquisa.
+- [tests/mapa-dos-testes.md](tests/mapa-dos-testes.md): o que cada teste verifica.
+
+## Referências e leitura
+
+- [docs/referencias.bib](docs/referencias.bib): bibliografia em BibTeX (estilo ABNT).
+- [docs/leituras/mapa-das-leituras.md](docs/leituras/mapa-das-leituras.md): um fichamento
+  por leitura, agrupado por tema.
+- [docs/glossario/glossario.md](docs/glossario/glossario.md): termos técnicos, fórmulas e
+  onde cada um aparece no código.
+- [docs/futuro/ideias-futuras.md](docs/futuro/ideias-futuras.md): direções de pesquisa
+  ainda não exploradas (GNN supervisionada, explicabilidade, detecção em tempo real, entre
+  outras).
+
+## Convenções deste repositório
+
+- [docs/obsidian.md](docs/obsidian.md): por que o repositório é também um cofre do
+  Obsidian, o padrão de nota-mapa + README, as tags e as cores do grafo.
+- Cada pasta documentada segue o padrão `pasta/nome-descritivo.md` (o conteúdo real, e o
+  rótulo que aparece no grafo de notas) + `pasta/README.md` (um ponteiro de três linhas,
+  só para o GitHub mostrar algo ao abrir a pasta). Um agente que for ler a documentação de
+  uma pasta deve abrir a nota-mapa, não o README.

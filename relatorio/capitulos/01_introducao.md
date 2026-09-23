@@ -1,4 +1,10 @@
+---
+tags: [relatorio]
+---
+
 # Introdução
+
+Volta para o [roteiro do relatório](../mapa-do-relatorio.md).
 
 > **Roteiro** (a base está na [proposta](../../docs/proposta.md); atualize com o que foi feito):
 >

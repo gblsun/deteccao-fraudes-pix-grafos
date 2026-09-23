@@ -1,8 +1,15 @@
+---
+tags: [relatorio]
+---
+
 # Metodologia
+
+Volta para o [roteiro do relatório](../mapa-do-relatorio.md).
 
 > **Rascunho** gerado a partir do código do repositório (`src/pixfraud/`, `configs/`,
 > `scripts/`). Os fatos e números estão conferidos; o texto deve ser reescrito com as
-> suas palavras e no nível de detalhe pedido pela instituição.
+> suas palavras e no nível de detalhe pedido pela instituição. A explicação completa de
+> cada modelo está em [`docs/modelos.md`](../../docs/modelos.md).
 
 ## Dados
 

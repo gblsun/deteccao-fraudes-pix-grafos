@@ -1,4 +1,10 @@
+---
+tags: [relatorio]
+---
+
 # Fundamentação teórica
+
+Volta para o [roteiro do relatório](../mapa-do-relatorio.md).
 
 > **Roteiro** (os notebooks de [`estudos/`](../../estudos/trilha-de-estudos.md) e os fichamentos de
 > [`docs/leituras/`](../../docs/leituras/) são o material de partida):

@@ -1,4 +1,10 @@
+---
+tags: [relatorio]
+---
+
 # Resumo {.unnumbered}
+
+Volta para o [roteiro do relatório](../mapa-do-relatorio.md).
 
 > **Roteiro** (escrever por último, com 150 a 250 palavras):
 >

@@ -1,3 +1,7 @@
+---
+tags: [mapa]
+---
+
 # A rede Pix dentro do cofre
 
 O grafo do Obsidian mostra as **notas** e seus links. O grafo da **rede Pix** (contas e

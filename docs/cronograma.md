@@ -1,7 +1,13 @@
+---
+tags: [pesquisa]
+---
+
 # Cronograma
 
-Duração: 12 meses, conforme a proposta ([proposta-original.pdf](proposta-original.pdf)).
-Marque `[x]` quando a etapa for concluída.
+Volta para o [índice da documentação](mapa-da-pesquisa.md).
+
+Duração: 12 meses, conforme a [proposta](proposta.md)
+([PDF original](proposta-original.pdf)). Marque `[x]` quando a etapa for concluída.
 
 | Status | Atividade                                                       | Meses   | Entregas no repositório                                   |
 |:------:|-----------------------------------------------------------------|:-------:|-----------------------------------------------------------|

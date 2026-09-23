@@ -14,6 +14,7 @@ FOLDER_MAPS = {
     "data": None,  # data/README.md é a própria documentação, sem nota-mapa separada
     "docs": "mapa-da-pesquisa.md",
     "docs/diario": "diario-de-pesquisa.md",
+    "docs/futuro": "ideias-futuras.md",
     "docs/glossario": "glossario.md",
     "docs/leituras": "mapa-das-leituras.md",
     "docs/reunioes": "atas-de-reuniao.md",
@@ -41,6 +42,17 @@ def test_every_docs_folder_has_a_named_map_note(folder):
     """As pastas do cofre de pesquisa têm uma nota-mapa com nome próprio (não "README"),
     porque o Obsidian rotula cada nó do grafo pelo nome do arquivo."""
     assert (ROOT / folder / FOLDER_MAPS[folder]).exists()
+
+
+NOTES_WITHOUT_TAG = {p for p in MARKDOWN if p.name == "README.md" or "estudos" in p.relative_to(ROOT).parts}
+
+
+@pytest.mark.parametrize("path", sorted(set(MARKDOWN) - NOTES_WITHOUT_TAG), ids=lambda p: str(p.relative_to(ROOT)))
+def test_every_vault_note_has_tags_frontmatter(path):
+    """Toda nota do cofre tem uma tag (para colorir o grafo); README e estudos/ ficam de
+    fora de propósito (ver docs/obsidian.md)."""
+    text = path.read_text(encoding="utf-8")
+    assert re.match(r"^---\ntags: \[.+\]\n---", text), f"{path.relative_to(ROOT)}: sem frontmatter de tags"
 
 
 @pytest.mark.parametrize("path", MARKDOWN, ids=lambda p: str(p.relative_to(ROOT)))

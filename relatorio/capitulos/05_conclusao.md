@@ -1,4 +1,10 @@
+---
+tags: [relatorio]
+---
+
 # Conclusão
+
+Volta para o [roteiro do relatório](../mapa-do-relatorio.md).
 
 > **Roteiro** (responder aos objetivos da introdução, um a um):
 >
@@ -12,4 +18,5 @@
 >    o AMLworld também é sintético e trata de lavagem, não de golpes.
 > 4. **Trabalhos futuros**: calibrar o gerador com os dados do BCB, novas tipologias,
 >    detecção em janelas curtas, modelos de grafo supervisionados (GNN) quando houver
->    rótulos.
+>    rótulos. Desenvolvimento de cada ideia em
+>    [`docs/futuro/ideias-futuras.md`](../../docs/futuro/ideias-futuras.md).

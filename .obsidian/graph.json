@@ -48,6 +48,34 @@
         "a": 1,
         "rgb": 1548984
       }
+    },
+    {
+      "query": "tag:pesquisa",
+      "color": {
+        "a": 1,
+        "rgb": 3426654
+      }
+    },
+    {
+      "query": "tag:meta",
+      "color": {
+        "a": 1,
+        "rgb": 9079434
+      }
+    },
+    {
+      "query": "tag:relatorio",
+      "color": {
+        "a": 1,
+        "rgb": 10514492
+      }
+    },
+    {
+      "query": "tag:ideia",
+      "color": {
+        "a": 1,
+        "rgb": 14725168
+      }
     }
   ],
   "collapse-display": false,
@@ -60,6 +88,6 @@
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 0.6154698017719594,
+  "scale": 0.8353587243681279,
   "close": false
 }

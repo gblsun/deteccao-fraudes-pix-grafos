@@ -1,9 +1,16 @@
+---
+tags: [pesquisa]
+---
+
 # Detecção de Fraudes em Transações PIX utilizando Teoria dos Grafos e Machine Learning
 
 > Texto da proposta de iniciação científica ([PDF original](proposta-original.pdf)). Por
 > exigência do modelo de submissão, o documento não traz os nomes dos autores nem do curso.
 > Tamanho exigido: de 2 a 10 páginas. Nesta versão, as referências foram completadas com os
 > nomes dos autores das obras (formato ABNT).
+
+Volta para o [índice da documentação](mapa-da-pesquisa.md). Ver também o
+[cronograma](cronograma.md), com as etapas derivadas desta proposta.
 
 ## Resumo
 

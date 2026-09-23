@@ -1,3 +1,7 @@
+---
+tags: [meta]
+---
+
 # Notas da pesquisa no Obsidian
 
 O repositório inteiro funciona como um cofre (*vault*) do [Obsidian](https://obsidian.md):
@@ -49,11 +53,15 @@ o grafo por ela:
 
 | Tag | Cor | Notas |
 |-----|-----|-------|
-| `mapa` | azul | as notas-mapa de cada pasta (a raiz do grafo) |
+| `mapa` | azul | as notas-mapa de cada pasta (a raiz do grafo), incluindo notas-índice como `rede-pix.md` e `revisao-bibliografica.md` |
 | `leitura` | verde | os fichamentos de `docs/leituras/` |
 | `glossario` | roxo | os termos de `docs/glossario/` |
 | `diario` / `ata` | laranja | as notas datadas de `docs/diario/` e `docs/reunioes/` |
 | `resultado` / `metodo` | vermelho | `docs/resultados.md` e `docs/modelos.md` |
+| `pesquisa` | azul-petróleo | `docs/proposta.md` e `docs/cronograma.md` |
+| `meta` | cinza | documentação sobre o próprio cofre (esta nota) |
+| `relatorio` | marrom | os capítulos de `relatorio/capitulos/` |
+| `ideia` | dourado | as notas de `docs/futuro/` |
 | (por caminho) | ciano | tudo em `estudos/` |
 
 Os modelos de `docs/modelos/` já colocam a tag certa em cada nota nova. Se criar uma nota
@@ -68,6 +76,19 @@ tags: [leitura]
 Para ver as cores, abra a aba **Grafo** (ícone de rede na barra lateral) — elas já vêm
 carregadas do repositório, sem precisar configurar de novo.
 
+Regra geral: **toda nota do cofre tem uma tag**, com duas exceções — os `README.md`
+(nem entram no cofre) e as notas de `estudos/`, já coloridas por caminho. O teste
+`tests/test_docs.py::test_every_vault_note_has_tags_frontmatter` garante isso.
+
+## Para agentes e ferramentas de IA
+
+O arquivo [`llms.txt`](../llms.txt), na raiz, segue a convenção
+[llmstxt.org](https://llmstxt.org): um resumo do projeto e uma lista de pontos de entrada,
+para um agente que não consegue abrir o grafo do Obsidian entender a estrutura do
+repositório rapidamente. Ele existe **além** do grafo, não em vez dele — continua valendo
+o mesmo padrão nota-mapa + README, e o `llms.txt` deve ser atualizado quando um ponto de
+entrada novo (uma pasta documentada, uma seção grande) for criado.
+
 ## Rotina
 
 | Quando | O que fazer | Onde |
@@ -77,6 +98,7 @@ carregadas do repositório, sem precisar configurar de novo.
 | reunião de orientação | nova nota `AAAA-MM-DD`, depois inserir o modelo `reuniao` | `docs/reunioes/` |
 | saiu um resultado | ligar o resultado às leituras e decisões que o explicam | [resultados.md](resultados.md) |
 | apareceu um termo técnico novo | nota em `docs/glossario/`, a partir do índice; linkar na primeira ocorrência em `resultados.md` ou `modelos.md` | [glossario.md](glossario/glossario.md) |
+| surgiu uma ideia de trabalho futuro | nova nota em `docs/futuro/`, tag `ideia`; acrescentar uma linha no índice | [ideias-futuras.md](futuro/ideias-futuras.md) |
 
 O diário é o que mais ajuda no fim: na escrita do relatório (meses 11 e 12), a
 justificativa de cada escolha já está registrada, com data.

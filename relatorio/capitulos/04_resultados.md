@@ -1,4 +1,10 @@
+---
+tags: [relatorio]
+---
+
 # Resultados
+
+Volta para o [roteiro do relatório](../mapa-do-relatorio.md).
 
 > **Rascunho** tirado de [`docs/resultados.md`](../../docs/resultados.md), onde estão os
 > números completos, as figuras e as ressalvas. Reescreva com as suas palavras e escolha
