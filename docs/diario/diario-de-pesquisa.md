@@ -19,7 +19,8 @@ assim. É o registro que nenhum resultado salvo em `reports/` guarda.
 
 | Dia | O que ficou registrado |
 |-----|------------------------|
-| [2026-09-22](2026-09-22.md) | cenários de dificuldade, conserto do gerador, AMLworld, detecção a tempo e a montagem do cofre |
+| [2026-09-21](2026-09-21.md) | estrutura inicial do pacote `pixfraud`, grafos, padrões de fraude, material de estudo e os algoritmos mais avançados (temporal, comunidades, fluxo, estatística) |
+| [2026-09-22](2026-09-22.md) | cenários de dificuldade, AMLworld, detecção a tempo, LOF, legibilidade do cofre do Obsidian, bibliografia e ideias futuras |
 
 Cada nota diária deve apontar para o que ela menciona: a seção de
 [resultados](../resultados.md), o script que rodou em [`scripts/`](../../scripts/mapa-dos-scripts.md)
