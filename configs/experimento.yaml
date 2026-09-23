@@ -29,6 +29,23 @@ simulacao:
   p_new_fraud_account: 0.7 # fração das contas fraudulentas recém-abertas (< 60 dias)
   quiet_fraction: 0.0      # fração de pessoas que quase não usam Pix
   quiet_activity: 0.1      # atividade dessas pessoas, relativa às demais
+  # Realismo ligado só pelos cenários de configs/cenarios.yaml (negativos_dificeis,
+  # quadrilhas_realistas, calibrado). Com estes valores, que são os padrões, o gerador
+  # produz exatamente o mesmo dataset de antes de os parâmetros existirem.
+  merchant_amount_mu: null     # valor dos Pix para comércios (null = o mesmo dos P2P)
+  merchant_amount_sigma: null
+  calendar: uniforme           # uniforme ou semanal (dia da semana e começo do mês)
+  employees_per_merchant: 0    # funcionários pagos por Pix por comércio (salários)
+  salary_business_day: 5       # dia útil em que caem os salários
+  supplier_tx_per_week: 0      # pagamentos semanais de cada comércio a fornecedores
+  p_organizer: 0.0             # fração de pessoas que organizam vaquinhas
+  p_fast_forwarder: 0.0        # fração de pessoas que repassam o salário em poucas horas
+  p_recruited_mule: 0.0        # fração das laranjas que são contas com histórico legítimo
+  collector_cashout: false     # a coletora saca o dinheiro para uma corretora
+  cashout_delay_min: 180       # tempo médio (min) até cada saque
+  laundering_typologies: [cadeia]  # cadeia, espalha_junta, ciclo, bipartido (sorteada por quadrilha)
+  p_contested: 0.0             # fração dos golpes contestados (coluna contestado_em)
+  contest_delay_h: 48          # atraso mediano da contestação, em horas
 
 atributos:
   betweenness_k: 500       # vértices de origem amostrados na intermediação (null = exato)
