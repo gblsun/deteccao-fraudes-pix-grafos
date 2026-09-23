@@ -57,6 +57,19 @@ De onde vêm os números e com que dados o método é testado.
 | [lopezrojas2016paysim](lopezrojas2016paysim.md) | PaySim: simulador de dinheiro móvel, referência para gerar dados sintéticos | [simulation.py](../../src/pixfraud/simulation.py), [external.py](../../src/pixfraud/external.py) |
 | [altman2023realistic](altman2023realistic.md) | AMLworld: transações sintéticas de lavagem com tipologias em grafo | [external.py](../../src/pixfraud/external.py), [resultados, seção 8](../resultados.md) |
 
+## Trabalhos relacionados: fraude com redes neurais em grafos
+
+Pesquisas recentes sobre o mesmo problema com GNN (grafos neurais). Servem de comparação
+com a abordagem não supervisionada adotada aqui e de base para
+[ideias futuras](../futuro/ideias-futuras.md).
+
+| Leitura | Em uma linha | Entra em |
+|---------|--------------|----------|
+| [guerra2025gnnfraude](guerra2025gnnfraude.md) | TCC (ICMC-USP, 2025): mesmo problema desta pesquisa, com GNN supervisionada | [GNN supervisionada](../futuro/gnn-supervisionada.md) |
+| [dou2020caregnn](dou2020caregnn.md) | CARE-GNN (CIKM 2020): detector de GNN que se adapta a fraudadores camuflados | [detecção adversarial](../futuro/deteccao-adversarial.md) |
+| [motie2024gnnreview](motie2024gnnreview.md) | Revisão sistemática de GNN para fraude financeira (Expert Systems with Applications, 2024) | [GNN supervisionada](../futuro/gnn-supervisionada.md) |
+| [dellagarza2023aml](dellagarza2023aml.md) | Trabalho brasileiro (SBSI 2023): GCN, Skip-GCN e NENN para lavagem de dinheiro | [resultados](../resultados.md) |
+
 ## Como acrescentar uma leitura
 
 1. Acrescente a referência ao [`referencias.bib`](../referencias.bib).

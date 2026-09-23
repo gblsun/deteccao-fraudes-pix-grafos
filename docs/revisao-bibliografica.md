@@ -1,3 +1,7 @@
+---
+tags: [mapa]
+---
+
 # Revisão bibliográfica
 
 Índice das leituras. Cada leitura tem o seu fichamento em `docs/leituras/<chave-bibtex>.md`,
@@ -24,6 +28,10 @@ Não constam na proposta original, mas são próximas do tema. Todas já estão 
 | `altman2023realistic`  | Dataset sintético de lavagem de dinheiro (AMLworld) com padrões em grafo (fan-in, fan-out, ciclos, cadeias) |
 | `weber2019aml`         | Dataset Elliptic: grafo de transações Bitcoin rotulado, com comparação entre atributos tabulares e de grafo |
 | `brandes2001faster`    | Algoritmo usado pelo NetworkX para calcular a intermediação (*betweenness*)            |
+| `guerra2025gnnfraude`  | TCC (ICMC-USP, 2025): mesmo problema desta pesquisa, com GNN supervisionada            |
+| `dou2020caregnn`       | CARE-GNN (CIKM 2020): detector de GNN que se adapta a fraudadores camuflados           |
+| `motie2024gnnreview`   | Revisão sistemática de GNN para fraude financeira (2024)                              |
+| `dellagarza2023aml`    | Trabalho brasileiro (SBSI 2023): GNN para detecção de lavagem de dinheiro              |
 
 ## Fichamentos
 
@@ -49,3 +57,7 @@ Todas as leituras já têm uma nota de esqueleto em
 | [bcb2026dadosabertos](leituras/bcb2026dadosabertos.md) | API de dados abertos do Pix: estatísticas de transações e de fraudes | [bcb.py](../src/pixfraud/bcb.py), [notebook 01](../notebooks/01_analise_exploratoria.ipynb), [dados](../data/README.md) |
 | [lopezrojas2016paysim](leituras/lopezrojas2016paysim.md) | PaySim: simulador de dinheiro móvel, referência para gerar dados sintéticos | [simulation.py](../src/pixfraud/simulation.py), [external.py](../src/pixfraud/external.py) |
 | [altman2023realistic](leituras/altman2023realistic.md) | AMLworld: transações sintéticas de lavagem com tipologias em grafo | [external.py](../src/pixfraud/external.py), [resultados, seção 8](resultados.md) |
+| [guerra2025gnnfraude](leituras/guerra2025gnnfraude.md) | TCC (ICMC-USP, 2025): mesmo problema desta pesquisa, com GNN supervisionada | [ideias futuras](futuro/ideias-futuras.md) |
+| [dou2020caregnn](leituras/dou2020caregnn.md) | CARE-GNN (CIKM 2020): GNN contra fraudadores camuflados | [ideias futuras](futuro/ideias-futuras.md) |
+| [motie2024gnnreview](leituras/motie2024gnnreview.md) | Revisão sistemática de GNN para fraude financeira (2024) | [ideias futuras](futuro/ideias-futuras.md) |
+| [dellagarza2023aml](leituras/dellagarza2023aml.md) | Trabalho brasileiro (SBSI 2023): GNN para lavagem de dinheiro | [resultados](resultados.md) |
