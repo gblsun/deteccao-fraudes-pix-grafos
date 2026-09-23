@@ -1,10 +1,14 @@
+---
+tags: [resultado]
+---
+
 # Resultados
 
 Resultados **preliminares**, obtidos só com o dataset sintético (`pixfraud.simulation`).
 Todos os números abaixo saem dos arquivos de `reports/results/` e podem ser refeitos com:
 
 ```powershell
-.\scripts\reproduzir_tudo.ps1   # refaz tudo na ordem certa (ver scripts/README.md)
+.\scripts\reproduzir_tudo.ps1   # refaz tudo na ordem certa (ver scripts/mapa-dos-scripts.md)
 ```
 
 Cada semente gera um dataset diferente (~2.140 contas e ~42 mil Pix no cenário base) e muda a semente do
@@ -13,17 +17,18 @@ e [`configs/cenarios.yaml`](../configs/cenarios.yaml).
 
 ## Como ler as métricas
 
-* **Average precision (AP)** é a métrica principal. Um detector que ordena as contas ao
-  acaso tem AP igual à taxa de fraude (~0,019 no cenário base e 0,006 no `realista`),
-  então 0,5 já é muito melhor que o acaso.
-* **ROC-AUC** fica acima de 0,96 em quase todas as combinações e quase não diferencia
-  nada. Com fraudes raras, ela é otimista: há contas normais demais para "empurrar" para
-  baixo do ranking.
-* **precision@k**: das *k* contas mais suspeitas (*k* = nº de fraudes reais), que fração é
-  fraude.
+* **[Average precision](glossario/average-precision.md) (AP)** é a métrica principal. Um
+  detector que ordena as contas ao acaso tem AP igual à taxa de fraude (~0,019 no cenário
+  base e 0,006 no `realista`), então 0,5 já é muito melhor que o acaso.
+* **[ROC-AUC](glossario/roc-auc.md)** fica acima de 0,96 em quase todas as combinações e
+  quase não diferencia nada. Com fraudes raras, ela é otimista: há contas normais demais
+  para "empurrar" para baixo do ranking.
+* **[Precision@k](glossario/precision-at-k.md)**: das *k* contas mais suspeitas (*k* = nº
+  de fraudes reais), que fração é fraude.
 * **Testes pareados**: a mesma semente é avaliada pelas duas abordagens. Com 10 sementes e
-  10 comparações por métrica, o menor p de Wilcoxon ajustado por Holm é ≈ 0,02. Esse
-  valor quer dizer que **todas** as sementes apontaram para o mesmo lado.
+  10 comparações por métrica, o menor p de [Wilcoxon](glossario/teste-de-wilcoxon-pareado.md)
+  ajustado por [Holm](glossario/correcao-de-holm.md) é ≈ 0,02. Esse valor quer dizer que
+  **todas** as sementes apontaram para o mesmo lado.
 
 ## 1. Cenário base: o tabular parece bastar
 
@@ -45,9 +50,19 @@ Olhando só para este cenário, a conclusão seria que **os grafos não ajudam**
 * o conjunto `completo` não é significativamente melhor que o tabular (+0,02,
   IC [−0,01; 0,05], p = 0,46).
 
-Duas exceções já aparecem: os atributos estruturais avançados (k-núcleo, OddBall,
-participação) melhoram muito os de grafo clássicos (+0,27 no Isolation Forest e +0,14 no
-DBSCAN, 10 de 10 sementes), e com o Isolation Forest o `completo` supera o tabular (+0,19).
+Duas exceções já aparecem: os atributos estruturais avançados
+([k-núcleo](glossario/k-nucleo.md), [OddBall](glossario/egonet-e-oddball.md),
+[participação](glossario/coeficiente-de-participacao.md)) melhoram muito os de grafo
+clássicos (+0,27 no [Isolation Forest](glossario/isolation-forest.md) e +0,14 no
+[DBSCAN](glossario/dbscan-e-k-distance.md), 10 de 10 sementes), e com o Isolation Forest o
+`completo` supera o tabular (+0,19).
+
+**Sobre o terceiro detector.** Um [LOF](glossario/lof.md) também foi avaliado nos mesmos
+estudos (todas as seções abaixo continuam comparando só Isolation Forest e DBSCAN, que
+sustentam as conclusões). Ele nunca superou os outros dois em nenhum cenário — seu melhor
+resultado é AP 0,51 com `tabular` no cenário base, e cai para 0,06–0,08 nos conjuntos de
+grafo. Os números completos e a hipótese para o desempenho fraco estão em
+[modelos.md](modelos.md#4-local-outlier-factor--lof-não-supervisionado).
 
 ## 2. Cenários de dificuldade: a vantagem do tabular vinha dos atalhos do gerador
 
@@ -96,7 +111,7 @@ dois detectores, em **todos** os cenários seguintes.
 
 **2.3. O valor inflado dos golpes não explica a vantagem do grafo.** No `sem_valor`, os
 atributos de valor perdem o sinal: o efeito de `amount_received` vai de 0,76 para −0,07,
-o do PageRank (ponderado pelo valor) de 0,73 para 0,15 e o do `oddball_ew` de 0,94 para
+o do [PageRank](glossario/pagerank.md) (ponderado pelo valor) de 0,73 para 0,15 e o do `oddball_ew` de 0,94 para
 0,39. O tabular cai de 0,25 para 0,15 (DBSCAN), mas o grafo quase não muda (0,43 → 0,41)
 e o `completo` com DBSCAN fica igual (0,63 → 0,64).
 
@@ -107,7 +122,8 @@ no `base` (onde empata). No `realista`, tem AP 0,50 [0,45; 0,55], cerca de 80 ve
 acaso, e precision@k 0,55.
 
 **2.5. Os atributos temporais são fortes, mas dependem do repasse rápido.** O conjunto
-`temporal` (tempo de permanência do dinheiro e pico diário de pagadores) é o mais estável
+`temporal` ([tempo de permanência](glossario/tempo-de-permanencia.md) do dinheiro e pico
+diário de pagadores) é o mais estável
 nos sete primeiros cenários (Isolation Forest: AP de 0,55 a 0,61) e o melhor sozinho no
 `realista` (0,59). Quando as laranjas esperam ~6 h, cai para 0,41. Mesmo assim, o tempo de
 permanência continua separando bem (δ = −0,77): 6 h ainda é rápido perto das pessoas
@@ -121,7 +137,7 @@ intermediação (`betweenness`) deixa de separar os grupos (de −0,31 para ~0).
 
 ### Quais atributos separam fraude de normal em cada cenário
 
-Delta de Cliff médio (fraude × normal) de cada atributo
+[Delta de Cliff](glossario/delta-de-cliff.md) médio (fraude × normal) de cada atributo
 ([`cenarios_efeitos.csv`](../reports/results/cenarios_efeitos.csv)):
 
 ![Delta de Cliff por cenário](../reports/figures/cenarios_efeitos.png)
@@ -155,7 +171,7 @@ Duas leituras importam para o resto do relatório:
   já tinha mostrado que a vantagem do grafo não depende desse valor.
 
 **Para onde vai o dinheiro dos golpes.** Das contestações aceitas, só **11% do valor volta**
-à vítima pelo MED. Metade (51%) não volta por **saldo insuficiente**, ou seja, o dinheiro
+à vítima pelo [MED](glossario/med.md). Metade (51%) não volta por **saldo insuficiente**, ou seja, o dinheiro
 já tinha saído da conta, e outros 28% são o que faltou nas devoluções parciais. É esse
 problema que a seção 5 mede.
 
@@ -219,8 +235,9 @@ No cenário `sem_atalhos` (43 contas fraudulentas e ~R$ 70 mil roubados por seme
 
 ## 6. Culpa por associação: usar as contestações que já existem
 
-Se parte das contas fraudulentas já é conhecida (por contestações no MED), a propagação de
-risco a partir delas ([`flow.propagate_risk`](../src/pixfraud/flow.py)) encontra as
+Se parte das contas fraudulentas já é conhecida (por contestações no MED), a
+[propagação de risco](glossario/propagacao-de-risco.md) a partir delas
+([`flow.propagate_risk`](../src/pixfraud/flow.py)) encontra as
 demais? Avaliação **só nas contas ainda desconhecidas**, 10 sementes
 ([`avaliar_propagacao.py`](../scripts/avaliar_propagacao.py)):
 
@@ -253,8 +270,9 @@ Tirando um atributo de cada vez do conjunto `completo`
   distâncias. Vale testar um conjunto `completo` sem ele;
 * o grau de entrada atrapalha o Isolation Forest (melhora de 0,06 a 0,09 ao sair).
 
-**Teto supervisionado.** Um Random Forest treinado com os rótulos (validação cruzada de 5
-partes) chega a AP 1,00 no `sem_atalhos` e 0,99 no `realista` com o conjunto `completo`,
+**Teto supervisionado.** Um [Random Forest](glossario/random-forest.md) treinado com os
+rótulos ([validação cruzada](glossario/validacao-cruzada.md) de 5 partes) chega a AP 1,00
+no `sem_atalhos` e 0,99 no `realista` com o conjunto `completo`,
 contra 0,62 e 0,53 do melhor detector não supervisionado. A distância mostra quanto se
 perde por não ter rótulos, e explica por que a seção 6 melhora tanto com poucos rótulos.
 Mesmo supervisionado, o grafo supera o tabular (0,78 contra 0,66 no `realista`).
@@ -286,6 +304,16 @@ lavagem é de 1,6% por janela.
 A diferença para o sintético é grande e tem explicações plausíveis: o AMLworld trata de
 lavagem (não de golpes contra vítimas), as contas de lavagem têm bastante movimento
 comum, e o rótulo marca como suspeita toda conta que tocou uma transação de lavagem.
+
+**Com todas as formas de pagamento** (sem restringir a ACH/Wire; mesmas 4 janelas, agora
+de 1 dia, por causa do tamanho — 100 a 134 mil contas cada), a fraude fica ainda mais rara
+(0,33% das contas, contra 1,6% na versão só-transferências) e a AP cai junto: a melhor
+combinação (`completo`, Isolation Forest) fica em 0,011, ainda assim **3,5 vezes o acaso**.
+A vantagem do grafo fica mais fraca e menos consistente aqui: com o Isolation Forest,
+`grafo` supera `tabular` nas 4 janelas (+0,006 de AP); com o DBSCAN, empata (2 de 4,
+diferença de −0,001). Cheque, dinheiro em espécie e cartão parecem diluir o sinal
+estrutural que as transferências eletrônicas preservam — mais um motivo para preferir
+ACH/Wire como a comparação principal com o Pix.
 
 ## 9. Cuidados na interpretação
 

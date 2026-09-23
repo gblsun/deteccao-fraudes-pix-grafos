@@ -3,6 +3,7 @@
 import pandas as pd
 import pytest
 
+from pixfraud.anomaly import DETECTORS
 from pixfraud.online import (
     checkpoint_flags,
     exposure_times,
@@ -90,7 +91,8 @@ def test_checkpoint_flags_budget():
               "modelos": {"isolation_forest": {"n_estimators": 30}, "dbscan": {"min_samples": 5}}}
     checkpoints = pd.date_range("2026-01-02", periods=2, freq="1D")
     flags = checkpoint_flags(accounts, tx, config, checkpoints, k=7, feature_sets={"grafo": ["in_degree", "pagerank"]})
-    assert set(flags["modelo"]) == {"isolation_forest", "dbscan"}
+    # sem "models", usa todo DETECTORS (aqui, sem configuração própria: cada um cai no padrão)
+    assert set(flags["modelo"]) == set(DETECTORS)
     assert (flags.groupby(["corte", "modelo"]).size() == 7).all()
     # só entram contas que já tinham feito ou recebido Pix antes do corte
     first_seen = pd.concat([

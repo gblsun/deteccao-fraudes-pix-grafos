@@ -9,6 +9,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from pixfraud.anomaly import DETECTORS
 from pixfraud.simulation import SimulationConfig, generate_dataset, save_dataset
 
 pytestmark = pytest.mark.lento  # cada teste roda um script inteiro
@@ -86,7 +87,7 @@ def test_avaliar_externo(tmp_path):
     assert "reaproveitada" in _run("avaliar_externo.py", *args)  # as janelas prontas ficam salvas
 
     runs = pd.read_csv(tmp_path / "saida" / "results" / "externo_execucoes.csv")
-    assert runs["janela"].nunique() >= 1 and set(runs["modelo"]) == {"isolation_forest", "dbscan"}
+    assert runs["janela"].nunique() >= 1 and set(runs["modelo"]) == set(DETECTORS)
     typologies = pd.read_csv(tmp_path / "saida" / "results" / "externo_tipologias.csv")
     assert set(typologies["typology"]) <= {"laranja", "intermediario", "coletor"}
     assert typologies["recall_at_k"].between(0, 1).all()
@@ -118,9 +119,9 @@ def test_avaliar_atributos(tmp_path):
          str(tmp_path / "cenarios.yaml"), "--cenarios", "dificil", "--sementes", "2", "--conjunto", "grafo",
          "--saida", str(tmp_path))
     ablation = pd.read_csv(tmp_path / "results" / "atributos_ablacao.csv")
-    assert len(ablation) == 2 * 2 * 6  # sementes × detectores × atributos do conjunto "grafo"
+    assert len(ablation) == 2 * len(DETECTORS) * 6  # sementes × detectores × atributos do conjunto "grafo"
     ceiling = pd.read_csv(tmp_path / "results" / "atributos_teto.csv")
-    assert set(ceiling["modelo"]) == {"isolation_forest", "dbscan", "random_forest"}
+    assert set(ceiling["modelo"]) == {*DETECTORS, "random_forest"}
     assert ceiling["average_precision"].between(0, 1).all()
     _check_metadata(tmp_path / "results" / "atributos_meta.json", cenarios={"dificil"})
     for figure in ("atributos_ablacao.png", "atributos_teto.png"):

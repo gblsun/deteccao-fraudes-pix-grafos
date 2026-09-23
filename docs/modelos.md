@@ -1,3 +1,7 @@
+---
+tags: [metodo]
+---
+
 # Modelos usados na pesquisa (e outros que caberiam)
 
 Este documento explica **o que cada modelo faz, por que ele está aqui e como está
@@ -5,7 +9,7 @@ configurado**. Os resultados de cada um estão em [resultados.md](resultados.md)
 parâmetros, em [`configs/experimento.yaml`](../configs/experimento.yaml).
 
 As referências citadas estão em [`referencias.bib`](referencias.bib), com fichamento em
-[`leituras/`](leituras/README.md).
+[`leituras/`](leituras/mapa-das-leituras.md).
 
 A pesquisa é, por escolha da proposta, **não supervisionada**: o detector não vê rótulos.
 Isso imita a situação real de um banco, em que a fraude só é conhecida depois (e em
@@ -23,8 +27,10 @@ flowchart LR
     atributos --> escala["log1p + padronização"]
     escala --> iforest["Isolation Forest"]
     escala --> dbscan["DBSCAN"]
+    escala --> lof["LOF"]
     iforest --> escore["escore de risco por conta"]
     dbscan --> escore
+    lof --> escore
     escore --> metricas["AP, precision@k, figuras"]
     contestacoes["fraudes já conhecidas<br/>(MED)"] --> propagacao["PageRank personalizado"]
     propagacao --> escore
@@ -42,7 +48,7 @@ Antes de qualquer modelo, cada atributo passa por `log(1 + x)` e é padronizado
 * **Consequência**: os atributos precisam ser não negativos. O código recusa valores
   negativos com mensagem explícita, em vez de deixar o `log1p` virar `NaN`.
 
-## 2. Isolation Forest (não supervisionado)
+## 2. [Isolation Forest](glossario/isolation-forest.md) (não supervisionado)
 
 **Ideia.** Sorteia um atributo e um corte ao acaso, muitas vezes, montando árvores. Uma
 conta anômala fica isolada com **poucos cortes**, porque está longe das outras; o escore é
@@ -59,7 +65,7 @@ fraudes, que na prática não se conhece) e `seed`.
 (`grafo_avancado`: AP 0,63) e nos temporais (0,57). Ele erra mais quando os atributos são
 poucos e redundantes.
 
-## 3. DBSCAN (não supervisionado)
+## 3. [DBSCAN](glossario/dbscan-e-k-distance.md) (não supervisionado)
 
 **Ideia.** Agrupa pontos em regiões densas: uma conta é **núcleo** se tem ao menos
 `min_samples` vizinhos dentro do raio `eps`; quem não é núcleo nem está perto de um é
@@ -89,21 +95,43 @@ precision@k ficam idênticas**. Aumente `max_exact` se tiver RAM sobrando.
 **Onde ele é melhor.** Com muitos atributos combinados (`completo`: AP 0,78 no cenário
 base e 0,50 no realista), e é o melhor dos dois na maioria dos cenários.
 
-## 4. Louvain e OddBall (dentro dos atributos)
+## 4. [Local Outlier Factor — LOF](glossario/lof.md) (não supervisionado)
+
+**Ideia.** Em vez de um raio único para toda a base (como o [DBSCAN](#3-dbscan-não-supervisionado)),
+compara a densidade em volta de cada conta com a densidade em volta dos seus vizinhos.
+Acha anomalias **locais**: uma conta pode estar numa região esparsa da rede sem ser
+anômala, se seus vizinhos também estiverem espalhados.
+
+**Configuração** (`modelos.local_outlier_factor`): `n_neighbors: 20`.
+
+**Resultado.** Foi o terceiro detector avaliado nos mesmos estudos (10 sementes,
+[`avaliar_robustez.py`](../scripts/mapa-dos-scripts.md) e
+[`avaliar_cenarios.py`](../scripts/mapa-dos-scripts.md)), e **não superou os outros dois em
+nenhum cenário**. No cenário base, `tabular` é o melhor conjunto para ele (AP 0,51,
+comparável ao DBSCAN antes do ajuste dos atalhos), mas nos conjuntos de grafo ele fica bem
+abaixo (`grafo`: 0,06; `grafo_avancado`: 0,08) — justamente onde o DBSCAN e o Isolation
+Forest se destacam. A causa provável: em vários conjuntos, sobretudo o `temporal`, há
+muitas contas com atributos praticamente idênticos (ex.: pessoas que nunca repassam
+dinheiro), o que degenera o cálculo de densidade local do LOF (o scikit-learn avisa disso
+em tempo de execução). Mantido no código como terceiro detector — útil como contraponto —,
+mas os resultados principais da pesquisa continuam se apoiando no Isolation Forest e no
+DBSCAN.
+
+## 5. Louvain e OddBall (dentro dos atributos)
 
 Não são detectores, mas dois algoritmos de grafo que **produzem atributos**:
 
-* **Louvain** (`pixfraud.communities`): encontra comunidades maximizando a modularidade.
-  Dele sai o *coeficiente de participação*: quanto as ligações de uma conta se espalham
+* **[Louvain](glossario/comunidades-e-modularidade.md)** (`pixfraud.communities`): encontra comunidades
+  maximizando a modularidade. Dele sai o *[coeficiente de participação](glossario/coeficiente-de-participacao.md)*: quanto as ligações de uma conta se espalham
   por comunidades diferentes. As contas da quadrilha têm participação um pouco maior que
   as legítimas (efeito pequeno, delta de Cliff entre 0,26 e 0,43).
-* **OddBall** (Akoglu, Tong e Koutra, 2015): em redes reais, o número de arestas e o valor
+* **[OddBall](glossario/egonet-e-oddball.md)** (Akoglu, Tong e Koutra, 2015): em redes reais, o número de arestas e o valor
   movimentado na vizinhança de uma conta seguem leis de potência em função do número de
   vizinhos. O escore mede o quanto a conta **foge dessas leis**: vizinhança em estrela
   (vítimas que não se conhecem) ou dinheiro demais para o tamanho da vizinhança. Foi o
   atributo com maior efeito em todos os cenários.
 
-## 5. PageRank personalizado, para "culpa por associação" (semi-supervisionado)
+## 6. [PageRank](glossario/pagerank.md) personalizado, para "[culpa por associação](glossario/propagacao-de-risco.md)" (semi-supervisionado)
 
 **Ideia.** Partindo das contas já conhecidas como fraudulentas (as contestações do MED),
 um passeio aleatório que sempre volta para elas mede o quanto cada outra conta está
@@ -114,9 +142,9 @@ um passeio aleatório que sempre volta para elas mede o quanto cada outra conta 
 Combinado com o detector (média dos percentis), levou a average precision de 0,46 para
 0,95 no cenário mais realista, com 25% das fraudes conhecidas.
 
-## 6. Random Forest, como teto (supervisionado)
+## 7. [Random Forest](glossario/random-forest.md), como teto (supervisionado)
 
-Serve só de referência: treinado **com os rótulos** (validação cruzada de 5 partes), mostra
+Serve só de referência: treinado **com os rótulos** ([validação cruzada](glossario/validacao-cruzada.md) de 5 partes), mostra
 até onde daria para chegar se eles existissem. Chega a AP 0,99 contra 0,53 do melhor não
 supervisionado. A distância entre os dois é o custo de não ter rótulos, e é o que
 justifica a seção anterior.
@@ -129,9 +157,11 @@ Ordenados pelo que rende mais com o esforço que exigem. Todos entram pelo mesmo
 uma função em [`anomaly.py`](../src/pixfraud/anomaly.py) que devolve `Detection` e uma
 entrada em `DETECTORS`; as comparações e figuras funcionam sem mudança.
 
+> O [LOF](#4-local-outlier-factor--lof-não-supervisionado) já está implementado e avaliado
+> (seção 4); fica de fora desta lista de "caberia" porque já coube.
+
 | Modelo | O que traria de novo | Esforço | Cuidado |
 |---|---|---|---|
-| **Local Outlier Factor (LOF)** | compara a densidade da conta com a dos vizinhos, em vez de usar um raio único; acha anomalias locais que o DBSCAN perde | baixo (scikit-learn) | mesma explosão de memória do DBSCAN em bases grandes |
 | **ECOD / COPOD** | anomalia pela cauda da distribuição de cada atributo; não tem parâmetro para ajustar e é muito rápido | baixo (biblioteca PyOD) | ignora a relação entre atributos |
 | **One-Class SVM** | fronteira não linear em volta do "normal" | baixo | custo cresce rápido com o nº de contas |
 | **Autoencoder** | aprende a reconstruir contas normais; o erro de reconstrução vira o escore | médio (PyTorch) | precisa de mais dados e de ajuste; menos interpretável |
@@ -144,8 +174,9 @@ entrada em `DETECTORS`; as comparações e figuras funcionam sem mudança.
 
 **Sugestão de ordem**, se for para acrescentar algum:
 
-1. **ECOD ou LOF**: baratos, entram como mais uma coluna nas comparações que já existem e
-   mostram se o DBSCAN está deixando algo na mesa.
+1. **ECOD**: barato, entra como mais uma coluna nas comparações que já existem. O LOF já
+   foi testado (seção 4) e não superou o Isolation Forest nem o DBSCAN; o ECOD, por ignorar
+   a relação entre atributos, é um contraponto diferente, não uma repetição.
 2. **Avaliar o FRAUDAR** que já está implementado, medindo quantas contas da quadrilha
    caem no subgrafo mais denso.
 3. **GNN**, como trabalho futuro do relatório: é o passo natural depois de mostrar que os
