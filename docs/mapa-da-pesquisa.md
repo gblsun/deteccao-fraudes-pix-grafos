@@ -17,6 +17,7 @@ do projeto e o passo a passo para rodar estão no [README principal](../README.m
 | [Modelos](modelos.md) | o que cada modelo faz, como está configurado e que outros caberiam |
 | [Revisão bibliográfica](revisao-bibliografica.md) | índice das leituras e sugestões; referências em [`referencias.bib`](referencias.bib) |
 | [Glossário](glossario/glossario.md) | termos técnicos, fórmulas e onde cada um aparece no projeto |
+| [Ideias futuras](futuro/ideias-futuras.md) | direções de pesquisa ainda não exploradas, para a seção de trabalhos futuros |
 
 ## Anotações
 
