@@ -95,4 +95,4 @@ vizinho. A implementação é a do scikit-learn [@pedregosa2011sklearn].
   5 partes).
 
 Todos os parâmetros estão em `configs/`, e cada resultado grava um `*_meta.json` com o
-commit, a configuração e as sementes usadas (ver `scripts/README.md`).
+commit, a configuração e as sementes usadas (ver `scripts/mapa-dos-scripts.md`).

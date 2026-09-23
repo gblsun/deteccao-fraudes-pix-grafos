@@ -19,13 +19,54 @@ A configuração já vem pronta em `.obsidian/`:
 | Formato dos links | Markdown, caminho relativo | os mesmos links funcionam no GitHub |
 | Atualizar links ao mover/renomear | sim | reorganizar pastas não quebra nada |
 | Pasta de anexos | `docs/anexos/` | imagens coladas nas notas não se espalham |
-| Arquivos excluídos | `.venv/`, `data/`, `src/`, `.pytest_cache/` | a busca e o grafo mostram só as notas |
-| Modelos | `docs/modelos/` | fichamento, reunião e diário |
+| Arquivos excluídos | `.venv/`, `data/`, `src/`, `.pytest_cache/`, e qualquer `README.md` (regex) | a busca e o grafo mostram só as notas com nome próprio |
+| Modelos | `docs/modelos/` | fichamento, reunião e diário, já com a tag de cada tipo |
 | Notas diárias | `docs/diario/AAAA-MM-DD.md` | diário de pesquisa |
+| Cores do grafo | `.obsidian/graph.json` | por tipo de nota (ver abaixo) |
 
 Se os comandos de modelos ou de nota diária não aparecerem, ative os plugins principais
 **Modelos** (*Templates*) e **Notas diárias** (*Daily notes*) em Configurações →
 Plugins principais.
+
+## Por que nenhuma nota se chama "README"
+
+O Obsidian rotula cada nó do grafo pelo **nome do arquivo**. Como quase toda pasta do
+repositório tem um `README.md` (é o que o GitHub mostra ao abrir a pasta), um cofre com
+vários arquivos chamados "README" vira um grafo com vários nós idênticos e ilegíveis.
+
+A solução: cada pasta documentada tem uma **nota-mapa com nome próprio** — por exemplo,
+`scripts/mapa-dos-scripts.md`, `docs/glossario/glossario.md`, `estudos/trilha-de-estudos.md`
+— e o `README.md` da pasta vira um ponteiro de três linhas só para o GitHub. A
+configuração exclui todo `README.md` do cofre (`userIgnoreFilters` em `.obsidian/app.json`,
+com um regex), então só as notas com nome aparecem no grafo. Ao criar uma pasta nova com
+documentação própria, siga o padrão: `nome-da-pasta/nome-descritivo.md` + um `README.md`
+apontando para ela.
+
+## Cores do grafo, por tipo de nota
+
+Cada nota do cofre de pesquisa tem uma tag no frontmatter, e `.obsidian/graph.json` colore
+o grafo por ela:
+
+| Tag | Cor | Notas |
+|-----|-----|-------|
+| `mapa` | azul | as notas-mapa de cada pasta (a raiz do grafo) |
+| `leitura` | verde | os fichamentos de `docs/leituras/` |
+| `glossario` | roxo | os termos de `docs/glossario/` |
+| `diario` / `ata` | laranja | as notas datadas de `docs/diario/` e `docs/reunioes/` |
+| `resultado` / `metodo` | vermelho | `docs/resultados.md` e `docs/modelos.md` |
+| (por caminho) | ciano | tudo em `estudos/` |
+
+Os modelos de `docs/modelos/` já colocam a tag certa em cada nota nova. Se criar uma nota
+sem passar pelo modelo, acrescente o frontmatter à mão:
+
+```markdown
+---
+tags: [leitura]
+---
+```
+
+Para ver as cores, abra a aba **Grafo** (ícone de rede na barra lateral) — elas já vêm
+carregadas do repositório, sem precisar configurar de novo.
 
 ## Rotina
 
@@ -35,6 +76,7 @@ Plugins principais.
 | dia de trabalho na pesquisa | **Notas diárias: Abrir a nota de hoje** (já vem com o modelo): o que rodou, o que deu errado, o que foi decidido e por quê | `docs/diario/` |
 | reunião de orientação | nova nota `AAAA-MM-DD`, depois inserir o modelo `reuniao` | `docs/reunioes/` |
 | saiu um resultado | ligar o resultado às leituras e decisões que o explicam | [resultados.md](resultados.md) |
+| apareceu um termo técnico novo | nota em `docs/glossario/`, a partir do índice; linkar na primeira ocorrência em `resultados.md` ou `modelos.md` | [glossario.md](glossario/glossario.md) |
 
 O diário é o que mais ajuda no fim: na escrita do relatório (meses 11 e 12), a
 justificativa de cada escolha já está registrada, com data.

@@ -1,3 +1,7 @@
+---
+tags: [ata]
+---
+
 # Reunião {{date}}
 
 Salve como `docs/reunioes/AAAA-MM-DD.md`. Não escreva nomes de pessoas: o repositório

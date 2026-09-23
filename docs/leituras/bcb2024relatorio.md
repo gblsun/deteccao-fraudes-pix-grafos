@@ -1,3 +1,7 @@
+---
+tags: [leitura]
+---
+
 # bcb2024relatorio
 
 > **Status: a fichar.** Esqueleto criado a partir do `referencias.bib`; o fichamento em si
@@ -5,7 +9,7 @@
 
 - **Referência:** BRASIL, Banco Central do **Relatório de Gestão do Pix**. 2024. Chave `bcb2024relatorio` no [referencias.bib](../referencias.bib).
 - **Em uma linha:** Relatório de gestão do Pix: números oficiais de uso e de fraude
-- **Tema:** [Dados: Pix e datasets públicos](README.md)
+- **Tema:** [Dados: Pix e datasets públicos](mapa-das-leituras.md)
 - **Onde entra no projeto:** [notebook 01](../../notebooks/01_analise_exploratoria.ipynb)
 - **Leituras vizinhas:** [bcb2024pix](bcb2024pix.md), [bcb2026dadosabertos](bcb2026dadosabertos.md)
 

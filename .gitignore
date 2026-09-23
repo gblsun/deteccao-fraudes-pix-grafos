@@ -34,6 +34,7 @@ data/**/*
 !.obsidian/app.json
 !.obsidian/templates.json
 !.obsidian/daily-notes.json
+!.obsidian/graph.json
 
 # Saída de scripts/reproduzir_tudo.ps1 -Rapido (conferência, não é resultado)
 reports_teste/

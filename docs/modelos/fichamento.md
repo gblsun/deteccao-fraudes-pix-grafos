@@ -1,3 +1,7 @@
+---
+tags: [leitura]
+---
+
 # {{title}}
 
 - **Referência:** `{{title}}` no [referencias.bib](../referencias.bib)

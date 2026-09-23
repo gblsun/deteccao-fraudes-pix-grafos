@@ -1,3 +1,7 @@
+---
+tags: [leitura]
+---
+
 # diestel2017graph
 
 > **Status: a fichar.** Esqueleto criado a partir do `referencias.bib`; o fichamento em si
@@ -5,7 +9,7 @@
 
 - **Referência:** DIESTEL, Reinhard **Graph Theory**. 2017. Chave `diestel2017graph` no [referencias.bib](../referencias.bib).
 - **Em uma linha:** Livro-texto de teoria dos grafos: definições e resultados usados na modelagem
-- **Tema:** [Grafos e redes](README.md)
+- **Tema:** [Grafos e redes](mapa-das-leituras.md)
 - **Onde entra no projeto:** [graph.py](../../src/pixfraud/graph.py), [estudo 01](../../estudos/01_fundamentos.ipynb)
 - **Leituras vizinhas:** [easley2010networks](easley2010networks.md), [brandes2001faster](brandes2001faster.md)
 

@@ -28,7 +28,7 @@ Não constam na proposta original, mas são próximas do tema. Todas já estão 
 ## Fichamentos
 
 Todas as leituras já têm uma nota de esqueleto em
-[`docs/leituras/`](leituras/README.md), agrupadas por tema, com o status de cada uma.
+[`docs/leituras/`](leituras/mapa-das-leituras.md), agrupadas por tema, com o status de cada uma.
 
 | Chave | Assunto em uma linha | Entra em |
 |-------|----------------------|----------|

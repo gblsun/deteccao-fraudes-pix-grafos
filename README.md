@@ -16,8 +16,8 @@ heatmaps de risco.
 cada conta faz sozinha, e sim o formato que elas desenham na rede.*
 
 Texto completo da proposta: [docs/proposta.md](docs/proposta.md) ([PDF original](docs/proposta-original.pdf)).
-**Mapa de toda a documentação**: [docs/README.md](docs/README.md). Cada pasta tem o seu
-README (por exemplo, [scripts/](scripts/README.md) e [reports/](reports/README.md)).
+**Mapa de toda a documentação**: [docs/mapa-da-pesquisa.md](docs/mapa-da-pesquisa.md). Cada pasta tem o seu
+README (por exemplo, [scripts/](scripts/mapa-dos-scripts.md) e [reports/](reports/mapa-dos-resultados.md)).
 
 **Para estudar:** a pasta [estudos/](estudos/) tem notebooks sobre teoria dos grafos aplicada
 a fraudes no Pix, com exercícios e gabarito, além das ferramentas para criar, recortar,
@@ -224,13 +224,13 @@ reais, e os dados do Banco Central são estatísticas agregadas e públicas.
 ## Organização do trabalho
 
 - Etapas e andamento: [docs/cronograma.md](docs/cronograma.md)
-- Estudos: [estudos/README.md](estudos/README.md)
+- Estudos: [estudos/trilha-de-estudos.md](estudos/trilha-de-estudos.md)
 - Leituras: [docs/revisao-bibliografica.md](docs/revisao-bibliografica.md) (índice) e um
   fichamento por leitura em `docs/leituras/`
 - Diário de pesquisa: `docs/diario/AAAA-MM-DD.md`, a partir de [docs/modelos/diario.md](docs/modelos/diario.md)
 - Reuniões de orientação: `docs/reunioes/AAAA-MM-DD.md`, a partir de [docs/modelos/reuniao.md](docs/modelos/reuniao.md)
 - Notas no Obsidian: o repositório já é um cofre configurado, ver [docs/obsidian.md](docs/obsidian.md)
-- Relatório final: capítulos em [relatorio/](relatorio/README.md), gerados com
+- Relatório final: capítulos em [relatorio/](relatorio/mapa-do-relatorio.md), gerados com
   `python scripts/gerar_relatorio.py`
 - Novos notebooks: prefixo numérico e nome descritivo (`02_perfis_de_fraude.ipynb`).
   Código reaproveitável vai para `src/pixfraud/`, com teste em `tests/`.

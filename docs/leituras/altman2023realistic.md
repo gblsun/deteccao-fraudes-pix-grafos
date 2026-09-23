@@ -1,3 +1,7 @@
+---
+tags: [leitura]
+---
+
 # altman2023realistic
 
 > **Status: a fichar.** Esqueleto criado a partir do `referencias.bib`; o fichamento em si
@@ -5,7 +9,7 @@
 
 - **Referência:** ALTMAN, Erik et al. **Realistic Synthetic Financial Transactions for Anti-Money Laundering Models**. 2023. Chave `altman2023realistic` no [referencias.bib](../referencias.bib).
 - **Em uma linha:** AMLworld: transações sintéticas de lavagem com tipologias em grafo
-- **Tema:** [Dados: Pix e datasets públicos](README.md)
+- **Tema:** [Dados: Pix e datasets públicos](mapa-das-leituras.md)
 - **Onde entra no projeto:** [external.py](../../src/pixfraud/external.py), [resultados, seção 8](../resultados.md)
 - **Leituras vizinhas:** [lopezrojas2016paysim](lopezrojas2016paysim.md), [weber2019aml](weber2019aml.md)
 

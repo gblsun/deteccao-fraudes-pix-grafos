@@ -1,6 +1,6 @@
 # Fundamentação teórica
 
-> **Roteiro** (os notebooks de [`estudos/`](../../estudos/README.md) e os fichamentos de
+> **Roteiro** (os notebooks de [`estudos/`](../../estudos/trilha-de-estudos.md) e os fichamentos de
 > [`docs/leituras/`](../../docs/leituras/) são o material de partida):
 >
 > 1. **O Pix e as fraudes**: funcionamento, MED, bloqueio cautelar, marcação de fraude

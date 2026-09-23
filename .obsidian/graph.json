@@ -1,0 +1,65 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "tag:mapa",
+      "color": {
+        "a": 1,
+        "rgb": 2783446
+      }
+    },
+    {
+      "query": "tag:leitura",
+      "color": {
+        "a": 1,
+        "rgb": 1814394
+      }
+    },
+    {
+      "query": "tag:glossario",
+      "color": {
+        "a": 1,
+        "rgb": 8019143
+      }
+    },
+    {
+      "query": "tag:diario OR tag:ata",
+      "color": {
+        "a": 1,
+        "rgb": 15427636
+      }
+    },
+    {
+      "query": "tag:resultado OR tag:metodo",
+      "color": {
+        "a": 1,
+        "rgb": 14895432
+      }
+    },
+    {
+      "query": "path:estudos",
+      "color": {
+        "a": 1,
+        "rgb": 1548984
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": true,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": true,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.6154698017719594,
+  "close": false
+}

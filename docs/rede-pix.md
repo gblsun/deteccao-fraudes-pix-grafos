@@ -4,7 +4,7 @@ O grafo do Obsidian mostra as **notas** e seus links. O grafo da **rede Pix** (c
 transferências) é outra coisa: tem milhares de vértices e é desenhado pelos scripts do
 projeto. Esta nota reúne as duas formas de olhar para ele sem sair do cofre.
 
-Volta para o [índice da documentação](README.md).
+Volta para o [índice da documentação](mapa-da-pesquisa.md).
 
 ## Rede inteira, interativa
 
@@ -41,5 +41,5 @@ python scripts/visualizar_rede.py --modelo isolation_forest --atributos grafo_av
 python scripts/criar_grafo.py csv data/synthetic/transactions.csv --conta C000167 --saltos 2 --direcao tras --saida reports/estudos/trilha.png
 ```
 
-O que cada arquivo contém está em [`reports/README.md`](../reports/README.md); a
+O que cada arquivo contém está em [`reports/mapa-dos-resultados.md`](../reports/mapa-dos-resultados.md); a
 interpretação, em [resultados](resultados.md).

@@ -1,3 +1,7 @@
+---
+tags: [leitura]
+---
+
 # bcb2024pix
 
 > **Status: a fichar.** Esqueleto criado a partir do `referencias.bib`; o fichamento em si
@@ -5,7 +9,7 @@
 
 - **Referência:** BRASIL, Banco Central do **Pix: arranjo de pagamentos instantâneos**. 2024. Chave `bcb2024pix` no [referencias.bib](../referencias.bib).
 - **Em uma linha:** O arranjo Pix: regras, MED e bloqueio cautelar
-- **Tema:** [Dados: Pix e datasets públicos](README.md)
+- **Tema:** [Dados: Pix e datasets públicos](mapa-das-leituras.md)
 - **Onde entra no projeto:** [bcb.py](../../src/pixfraud/bcb.py), [proposta](../proposta.md)
 - **Leituras vizinhas:** [bcb2024relatorio](bcb2024relatorio.md), [bcb2026dadosabertos](bcb2026dadosabertos.md)
 

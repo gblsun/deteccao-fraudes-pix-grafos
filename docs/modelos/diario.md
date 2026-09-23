@@ -1,3 +1,7 @@
+---
+tags: [diario]
+---
+
 # Diário {{date}}
 
 ## O que fiz

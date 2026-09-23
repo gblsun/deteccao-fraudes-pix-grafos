@@ -135,7 +135,7 @@ formatos cada abordagem encontra. Para um teste rápido, use `--max-janelas 1` n
 ~79 mil contas e leva ~20 min; a mesma janela com todas as formas de pagamento tem ~160
 mil. O que pesa é o rótulo binário do DBSCAN, cuja memória cresce com o quadrado do nº de
 contas; o parâmetro `modelos.dbscan.max_exact` (ver
-[`configs/README.md`](../configs/README.md)) define até onde vale a pena gastar essa
+[`configs/parametros-dos-experimentos.md`](../configs/parametros-dos-experimentos.md)) define até onde vale a pena gastar essa
 memória. Para janelas menores, use `--dias-janela 1`.
 
 Nos dois datasets não existe idade da conta: `account_age_days` fica 0 e deixa de informar.

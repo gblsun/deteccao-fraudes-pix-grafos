@@ -1,4 +1,4 @@
-"""Testes da documentação: links que funcionam, docstrings e um README em cada pasta."""
+"""Testes da documentação: links que funcionam, docstrings, README e mapa em cada pasta."""
 
 import ast
 import re
@@ -7,8 +7,25 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).parents[1]
-FOLDERS_WITH_README = ["app", "configs", "data", "docs", "estudos", "notebooks", "relatorio", "reports", "scripts",
-                       "src/pixfraud", "tests"]
+# pasta -> nome da nota-mapa (o README da pasta é só um ponteiro para ela; ver docs/obsidian.md)
+FOLDER_MAPS = {
+    "app": "guia-do-explorador.md",
+    "configs": "parametros-dos-experimentos.md",
+    "data": None,  # data/README.md é a própria documentação, sem nota-mapa separada
+    "docs": "mapa-da-pesquisa.md",
+    "docs/diario": "diario-de-pesquisa.md",
+    "docs/glossario": "glossario.md",
+    "docs/leituras": "mapa-das-leituras.md",
+    "docs/reunioes": "atas-de-reuniao.md",
+    "estudos": "trilha-de-estudos.md",
+    "notebooks": "mapa-dos-notebooks.md",
+    "relatorio": "mapa-do-relatorio.md",
+    "reports": "mapa-dos-resultados.md",
+    "scripts": "mapa-dos-scripts.md",
+    "src/pixfraud": None,  # README técnico do pacote, não faz parte do cofre de pesquisa
+    "tests": "mapa-dos-testes.md",
+}
+FOLDERS_WITH_README = sorted(FOLDER_MAPS)
 MARKDOWN = sorted({ROOT / "README.md", *(p for f in FOLDERS_WITH_README for p in (ROOT / f).rglob("*.md"))})
 CODE = re.compile(r"(`{3,}).*?\1|`[^`\n]*`", re.DOTALL)  # blocos e trechos de código: exemplos, não links
 LINK = re.compile(r"\]\(([^)\s#]+)(?:#[^)]*)?\)")
@@ -17,6 +34,13 @@ LINK = re.compile(r"\]\(([^)\s#]+)(?:#[^)]*)?\)")
 @pytest.mark.parametrize("folder", FOLDERS_WITH_README)
 def test_every_folder_has_a_readme(folder):
     assert (ROOT / folder / "README.md").exists()
+
+
+@pytest.mark.parametrize("folder", sorted(f for f, mapa in FOLDER_MAPS.items() if mapa))
+def test_every_docs_folder_has_a_named_map_note(folder):
+    """As pastas do cofre de pesquisa têm uma nota-mapa com nome próprio (não "README"),
+    porque o Obsidian rotula cada nó do grafo pelo nome do arquivo."""
+    assert (ROOT / folder / FOLDER_MAPS[folder]).exists()
 
 
 @pytest.mark.parametrize("path", MARKDOWN, ids=lambda p: str(p.relative_to(ROOT)))
