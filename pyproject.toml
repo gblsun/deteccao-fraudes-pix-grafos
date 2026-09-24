@@ -24,6 +24,9 @@ notebooks = ["jupyterlab>=4", "ipykernel"]
 app = ["streamlit>=1.30"]
 docs = ["pdoc>=14"]
 relatorio = ["pypandoc_binary>=1.13"]
+# GNN (pixfraud.gnn). Instale antes o PyTorch só para CPU, bem menor que o de GPU:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+gnn = ["torch>=2.9", "torch_geometric>=2.6"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -31,6 +34,11 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["lento: testes que rodam scripts inteiros ou o app (pule com -m \"not lento\")"]
+# Avisos internos do PyTorch Geometric no Python 3.14, que não dependem deste código.
+filterwarnings = [
+    "ignore::DeprecationWarning:torch_geometric.*",
+    "ignore:`torch.jit.script` is not supported:FutureWarning",
+]
 
 [tool.ruff]
 line-length = 120

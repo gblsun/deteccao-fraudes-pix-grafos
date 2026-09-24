@@ -64,9 +64,46 @@ MODEL_COLORS = {
 }
 
 
+MODEL_LABELS = {
+    "isolation_forest": "Isolation Forest",
+    "dbscan": "DBSCAN",
+    "local_outlier_factor": "LOF",
+    "ecod": "ECOD",
+    "one_class_svm": "One-Class SVM",
+    "autoencoder": "Autoencoder",
+    "fraudar": "FRAUDAR",
+    "node2vec_if": "node2vec + IF",
+    "propagacao": "PageRank personalizado",
+    "propagacao_relativa": "PageRank relativo",
+    "label_spreading": "Label spreading",
+    "random_forest": "Random Forest",
+    "gradient_boosting": "Gradient boosting",
+    "graphsage": "GraphSAGE",
+}
+
+
 def model_color(model: str) -> str:
     """Cor fixa de um modelo nas figuras (cinza-médio para um modelo sem cor definida)."""
     return MODEL_COLORS.get(model, "#9aa7a4")
+
+
+def model_label(model: str) -> str:
+    """Nome legível de um modelo, o mesmo em todas as figuras e tabelas."""
+    return MODEL_LABELS.get(model, model.replace("_", " "))
+
+
+def format_number(value: float, digits: int = 2) -> str:
+    """Número com vírgula decimal, como no resto da documentação (``0,58``)."""
+    return f"{value:.{digits}f}".replace(".", ",")
+
+
+def format_ci(mean: float, low: float, high: float, digits: int = 2) -> str:
+    """Média e intervalo de confiança no formato único dos resultados: ``0,58 [0,52; 0,63]``."""
+    if pd.isna(mean):
+        return "—"
+    if pd.isna(low) or pd.isna(high):
+        return format_number(mean, digits)
+    return f"{format_number(mean, digits)} [{format_number(low, digits)}; {format_number(high, digits)}]"
 
 
 def flow_layout(graph: nx.DiGraph) -> dict:

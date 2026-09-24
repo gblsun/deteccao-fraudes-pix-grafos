@@ -21,13 +21,14 @@ from pathlib import Path
 import networkx as nx
 import pandas as pd
 import yaml
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 
 from pixfraud.anomaly import DETECTORS, Detection
 from pixfraud.evaluation import evaluate
 from pixfraud.features import FEATURE_SETS, build_features
 from pixfraud.graph import build_graph
+from pixfraud.graph_models import GRAPH_DETECTORS
 from pixfraud.simulation import SimulationConfig, generate_dataset, with_overrides
 
 # Pares (a, b) de conjuntos de atributos comparados nos estudos com várias
@@ -40,6 +41,8 @@ COMPARISONS = [
     ("completo", "tabular"),
 ]
 REPEATED_METRICS = ["average_precision", "precision_at_k", "roc_auc", "f1"]
+# Tetos supervisionados de ``supervised_scores`` (a GNN fica em ``pixfraud.gnn``, opcional).
+SUPERVISED_MODELS = ("random_forest", "gradient_boosting")
 
 
 @dataclass
@@ -94,7 +97,7 @@ def seeded_models(models_config: dict, seed: int) -> dict:
     não só o dataset.
     """
     models = copy.deepcopy(models_config)
-    for name, detect in DETECTORS.items():
+    for name, detect in {**DETECTORS, **GRAPH_DETECTORS}.items():
         if "seed" in inspect.signature(detect).parameters:
             models.setdefault(name, {})["seed"] = seed
     return models
@@ -158,17 +161,32 @@ def feature_ablation(
     return pd.DataFrame(rows)
 
 
-def supervised_scores(features: pd.DataFrame, labels: pd.Series, seed: int = 42, folds: int = 5) -> pd.Series:
-    """Probabilidade de fraude de cada conta dada por um Random Forest que **viu os rótulos**.
+def supervised_scores(
+    features: pd.DataFrame,
+    labels: pd.Series,
+    seed: int = 42,
+    folds: int = 5,
+    model: str = "random_forest",
+) -> pd.Series:
+    """Probabilidade de fraude de cada conta dada por um modelo que **viu os rótulos**.
 
     Serve de teto para os detectores não supervisionados: com validação
     cruzada estratificada, cada conta recebe o escore de um modelo treinado
     sem ela. Numa situação real esses rótulos não existiriam (ou seriam
     poucos), então a distância até este teto mostra quanto se perde por não
-    tê-los.
+    tê-los. ``model``: ``random_forest`` ou ``gradient_boosting`` (árvores em
+    sequência, cada uma corrigindo o erro das anteriores, no estilo LightGBM).
     """
     y = labels.reindex(features.index).astype(bool).to_numpy()
-    model = RandomForestClassifier(n_estimators=300, class_weight="balanced_subsample", random_state=seed, n_jobs=-1)
+    if model == "random_forest":
+        model = RandomForestClassifier(n_estimators=300, class_weight="balanced_subsample", random_state=seed,
+                                       n_jobs=-1)
+    elif model == "gradient_boosting":
+        # folhas pequenas: com ~15 fraudes no dataset, o padrão (20 contas por folha) não isola nenhuma
+        model = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.05, min_samples_leaf=5,
+                                               class_weight="balanced", random_state=seed)
+    else:
+        raise ValueError(f"modelo supervisionado desconhecido: {model} (use um de {SUPERVISED_MODELS})")
     splitter = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)
     proba = cross_val_predict(model, features.to_numpy(dtype=float), y, cv=splitter, method="predict_proba")[:, 1]
     return pd.Series(proba, index=features.index, name="score")

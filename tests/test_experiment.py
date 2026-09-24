@@ -42,7 +42,7 @@ def test_run_seeds_one_dataset_per_seed():
 def test_seeded_models_reach_every_random_detector():
     seeded = seeded_models(CONFIG["modelos"], 7)
     assert {m for m, params in seeded.items() if params.get("seed") == 7} == {
-        "isolation_forest", "one_class_svm", "autoencoder"}
+        "isolation_forest", "one_class_svm", "autoencoder", "node2vec_if"}
     assert "seed" not in seeded["dbscan"]  # determinístico: não recebe semente
     assert seeded["isolation_forest"]["n_estimators"] == 50
     assert "seed" not in CONFIG["modelos"]["isolation_forest"]  # a original não muda
@@ -99,8 +99,15 @@ def test_feature_ablation_finds_the_informative_feature():
     assert (table["queda"] == table["ap_com_todos"] - table["ap_sem"]).all()
 
 
-def test_supervised_scores_are_out_of_fold():
+@pytest.mark.parametrize("model", ["random_forest", "gradient_boosting"])
+def test_supervised_scores_are_out_of_fold(model):
     features, labels = _planted()
-    scores = supervised_scores(features, labels, seed=0)
+    scores = supervised_scores(features, labels, seed=0, model=model)
     assert scores.index.equals(features.index) and scores.between(0, 1).all()
     assert average_precision_score(labels, scores) > 0.9  # o sinal é fácil: fraudes no topo
+
+
+def test_supervised_scores_rejects_unknown_model():
+    features, labels = _planted()
+    with pytest.raises(ValueError, match="desconhecido"):
+        supervised_scores(features, labels, model="svm")

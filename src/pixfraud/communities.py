@@ -9,6 +9,8 @@ viram uma aresta só), porque aqui interessa *quem se relaciona com quem*.
 * ``core_numbers``: decomposição em k-núcleos;
 * ``densest_subgraph``: subgrafo mais denso pelo algoritmo guloso de Charikar,
   com a opção de pesos do FRAUDAR, que resistem a camuflagem;
+* ``peeling_scores``: a mesma remoção gulosa transformada em escore por conta
+  (o núcleo ponderado), usada pelo detector ``fraudar`` de ``pixfraud.graph_models``;
 * ``oddball_scores``: anomalias de egonet (OddBall).
 """
 
@@ -122,41 +124,71 @@ def densest_subgraph(graph: nx.Graph, weight: str | None = None, fraudar: bool =
     procuradas (comércios) valem pouco, e a camuflagem "pagar a padaria" não
     ajuda uma quadrilha a se esconder.
     """
-    if fraudar:
-        in_degree = dict(graph.in_degree()) if graph.is_directed() else dict(graph.degree())
-        weighted = nx.DiGraph() if graph.is_directed() else nx.Graph()
-        weighted.add_nodes_from(graph.nodes)
-        for u, v in graph.edges():
-            weighted.add_edge(u, v, fraudar=1.0 / np.log(in_degree[v] + 5))
-        simple = undirected_simple(weighted, "fraudar")
-    else:
-        simple = undirected_simple(graph, weight)
+    simple = _fraudar_weighted(graph) if fraudar else undirected_simple(graph, weight)
+    if simple.number_of_nodes() == 0:
+        return set(), 0.0
+    order, _, densities = _peel(simple)
+    best_cut = int(np.argmax(densities))  # densities[i]: densidade depois de tirar as i primeiras contas
+    return set(simple) - set(order[:best_cut]), float(densities[best_cut])
 
+
+def peeling_scores(graph: nx.Graph, weight: str | None = None, fraudar: bool = True) -> pd.Series:
+    """Escore por conta tirado da mesma remoção gulosa do ``densest_subgraph``.
+
+    O escore de uma conta é o maior grau (ponderado) que a remoção já tinha
+    precisado atingir quando chegou a ela: a generalização do k-núcleo para
+    pesos. Uma conta num bloco denso só sai quando a remoção já está "cortando
+    fundo", então fica com escore alto; e, ao contrário do subgrafo mais denso,
+    que devolve um bloco só, cada bloco denso (cada quadrilha) recebe o seu
+    nível. Empates são desfeitos pela ordem de remoção: quem sai depois fica
+    à frente. Com ``fraudar=True`` (padrão), usa os pesos do FRAUDAR.
+    """
+    simple = _fraudar_weighted(graph) if fraudar else undirected_simple(graph, weight)
+    order, removal_degree, _ = _peel(simple)
+    level = np.maximum.accumulate(removal_degree) if len(order) else np.array([])
+    tie_break = np.arange(len(order)) / max(len(order), 1) * 1e-9 * (level.max() if len(order) else 0.0)
+    return pd.Series(level + tie_break, index=order, name="score").reindex(list(graph.nodes), fill_value=0.0)
+
+
+def _fraudar_weighted(graph: nx.Graph) -> nx.Graph:
+    """Grafo simples com o peso do FRAUDAR, ``1 / log(grau de entrada do destino + 5)``, em cada aresta."""
+    in_degree = dict(graph.in_degree()) if graph.is_directed() else dict(graph.degree())
+    weighted = nx.DiGraph() if graph.is_directed() else nx.Graph()
+    weighted.add_nodes_from(graph.nodes)
+    for u, v in graph.edges():
+        weighted.add_edge(u, v, fraudar=1.0 / np.log(in_degree[v] + 5))
+    return undirected_simple(weighted, "fraudar")
+
+
+def _peel(simple: nx.Graph) -> tuple[list, np.ndarray, np.ndarray]:
+    """Remoção gulosa de Charikar: tira sempre a conta de menor grau ponderado.
+
+    Devolve a ordem de remoção, o grau de cada conta no momento em que saiu e a
+    densidade (peso total / nº de contas) antes de cada remoção e no fim.
+    """
     degree = {v: sum(d["weight"] for d in simple[v].values()) for v in simple}
     total = sum(d["weight"] for *_, d in simple.edges(data=True))
     remaining = simple.number_of_nodes()
-    if remaining == 0:
-        return set(), 0.0
     counter = itertools.count()
     heap = [(d, next(counter), v) for v, d in degree.items()]
     heapq.heapify(heap)
-    removed, order = set(), []
-    best_density, best_cut = total / remaining, 0
+    removed, order, removal_degree = set(), [], []
+    densities = [total / remaining if remaining else 0.0]
     while heap:
         d, _, v = heapq.heappop(heap)
         if v in removed or d != degree[v]:
             continue  # entrada desatualizada
         removed.add(v)
         order.append(v)
+        removal_degree.append(degree[v])
         total -= degree[v]
         remaining -= 1
         for u, data in simple[v].items():
             if u not in removed:
                 degree[u] -= data["weight"]
                 heapq.heappush(heap, (degree[u], next(counter), u))
-        if remaining and total / remaining > best_density:
-            best_density, best_cut = total / remaining, len(order)
-    return set(simple) - set(order[:best_cut]), float(best_density)
+        densities.append(total / remaining if remaining else 0.0)
+    return order, np.array(removal_degree, dtype=float), np.array(densities)
 
 
 def egonet_features(graph: nx.Graph, weight: str = "amount") -> pd.DataFrame:

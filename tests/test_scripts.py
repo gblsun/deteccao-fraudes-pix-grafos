@@ -123,7 +123,8 @@ def test_avaliar_atributos(tmp_path):
     ablation = pd.read_csv(tmp_path / "results" / "atributos_ablacao.csv")
     assert len(ablation) == 2 * len(DETECTORS) * 6  # sementes × detectores × atributos do conjunto "grafo"
     ceiling = pd.read_csv(tmp_path / "results" / "atributos_teto.csv")
-    assert set(ceiling["modelo"]) == {*DETECTORS, "random_forest"}
+    expected = {*DETECTORS, "random_forest", "gradient_boosting"}
+    assert expected <= set(ceiling["modelo"]) and set(ceiling["modelo"]) - expected <= {"graphsage"}
     assert ceiling["average_precision"].between(0, 1).all()
     _check_metadata(tmp_path / "results" / "atributos_meta.json", cenarios={"dificil"})
     for figure in ("atributos_ablacao.png", "atributos_teto.png"):
@@ -137,13 +138,23 @@ def test_avaliar_propagacao(tmp_path):
          str(tmp_path / "cenarios.yaml"), "--cenarios", "dificil", "--sementes", "2", "--fracoes", "0.25",
          "--saida", str(tmp_path))
     runs = pd.read_csv(tmp_path / "results" / "propagacao_execucoes.csv")
-    assert set(runs["metodo"]) == {"propagacao", "propagacao_relativa", "completo_dbscan", "temporal_if", "combinado"}
+    assert set(runs["metodo"]) == {"propagacao", "propagacao_relativa", "label_spreading", "completo_dbscan",
+                                   "temporal_if", "combinado", "label_spreading_combinado"}
     assert runs["average_precision"].between(0, 1).all()
     assert (runs["fraudes_conhecidas"] >= 1).all()
     comparisons = pd.read_csv(tmp_path / "results" / "propagacao_comparacoes.csv")
-    assert "combinado - completo_dbscan" in set(comparisons["comparação"])
+    assert {"combinado - completo_dbscan", "label_spreading - propagacao_relativa"} <= set(comparisons["comparação"])
     _check_metadata(tmp_path / "results" / "propagacao_meta.json", cenarios={"dificil"})
     assert (tmp_path / "figures" / "propagacao_average_precision.png").exists()
+
+    # fraudes conhecidas pelas contestações (MED), e não sorteadas
+    (tmp_path / "contestado.yaml").write_text("contestado: {p_contested: 1.0, contest_delay_h: 1}\n", encoding="utf-8")
+    out = tmp_path / "contestacao"
+    _run("avaliar_propagacao.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "contestado.yaml"), "--cenarios", "contestado", "--sementes", "2", "--conhecidas",
+         "contestacao", "--saida", str(out))
+    contested = pd.read_csv(out / "results" / "propagacao_execucoes.csv")
+    assert set(contested["conhecidas"]) == {"contestacao"}
 
 
 def test_gerar_relatorio(tmp_path):

@@ -4,9 +4,12 @@ Duas análises, nos cenários escolhidos e com várias sementes:
 
 * **ablação**: tira um atributo de cada vez do conjunto (padrão: ``completo``) e
   mede a queda da average precision de cada detector;
-* **teto supervisionado**: um Random Forest treinado com os rótulos (validação
-  cruzada de 5 partes) em cada conjunto de atributos, ao lado dos detectores
-  não supervisionados.
+* **teto supervisionado**: modelos treinados com os rótulos (validação cruzada
+  de 5 partes), ao lado dos detectores não supervisionados: Random Forest e
+  gradient boosting em cada conjunto de atributos, e, se o extra ``gnn`` estiver
+  instalado, uma GraphSAGE com os atributos ``tabular`` e ``completo`` (ela
+  aprende a estrutura do grafo sozinha, então dá para ver se isso supre a
+  falta dos atributos de grafo).
 
 Saídas em reports/results/:
     atributos_ablacao.csv          uma linha por (cenário, semente, modelo, atributo removido)
@@ -35,8 +38,10 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from sklearn.metrics import average_precision_score  # noqa: E402
 
+from pixfraud import gnn  # noqa: E402
 from pixfraud.anomaly import DETECTORS  # noqa: E402
 from pixfraud.experiment import (  # noqa: E402
+    SUPERVISED_MODELS,
     feature_ablation,
     load_experiment_config,
     load_scenarios,
@@ -55,10 +60,11 @@ from pixfraud.visualization import (  # noqa: E402
     INK_SECONDARY,
     SEQUENTIAL_CMAP,
     SURFACE,
+    model_label,
     plot_value_matrix,
 )
 
-SUPERVISED = "random_forest"
+GNN_SETS = ["tabular", "completo"]  # conjuntos em que a GraphSAGE roda (é o teto mais caro)
 
 
 def main() -> None:
@@ -75,6 +81,9 @@ def main() -> None:
     began = time.time()
 
     config = load_experiment_config(args.config)
+    use_gnn = gnn.available()
+    if not use_gnn:
+        print("aviso: sem o extra 'gnn' (PyTorch Geometric), o teto da GraphSAGE fica de fora", flush=True)
     base = load_config(args.config)
     scenarios = load_scenarios(args.arquivo_cenarios)
     unknown = [n for n in args.cenarios if n not in scenarios]
@@ -97,10 +106,17 @@ def main() -> None:
 
             metrics, _ = run_detectors(prepared.features, prepared.labels, models, models=args.modelos)
             ceilings.append(metrics[["atributos", "modelo", "average_precision"]].assign(**ids))
-            for set_name, columns in FEATURE_SETS.items():
-                scores = supervised_scores(prepared.features[columns], prepared.labels, seed=seed)
+            supervised = [(s, m, lambda c=c, m=m: supervised_scores(prepared.features[c], prepared.labels,
+                                                                     seed=seed, model=m))
+                          for s, c in FEATURE_SETS.items() for m in SUPERVISED_MODELS]
+            if use_gnn:
+                supervised += [(s, "graphsage", lambda s=s: gnn.graphsage_scores(
+                    prepared.graph, prepared.features[FEATURE_SETS[s]], prepared.labels, seed=seed))
+                    for s in GNN_SETS]
+            for set_name, model_name, fit in supervised:
+                scores = fit()
                 ap = average_precision_score(prepared.labels.reindex(scores.index), scores)
-                ceilings.append(pd.DataFrame([{"atributos": set_name, "modelo": SUPERVISED,
+                ceilings.append(pd.DataFrame([{"atributos": set_name, "modelo": model_name,
                                                "average_precision": ap, **ids}]))
             print(f"{name}: semente {seed}/{args.sementes}, {time.time() - seed_began:.0f} s", flush=True)
 
@@ -149,22 +165,23 @@ def _plot_ablation(summary: pd.DataFrame, args, path: Path) -> None:
 
 
 def _plot_ceiling(summary: pd.DataFrame, args, path: Path) -> None:
-    """Matriz conjunto × (cenário, modelo) da AP média, com o Random Forest supervisionado."""
+    """Um painel por cenário: conjunto de atributos × modelo, da AP média (tetos supervisionados à direita)."""
     mean = summary["mean"]
     present = set(mean.index.get_level_values("modelo"))
-    models = [m for m in [*DETECTORS, SUPERVISED] if m in present]
-    matrix = pd.DataFrame(
-        {f"{c}\n{m.replace('_', ' ')}": [mean.get((c, s, m), np.nan) for s in FEATURE_SETS]
-         for c in args.cenarios for m in models},
-        index=list(FEATURE_SETS),
-    )
-    fig, ax = plt.subplots(figsize=(2.4 + 1.2 * matrix.shape[1], 1.6 + 0.5 * len(matrix)), layout="constrained")
-    mesh = plot_value_matrix(matrix, SEQUENTIAL_CMAP, vmin=0, vmax=1, ax=ax)
-    colorbar = fig.colorbar(mesh, ax=ax, shrink=0.6, pad=0.02)
+    models = [m for m in [*DETECTORS, *SUPERVISED_MODELS, "graphsage"] if m in present]
+    fig, axes = plt.subplots(len(args.cenarios), 1, figsize=(2.6 + 0.95 * len(models), 0.6 + 3.2 * len(args.cenarios)),
+                             squeeze=False, layout="constrained")
+    for ax, scenario in zip(axes[:, 0], args.cenarios):
+        matrix = pd.DataFrame({model_label(m): [mean.get((scenario, s, m), np.nan) for s in FEATURE_SETS]
+                               for m in models}, index=list(FEATURE_SETS))
+        mesh = plot_value_matrix(matrix, SEQUENTIAL_CMAP, vmin=0, vmax=1, ax=ax)
+        ax.tick_params(axis="x", labelrotation=30)
+        ax.set_title(scenario, color=INK, fontsize=10, loc="left")
+    colorbar = fig.colorbar(mesh, ax=axes, shrink=0.6, pad=0.02)
     colorbar.set_label("average precision", color=INK_SECONDARY)
     colorbar.outline.set_visible(False)
-    ax.set_title(f"Não supervisionado × teto supervisionado (Random Forest com os rótulos), {args.sementes} sementes",
-                 color=INK, fontsize=9, loc="left")
+    fig.suptitle(f"Não supervisionados × tetos supervisionados (treinados com os rótulos), {args.sementes} sementes",
+                 color=INK, fontsize=10)
     fig.savefig(path, dpi=150, facecolor=SURFACE)
     plt.close(fig)
 

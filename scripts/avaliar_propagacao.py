@@ -9,7 +9,17 @@ contestadas" e mede, **só nas contas restantes**, a average precision de:
   PageRank comum, para não favorecer as contas muito conectadas;
 * ``completo_dbscan`` e ``temporal_if``: os melhores detectores não supervisionados,
   que não usam as contas conhecidas;
-* ``combinado``: média dos percentis da propagação relativa e do ``completo_dbscan``.
+* ``combinado``: média dos percentis da propagação relativa e do ``completo_dbscan``;
+* ``label_spreading``: propagação de rótulos com as fraudes conhecidas (+1) **e**
+  uma fração das contas legítimas também tratadas como conhecidas (-1), a mesma
+  fração das fraudes (``pixfraud.flow.label_spreading``);
+* ``label_spreading_combinado``: média dos percentis do label spreading e do
+  ``completo_dbscan``.
+
+As contas conhecidas (fraudes e legítimas) ficam fora da avaliação de todos os
+métodos. Com ``--conhecidas contestacao``, as fraudes conhecidas deixam de ser
+sorteadas: são as contas que receberam um golpe contestado até o fim do período
+(coluna ``contestado_em``, só nos cenários com ``p_contested`` > 0), como no MED.
 
 Saídas em reports/results/: propagacao_execucoes.csv, propagacao_resumo.csv,
 propagacao_comparacoes.csv e propagacao_meta.json, e a figura
@@ -18,6 +28,7 @@ reports/figures/propagacao_average_precision.png.
 Uso:
     python scripts/avaliar_propagacao.py --sementes 10
     python scripts/avaliar_propagacao.py --cenarios realista --fracoes 0.1 --sementes 3
+    python scripts/avaliar_propagacao.py --cenarios calibrado --conhecidas contestacao
 """
 
 import argparse
@@ -43,17 +54,21 @@ from pixfraud.experiment import (  # noqa: E402
     seeded_models,
 )
 from pixfraud.features import FEATURE_SETS  # noqa: E402
-from pixfraud.flow import propagate_risk  # noqa: E402
+from pixfraud.flow import label_spreading, propagate_risk  # noqa: E402
 from pixfraud.simulation import generate_dataset, load_config, with_overrides  # noqa: E402
 from pixfraud.stats import compare_runs, summarize_runs  # noqa: E402
 from pixfraud.visualization import INK, INK_SECONDARY, SEQUENTIAL_CMAP, SURFACE, plot_value_matrix  # noqa: E402
 
-METHODS = ["propagacao", "propagacao_relativa", "completo_dbscan", "temporal_if", "combinado"]
+METHODS = ["propagacao", "propagacao_relativa", "label_spreading", "completo_dbscan", "temporal_if", "combinado",
+           "label_spreading_combinado"]
 COMPARISONS = [
     ("combinado", "completo_dbscan"),
     ("propagacao_relativa", "completo_dbscan"),
     ("propagacao_relativa", "propagacao"),
+    ("label_spreading", "propagacao_relativa"),
+    ("label_spreading_combinado", "combinado"),
 ]
+CONTESTED = "contestacao"
 
 
 def main() -> None:
@@ -64,6 +79,10 @@ def main() -> None:
     parser.add_argument("--sementes", type=int, default=10)
     parser.add_argument("--fracoes", nargs="+", type=float, default=[0.1, 0.25],
                         help="frações das contas fraudulentas tratadas como já conhecidas")
+    parser.add_argument("--conhecidas", choices=["fracao", CONTESTED], default="fracao",
+                        help="fraudes conhecidas sorteadas (--fracoes) ou vindas das contestações")
+    parser.add_argument("--fracao-legitimas", type=float, default=None,
+                        help="fração das legítimas conhecidas no modo contestacao (padrão: 0,25)")
     parser.add_argument("--saida", default="reports")
     args = parser.parse_args()
     began = time.time()
@@ -87,18 +106,22 @@ def main() -> None:
                 "temporal_if": _scores(prepared, "temporal", "isolation_forest", models),
             }
             fraud = prepared.labels.index[prepared.labels]
+            legit = prepared.labels.index[~prepared.labels]
             rng = np.random.default_rng(seed)
-            for fraction in args.fracoes:
-                known = list(rng.choice(fraud, size=max(1, round(fraction * len(fraud))), replace=False))
+            legit_rng = np.random.default_rng([seed, 1])  # separado: não muda o sorteio das fraudes
+            for fraction, known in _known_frauds(args, rng, fraud, tx):
+                legit_fraction = fraction if fraction != CONTESTED else (args.fracao_legitimas or 0.25)
+                known_legit = list(legit_rng.choice(legit, size=round(legit_fraction * len(legit)), replace=False))
                 scores = {
                     "propagacao": propagate_risk(prepared.graph, known),
                     "propagacao_relativa": propagate_risk(prepared.graph, known, relative=True),
+                    "label_spreading": label_spreading(prepared.graph, known, known_legit),
                     **detectors,
                 }
-                labels = prepared.labels.drop(known)  # avalia só nas contas ainda desconhecidas
-                percentiles = [scores[m].reindex(labels.index).rank(pct=True)
-                               for m in ("propagacao_relativa", "completo_dbscan")]
-                scores["combinado"] = sum(percentiles) / 2
+                labels = prepared.labels.drop(known + known_legit)  # avalia só nas contas ainda desconhecidas
+                scores["combinado"] = _mean_percentile(scores, labels, "propagacao_relativa", "completo_dbscan")
+                scores["label_spreading_combinado"] = _mean_percentile(scores, labels, "label_spreading",
+                                                                       "completo_dbscan")
                 for method in METHODS:
                     score = scores[method].reindex(labels.index).fillna(0.0)
                     k = int(labels.sum())
@@ -124,7 +147,8 @@ def main() -> None:
     summary.droplevel("modelo").rename_axis(index={"atributos": "metodo"}).to_csv(results / "propagacao_resumo.csv")
     comparisons.drop(columns="modelo").to_csv(results / "propagacao_comparacoes.csv", index=False)
     save_metadata(results / "propagacao_meta.json", config, cenarios={n: scenarios[n] for n in args.cenarios},
-                  sementes=list(range(1, args.sementes + 1)), fracoes=args.fracoes,
+                  sementes=list(range(1, args.sementes + 1)), conhecidas=args.conhecidas,
+                  fracoes=args.fracoes if args.conhecidas == "fracao" else None,
                   duracao_s=round(time.time() - began))
     _plot(summary.loc["average_precision"], args, figures / "propagacao_average_precision.png")
 
@@ -135,6 +159,29 @@ def main() -> None:
     print(comparisons[comparisons["métrica"] == "average_precision"][columns].round(4).to_string(index=False))
 
 
+def _known_frauds(args, rng, fraud, tx):
+    """As fraudes tratadas como conhecidas: ``(rótulo, contas)`` para cada nível avaliado."""
+    if args.conhecidas == "fracao":
+        for fraction in args.fracoes:
+            yield fraction, list(rng.choice(fraud, size=max(1, round(fraction * len(fraud))), replace=False))
+        return
+    if "contestado_em" not in tx:
+        raise SystemExit("--conhecidas contestacao precisa de um cenário com p_contested > 0 (coluna contestado_em)")
+    contested = tx[tx["contestado_em"].notna() & (tx["contestado_em"] <= tx["timestamp"].max())]
+    known = sorted(set(contested["receiver"]) & set(fraud))
+    if known:
+        yield CONTESTED, known
+
+
+def _mean_percentile(scores: dict, labels: pd.Series, *methods: str) -> pd.Series:
+    """Combinação de métodos: média dos percentis de cada um, nas contas avaliadas."""
+    return sum(scores[m].reindex(labels.index).rank(pct=True) for m in methods) / len(methods)
+
+
+def _known_label(level) -> str:
+    return "contestações" if level == CONTESTED else f"{level:.0%} conhecidas"
+
+
 def _scores(prepared, feature_set: str, model: str, models: dict) -> pd.Series:
     """Escore de um detector não supervisionado (não usa as contas conhecidas)."""
     return DETECTORS[model](prepared.features[FEATURE_SETS[feature_set]], **models.get(model, {})).scores
@@ -143,8 +190,9 @@ def _scores(prepared, feature_set: str, model: str, models: dict) -> pd.Series:
 def _plot(summary: pd.DataFrame, args, path: Path) -> None:
     """Matriz método × (cenário, fração conhecida) da AP média."""
     mean = summary["mean"].droplevel("modelo")
-    columns = [(c, f) for c in args.cenarios for f in args.fracoes]
-    matrix = pd.DataFrame({f"{c}\n{f:.0%} conhecidas": [mean.get((c, f, m), np.nan) for m in METHODS]
+    levels = args.fracoes if args.conhecidas == "fracao" else [CONTESTED]
+    columns = [(c, f) for c in args.cenarios for f in levels]
+    matrix = pd.DataFrame({f"{c}\n{_known_label(f)}": [mean.get((c, f, m), np.nan) for m in METHODS]
                            for c, f in columns}, index=METHODS)
     fig, ax = plt.subplots(figsize=(2.8 + 1.4 * len(columns), 1.6 + 0.5 * len(METHODS)), layout="constrained")
     mesh = plot_value_matrix(matrix, SEQUENTIAL_CMAP, vmin=0, vmax=1, ax=ax)
