@@ -71,3 +71,17 @@ modelos:
     max_exact: 20000
   local_outlier_factor:
     n_neighbors: 20        # tamanho da vizinhança comparada; não gasta memória quadrática
+  ecod:
+    contamination: 0.05    # só o rótulo binário: a fração de maior escore marcada como anômala
+  one_class_svm:
+    nu: 0.05               # fração aproximada de contas deixadas fora da fronteira
+    gamma: scale
+    # Acima deste nº de contas, o núcleo RBF é aproximado (Nyström) e o SVM é treinado
+    # por gradiente estocástico: custo linear em vez de quadrático a cúbico.
+    max_exact: 5000
+    n_components: 300
+    seed: 42
+  autoencoder:
+    max_iter: 300          # para antes, quando o erro de validação deixa de cair
+    contamination: 0.05
+    seed: 42

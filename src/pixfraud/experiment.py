@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import importlib.metadata
+import inspect
 import json
 import platform
 import subprocess
@@ -69,19 +70,34 @@ def run_detectors(
     labels: pd.Series,
     models_config: dict,
     feature_sets: dict[str, list[str]] = FEATURE_SETS,
+    models: list[str] | None = None,
 ) -> tuple[pd.DataFrame, dict[tuple[str, str], Detection]]:
-    """Roda cada detector em cada conjunto de atributos.
+    """Roda cada detector (``models``, ou todos de ``DETECTORS``) em cada conjunto de atributos.
 
     Devolve a tabela de métricas (uma linha por combinação) e as detecções,
     indexadas por ``(conjunto, modelo)``.
     """
     rows, detections = [], {}
     for set_name, columns in feature_sets.items():
-        for model_name, detect in DETECTORS.items():
-            detection = detect(features[columns], **models_config.get(model_name, {}))
+        for model_name in models or list(DETECTORS):
+            detection = DETECTORS[model_name](features[columns], **models_config.get(model_name, {}))
             detections[(set_name, model_name)] = detection
             rows.append({"atributos": set_name, "modelo": model_name, **evaluate(labels, detection)})
     return pd.DataFrame(rows), detections
+
+
+def seeded_models(models_config: dict, seed: int) -> dict:
+    """Cópia da seção ``modelos`` com ``seed`` em todo detector que aceita semente.
+
+    Assim cada repetição de um estudo muda também a aleatoriedade dos
+    detectores (Isolation Forest, One-Class SVM aproximado, autoencoder), e
+    não só o dataset.
+    """
+    models = copy.deepcopy(models_config)
+    for name, detect in DETECTORS.items():
+        if "seed" in inspect.signature(detect).parameters:
+            models.setdefault(name, {})["seed"] = seed
+    return models
 
 
 def run_seeds(
@@ -89,19 +105,19 @@ def run_seeds(
     config: dict,
     seeds: Iterable[int],
     feature_sets: dict[str, list[str]] = FEATURE_SETS,
+    models: list[str] | None = None,
 ) -> Iterator[tuple[int, Prepared, pd.DataFrame]]:
     """Repete o experimento com várias sementes, uma de cada vez.
 
-    Cada semente gera um dataset sintético diferente e muda a semente do
-    Isolation Forest. Produz ``(semente, preparado, métricas)``, com a coluna
-    ``semente`` já incluída nas métricas.
+    Cada semente gera um dataset sintético diferente e muda a semente dos
+    detectores (``seeded_models``). Produz ``(semente, preparado, métricas)``,
+    com a coluna ``semente`` já incluída nas métricas.
     """
     for seed in seeds:
         accounts, transactions = generate_dataset(replace(simulation, seed=seed))
         prepared = prepare(accounts, transactions, config)
-        models = copy.deepcopy(config["modelos"])
-        models.setdefault("isolation_forest", {})["seed"] = seed
-        metrics, _ = run_detectors(prepared.features, prepared.labels, models, feature_sets)
+        metrics, _ = run_detectors(prepared.features, prepared.labels, seeded_models(config["modelos"], seed),
+                                   feature_sets, models)
         yield seed, prepared, metrics.assign(semente=seed)
 
 

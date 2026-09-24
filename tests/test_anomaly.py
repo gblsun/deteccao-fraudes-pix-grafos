@@ -4,7 +4,16 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pixfraud.anomaly import dbscan, isolation_forest, local_outlier_factor, prepare_matrix
+from pixfraud.anomaly import (
+    DETECTORS,
+    autoencoder,
+    dbscan,
+    ecod,
+    isolation_forest,
+    local_outlier_factor,
+    one_class_svm,
+    prepare_matrix,
+)
 from pixfraud.evaluation import evaluate
 
 
@@ -18,11 +27,56 @@ def blob_with_outlier():
     return features
 
 
-@pytest.mark.parametrize("detector", [isolation_forest, dbscan])
+@pytest.mark.parametrize("detector", [isolation_forest, dbscan, ecod, one_class_svm, autoencoder])
 def test_detector_flags_outlier(detector, blob_with_outlier):
     detection = detector(blob_with_outlier)
     assert detection.scores.idxmax() == "outlier"
     assert detection.is_anomaly["outlier"]
+
+
+@pytest.mark.parametrize("name", sorted(DETECTORS))
+def test_every_detector_returns_aligned_finite_scores(name, blob_with_outlier):
+    detection = DETECTORS[name](blob_with_outlier)
+    assert detection.scores.index.equals(blob_with_outlier.index)
+    assert detection.is_anomaly.index.equals(blob_with_outlier.index)
+    assert np.isfinite(detection.scores).all()
+    assert 0 < detection.is_anomaly.sum() < len(blob_with_outlier)
+
+
+@pytest.mark.parametrize("name", sorted(DETECTORS))
+def test_every_detector_survives_few_and_repeated_columns(name):
+    # como o conjunto "temporal": 2 atributos, a maioria das contas com valores iguais
+    features = pd.DataFrame({"a": [0.0] * 150 + [3.0, 9.0, 40.0], "b": [1.0] * 150 + [2.0, 7.0, 30.0]})
+    detection = DETECTORS[name](features)
+    assert np.isfinite(detection.scores).all()
+    assert detection.scores.iloc[-1] >= detection.scores.iloc[:150].max()
+
+
+def test_ecod_uses_both_tails():
+    # o ECOD soma a raridade de cada atributo: extremos nos dois atributos, para
+    # baixo ou para cima, ficam no topo
+    rng = np.random.default_rng(1)
+    features = pd.DataFrame(rng.lognormal(0, 0.4, (400, 2)), columns=["a", "b"])
+    features.loc[400] = [0.0, 0.0]  # cauda esquerda dos dois
+    features.loc[401] = [60.0, 60.0]  # cauda direita dos dois
+    top = ecod(features).scores.nlargest(2).index
+    assert set(top) == {400, 401}
+
+
+def test_one_class_svm_approximation_on_big_datasets():
+    rng = np.random.default_rng(0)
+    features = pd.DataFrame(rng.lognormal(0, 0.4, (600, 3)), columns=list("abc"))
+    features.loc[600] = [80.0, 80.0, 80.0]
+    exact = one_class_svm(features)
+    approximate = one_class_svm(features, max_exact=100, n_components=100)  # força Nyström + SGD
+    assert exact.scores.idxmax() == approximate.scores.idxmax() == 600
+    assert approximate.is_anomaly[600]
+
+
+def test_autoencoder_is_reproducible_with_the_seed(blob_with_outlier):
+    first = autoencoder(blob_with_outlier, seed=3).scores
+    assert first.equals(autoencoder(blob_with_outlier, seed=3).scores)
+    assert not first.equals(autoencoder(blob_with_outlier, seed=4).scores)
 
 
 def test_evaluate_perfect_ranking(blob_with_outlier):

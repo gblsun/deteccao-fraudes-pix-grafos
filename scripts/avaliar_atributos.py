@@ -22,7 +22,6 @@ Uso:
 """
 
 import argparse
-import copy
 import time
 from dataclasses import replace
 from pathlib import Path
@@ -44,6 +43,7 @@ from pixfraud.experiment import (  # noqa: E402
     prepare,
     run_detectors,
     save_metadata,
+    seeded_models,
     supervised_scores,
 )
 from pixfraud.features import FEATURE_SETS  # noqa: E402
@@ -69,6 +69,7 @@ def main() -> None:
     parser.add_argument("--sementes", type=int, default=5)
     parser.add_argument("--conjunto", default="completo", choices=list(FEATURE_SETS),
                         help="conjunto de atributos da ablação")
+    parser.add_argument("--modelos", nargs="+", choices=sorted(DETECTORS), help="detectores (padrão: todos)")
     parser.add_argument("--saida", default="reports")
     args = parser.parse_args()
     began = time.time()
@@ -87,14 +88,14 @@ def main() -> None:
             seed_began = time.time()
             accounts, tx = generate_dataset(replace(simulation, seed=seed))
             prepared = prepare(accounts, tx, config)
-            models = copy.deepcopy(config["modelos"])
-            models.setdefault("isolation_forest", {})["seed"] = seed
+            models = seeded_models(config["modelos"], seed)
             ids = {"cenario": name, "semente": seed}
 
-            ablation = feature_ablation(prepared.features, prepared.labels, FEATURE_SETS[args.conjunto], models)
+            ablation = feature_ablation(prepared.features, prepared.labels, FEATURE_SETS[args.conjunto], models,
+                                        args.modelos)
             ablations.append(ablation.assign(**ids))
 
-            metrics, _ = run_detectors(prepared.features, prepared.labels, models)
+            metrics, _ = run_detectors(prepared.features, prepared.labels, models, models=args.modelos)
             ceilings.append(metrics[["atributos", "modelo", "average_precision"]].assign(**ids))
             for set_name, columns in FEATURE_SETS.items():
                 scores = supervised_scores(prepared.features[columns], prepared.labels, seed=seed)
@@ -117,6 +118,7 @@ def main() -> None:
     ceiling_summary.to_csv(results / "atributos_teto_resumo.csv")
     save_metadata(results / "atributos_meta.json", config, cenarios={n: scenarios[n] for n in args.cenarios},
                   sementes=list(range(1, args.sementes + 1)), conjunto=args.conjunto,
+                  modelos=args.modelos or list(DETECTORS),
                   duracao_s=round(time.time() - began))
 
     _plot_ablation(ablation_summary, args, figures / "atributos_ablacao.png")
@@ -149,7 +151,8 @@ def _plot_ablation(summary: pd.DataFrame, args, path: Path) -> None:
 def _plot_ceiling(summary: pd.DataFrame, args, path: Path) -> None:
     """Matriz conjunto × (cenário, modelo) da AP média, com o Random Forest supervisionado."""
     mean = summary["mean"]
-    models = [*DETECTORS, SUPERVISED]
+    present = set(mean.index.get_level_values("modelo"))
+    models = [m for m in [*DETECTORS, SUPERVISED] if m in present]
     matrix = pd.DataFrame(
         {f"{c}\n{m.replace('_', ' ')}": [mean.get((c, s, m), np.nan) for s in FEATURE_SETS]
          for c in args.cenarios for m in models},

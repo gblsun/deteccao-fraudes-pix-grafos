@@ -21,7 +21,6 @@ Uso:
 """
 
 import argparse
-import copy
 import time
 from dataclasses import replace
 from pathlib import Path
@@ -36,7 +35,13 @@ import pandas as pd  # noqa: E402
 from sklearn.metrics import average_precision_score  # noqa: E402
 
 from pixfraud.anomaly import DETECTORS  # noqa: E402
-from pixfraud.experiment import load_experiment_config, load_scenarios, prepare, save_metadata  # noqa: E402
+from pixfraud.experiment import (  # noqa: E402
+    load_experiment_config,
+    load_scenarios,
+    prepare,
+    save_metadata,
+    seeded_models,
+)
 from pixfraud.features import FEATURE_SETS  # noqa: E402
 from pixfraud.flow import propagate_risk  # noqa: E402
 from pixfraud.simulation import generate_dataset, load_config, with_overrides  # noqa: E402
@@ -76,8 +81,7 @@ def main() -> None:
         for seed in range(1, args.sementes + 1):
             accounts, tx = generate_dataset(replace(simulation, seed=seed))
             prepared = prepare(accounts, tx, config)
-            models = copy.deepcopy(config["modelos"])
-            models.setdefault("isolation_forest", {})["seed"] = seed
+            models = seeded_models(config["modelos"], seed)
             detectors = {
                 "completo_dbscan": _scores(prepared, "completo", "dbscan", models),
                 "temporal_if": _scores(prepared, "temporal", "isolation_forest", models),

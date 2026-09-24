@@ -44,6 +44,30 @@ DIVERGING_CMAP = mcolors.LinearSegmentedColormap.from_list(
 )
 INK, INK_SECONDARY, SURFACE = "#0b0b0b", "#52514e", "#fcfcfb"
 
+# Uma cor por modelo, a mesma em todas as figuras. Famílias próximas têm tons
+# próximos: os detectores de densidade em azul, os de fronteira/reconstrução em
+# verde, os de grafo em roxo, a propagação em laranja e os tetos supervisionados em cinza.
+MODEL_COLORS = {
+    "isolation_forest": "#e45756",
+    "dbscan": "#256abf",
+    "local_outlier_factor": "#6da7ec",
+    "ecod": "#b8860b",
+    "one_class_svm": "#54a24b",
+    "autoencoder": "#88c77f",
+    "fraudar": "#7a5cc7",
+    "node2vec_if": "#b279a2",
+    "propagacao": "#f58518",
+    "label_spreading": "#ffbf79",
+    "random_forest": "#52514e",
+    "gradient_boosting": "#8a8a8a",
+    "graphsage": "#0b0b0b",
+}
+
+
+def model_color(model: str) -> str:
+    """Cor fixa de um modelo nas figuras (cinza-médio para um modelo sem cor definida)."""
+    return MODEL_COLORS.get(model, "#9aa7a4")
+
 
 def flow_layout(graph: nx.DiGraph) -> dict:
     """Posiciona os vértices da esquerda para a direita, no sentido do dinheiro.

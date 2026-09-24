@@ -82,9 +82,11 @@ def test_avaliar_externo(tmp_path):
     (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
     args = ["--config", str(tmp_path / "config.yaml"), "--dados", str(data), "--dias-janela", "2",
             "--min-fraudes", "1", "--saida", str(tmp_path / "saida")]
-    first = _run("avaliar_externo.py", *args)
+    first = _run("avaliar_externo.py", *args, "--modelos", "isolation_forest")
     assert "reaproveitada" not in first
-    assert "reaproveitada" in _run("avaliar_externo.py", *args)  # as janelas prontas ficam salvas
+    # um detector novo não é esquecido: a janela salva é completada só com os que faltam
+    assert "reaproveitada" not in _run("avaliar_externo.py", *args)
+    assert "reaproveitada" in _run("avaliar_externo.py", *args)  # agora tudo já está salvo
 
     runs = pd.read_csv(tmp_path / "saida" / "results" / "externo_execucoes.csv")
     assert runs["janela"].nunique() >= 1 and set(runs["modelo"]) == set(DETECTORS)
