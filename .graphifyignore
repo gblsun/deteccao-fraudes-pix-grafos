@@ -1,0 +1,14 @@
+# Arquivos que o Graphify não deve ler (o .gitignore já é respeitado).
+# Anonimato: o PDF original da proposta pode conter nomes (ver CLAUDE.md).
+docs/proposta-original.pdf
+docs/anexos/
+# gerados ou grandes: não trazem conhecimento novo
+data/
+reports/
+*.ipynb
+docs/grafo-de-notas.json
+relatorio/abnt.csl
+# configuração de editores
+.obsidian/
+.vscode/
+.github/

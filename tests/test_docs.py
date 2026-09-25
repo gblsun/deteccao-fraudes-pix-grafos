@@ -1,6 +1,7 @@
 """Testes da documentação: links que funcionam, docstrings, README e mapa em cada pasta."""
 
 import ast
+import importlib.util
 import re
 from pathlib import Path
 
@@ -70,3 +71,25 @@ def test_public_code_has_docstrings(path):
     public = [n for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef)) and not n.name.startswith("_")]
     missing = [n.name for n in public if not ast.get_docstring(n)]
     assert not missing, f"{path.name}: sem docstring em {missing}"
+
+
+def test_notes_graph_json_is_up_to_date():
+    """docs/grafo-de-notas.json (o grafo do Obsidian para agentes de IA) acompanha as notas."""
+    spec = importlib.util.spec_from_file_location("exportar", ROOT / "scripts" / "exportar_grafo_de_notas.py")
+    exportar = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(exportar)
+    saved = (ROOT / "docs" / "grafo-de-notas.json").read_text(encoding="utf-8")
+    assert saved == exportar.como_json(exportar.grafo_de_notas(ROOT)), (
+        "grafo de notas desatualizado: rode python scripts/exportar_grafo_de_notas.py"
+    )
+
+
+def test_code_graph_leaves_out_private_and_generated_files():
+    """O grafo do Graphify (graphify-out/, ver docs/obsidian.md) não lê o PDF original da
+    proposta (anonimato) nem dados e resultados gerados."""
+    graph = ROOT / "graphify-out" / "graph.json"
+    if not graph.exists():
+        pytest.skip("grafo do Graphify ainda não gerado")
+    text = graph.read_text(encoding="utf-8")
+    for forbidden in ("proposta-original.pdf", "data/synthetic", "data/raw", "reports/results"):
+        assert forbidden not in text, f"graphify-out/graph.json menciona {forbidden}: confira o .graphifyignore"

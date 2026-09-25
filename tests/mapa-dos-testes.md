@@ -41,6 +41,7 @@ instalado.
 | `test_pipeline.py` | tudo | o pipeline de ponta a ponta num dataset pequeno |
 | `test_scripts.py` | `scripts/` | os scripts de avaliação rodam e gravam o que prometem; progresso salvo é reaproveitado |
 | `test_app.py` | `app/` | o explorador Streamlit abre todas as abas sem erro |
+| `test_docs.py` | documentação | links relativos existem, toda nota tem tag, cada pasta tem nota-mapa, docstrings, `docs/grafo-de-notas.json` atualizado |
 
 ## Escrevendo um teste novo
 

@@ -63,6 +63,9 @@ associação, validação no AMLworld) estão em [docs/resultados.md](docs/resul
 ## Estrutura
 
 ```
+├── CLAUDE.md                  instruções para agentes de IA (Claude Code)
+├── llms.txt                   resumo e pontos de entrada para qualquer IA
+├── graphify-out/              grafo do código (Graphify): graph.json e GRAPH_REPORT.md
 ├── app/explorador.py          explorador interativo (Streamlit)
 ├── configs/
 │   ├── experimento.yaml       parâmetros da simulação, dos atributos e dos modelos
@@ -220,6 +223,97 @@ de interpretar os resultados.
 
 O projeto não usa dados pessoais reais. Os dados sintéticos não correspondem a pessoas
 reais, e os dados do Banco Central são estatísticas agregadas e públicas.
+
+## Grafos de conhecimento: Obsidian e Graphify
+
+A pesquisa tem dois grafos além do grafo de Pix. Um é para **anotar** a pesquisa, o outro é
+para **navegar** pelo código, e os dois também servem para agentes de IA:
+
+| | Obsidian | Graphify |
+|---|---|---|
+| Guarda | o **porquê**: leituras, decisões, reuniões, interpretação dos resultados | o **como**: que função chama qual, o que depende de quê |
+| Quem escreve | você, à mão, nas notas `.md` | ninguém: sai da leitura do código (árvore sintática) |
+| Nós | notas (fichamentos, glossário, diário, atas, resultados) | arquivos, funções e classes (e os títulos das notas) |
+| Arestas | links entre notas | `calls`, `imports`, `uses`, `references` |
+| Para a IA | [`docs/grafo-de-notas.json`](docs/grafo-de-notas.json) | `graphify-out/graph.json` e [`GRAPH_REPORT.md`](graphify-out/GRAPH_REPORT.md) |
+| Custo | nenhum | nenhum (local, sem LLM) |
+
+### Obsidian: o caderno da pesquisa
+
+O repositório inteiro é um cofre do Obsidian: fichamentos em `docs/leituras/`, termos em
+`docs/glossario/`, diário em `docs/diario/`, atas em `docs/reunioes/`, com modelos prontos e
+uma cor por tipo de nota. Configuração e rotina em [docs/obsidian.md](docs/obsidian.md).
+
+![Grafo de notas do Obsidian](reports/figures/grafo_de_notas.png)
+
+*Leituras (verde) em volta do mapa das leituras, termos do glossário (roxo) em volta do
+glossário, e `resultados.md` e `modelos.md` (vermelho) no meio, ligando os dois.*
+
+O mesmo grafo vai para um JSON que um agente consulta sem abrir as notas uma a uma. Por
+exemplo, quem cita a nota do PageRank:
+
+```powershell
+python scripts/exportar_grafo_de_notas.py   # depois de criar, renomear ou religar notas
+```
+
+```text
+docs/glossario/pagerank.md  <-  glossario.md, propagacao-de-risco.md, modelos.md, resultados.md
+docs/glossario/pagerank.md  ->  propagacao-de-risco.md, resultados.md, src/pixfraud/features.py
+```
+
+### Graphify: o mapa do código
+
+O [Graphify](https://github.com/Graphify-Labs/graphify) lê o código e monta um grafo de
+funções, classes e arquivos. Um agente pergunta ao grafo em vez de fazer grep e abrir
+arquivos inteiros.
+
+![Mapa do código pelo Graphify](reports/figures/grafo_do_codigo.png)
+
+*Cada ponto é um arquivo, e o tamanho é o número de ligações. `experiment.py` e
+`simulation.py` são o centro; os scripts (laranja) chamam o pacote (azul).*
+
+```powershell
+pip install graphifyy          # no .venv
+graphify update .              # depois de mudar o código (local, segundos)
+```
+
+**O que quebra se eu mudar `graph_features`?**
+
+```text
+> graphify affected "graph_features"
+- build_features() [calls] src/pixfraud/features.py:L111
+- prepare() [calls] src/pixfraud/experiment.py:L62
+- test_features() [calls] tests/test_features.py:L35
+- test_pipeline_end_to_end() [calls] tests/test_pipeline.py:L20
+- PageRank (ponderado pelo valor) [references] docs/glossario/pagerank.md:L13
+- Grau (in_degree, out_degree) [references] docs/glossario/grau.md:L16
+  ...
+```
+
+Aparecem as funções e os testes que a chamam e também as notas do glossário que citam a
+função, ou seja, o que precisa ser revisto junto.
+
+**Como o experimento chega nos atributos de grafo?**
+
+```text
+> graphify path "prepare" "graph_features"
+prepare() --calls--> build_features() --calls--> graph_features()
+```
+
+Outros comandos: `graphify explain "propagate_risk"` (vizinhos de uma função),
+`graphify god-nodes` (as peças centrais) e `graphify query "..."` (busca por tema).
+
+**Economiza tokens?** Numa medição neste repositório (tokens estimados como bytes ÷ 4), a
+pergunta "o que quebra se eu mudar `graph_features`?" custou ~120 tokens pelo grafo,
+contra ~3.350 com grep e leitura dos arquivos. A visão geral pelo `GRAPH_REPORT.md` custou
+~2.900 tokens, contra ~41.000 lendo `src/pixfraud/` inteiro. Numa sessão inteira o ganho
+é menor, de uns 20 a 40%, porque para editar uma função o agente ainda precisa ler o
+arquivo. O grafo ajuda a descobrir **onde** mexer e **o que** quebra.
+
+As figuras desta seção saem de `python scripts/ilustrar_grafos_de_conhecimento.py`.
+O [`CLAUDE.md`](CLAUDE.md) e o [`llms.txt`](llms.txt) apontam os agentes para os dois
+grafos, e [docs/obsidian.md](docs/obsidian.md) explica por que Neo4j, GraphRAG, LangGraph
+e Memgraph ficaram de fora por enquanto.
 
 ## Organização do trabalho
 

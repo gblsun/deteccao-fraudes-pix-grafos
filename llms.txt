@@ -50,6 +50,12 @@ identidade de quem faz esta pesquisa.
 
 - [docs/obsidian.md](docs/obsidian.md): por que o repositório é também um cofre do
   Obsidian, o padrão de nota-mapa + README, as tags e as cores do grafo.
+- [docs/grafo-de-notas.json](docs/grafo-de-notas.json): o grafo do Obsidian em JSON (cada
+  nota com título e tags, e cada link para outra nota ou arquivo de código), gerado por
+  `scripts/exportar_grafo_de_notas.py`. Use para achar relações sem abrir todas as notas.
+- [graphify-out/GRAPH_REPORT.md](graphify-out/GRAPH_REPORT.md): grafo de conhecimento do
+  código (Graphify: módulos, funções, chamadas e imports), com `graphify-out/graph.json`
+  para consultas (`graphify affected`, `path`, `explain`).
 - Cada pasta documentada segue o padrão `pasta/nome-descritivo.md` (o conteúdo real, e o
   rótulo que aparece no grafo de notas) + `pasta/README.md` (um ponteiro de três linhas,
   só para o GitHub mostrar algo ao abrir a pasta). Um agente que for ler a documentação de
