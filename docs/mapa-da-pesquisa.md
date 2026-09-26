@@ -45,5 +45,5 @@ não o grafo das notas) sem sair do cofre: [rede-pix.md](rede-pix.md).
 | [`relatorio/`](../relatorio/mapa-do-relatorio.md) | esqueleto do relatório final em Markdown, gerado em DOCX/PDF pelo Pandoc |
 | [`tests/`](../tests/mapa-dos-testes.md) | o que cada teste verifica |
 
-Regra para tudo o que fica no repositório: **nenhum nome de pessoa, orientador ou
-curso** (a proposta é submetida de forma anônima).
+Regra para tudo o que fica no repositório: seguir a **LGPD** no contexto do Pix, sem
+nenhum dado pessoal real de usuário do Pix (ver [CLAUDE.md](../CLAUDE.md)).

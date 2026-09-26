@@ -86,7 +86,7 @@ def test_notes_graph_json_is_up_to_date():
 
 def test_code_graph_leaves_out_private_and_generated_files():
     """O grafo do Graphify (graphify-out/, ver docs/obsidian.md) não lê o PDF original da
-    proposta (anonimato) nem dados e resultados gerados."""
+    proposta (arquivo de submissão) nem dados e resultados gerados."""
     graph = ROOT / "graphify-out" / "graph.json"
     if not graph.exists():
         pytest.skip("grafo do Graphify ainda não gerado")

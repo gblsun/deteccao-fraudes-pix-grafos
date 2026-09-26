@@ -8,10 +8,12 @@
 > Obsidian (ver `docs/obsidian.md`), então cada pasta documentada tem uma nota-mapa com
 > nome próprio além do `README.md` que o GitHub mostra.
 
-Regra que vale para qualquer edição feita por um agente neste repositório: **nenhum nome
-de pessoa, orientador ou curso** em nada do conteúdo — a proposta é submetida de forma
-anônima. Citar autores externos em referências bibliográficas é normal; a regra é sobre a
-identidade de quem faz esta pesquisa.
+Autor: Gabriel Muchon Pavanelli. Orientador: Prof. Me. Kyung Moo Kim.
+
+Regra que vale para qualquer edição feita por um agente neste repositório: seguir a
+**LGPD** no contexto do Pix — **nenhum dado pessoal real de usuário do Pix** (nome,
+CPF, chave Pix, conta, identificador de transação) no conteúdo; os dados são sintéticos ou
+agregados e públicos. Detalhes em `CLAUDE.md`.
 
 ## Comece por aqui
 

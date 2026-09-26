@@ -2470,6 +2470,11 @@
   },
   {
    "de": "docs/mapa-da-pesquisa.md",
+   "para": "CLAUDE.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
    "para": "README.md",
    "tipo": "arquivo"
   },
@@ -3010,6 +3015,11 @@
   },
   {
    "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "CLAUDE.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
    "para": "configs/parametros-dos-experimentos.md",
    "tipo": "nota"
   },
@@ -3396,6 +3406,11 @@
   {
    "de": "relatorio/capitulos/05_conclusao.md",
    "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "CLAUDE.md",
    "tipo": "nota"
   },
   {

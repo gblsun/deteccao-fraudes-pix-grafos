@@ -93,7 +93,7 @@ Três peças deixam o cofre legível para um agente:
 
 | Arquivo | Para quê |
 |---------|----------|
-| [`CLAUDE.md`](../CLAUDE.md) | instruções que o Claude Code carrega sozinho ao abrir o repositório (a regra de anonimato, por onde começar, como editar notas) |
+| [`CLAUDE.md`](../CLAUDE.md) | instruções que o Claude Code carrega sozinho ao abrir o repositório (a regra da LGPD, a autoria, por onde começar, como editar notas) |
 | [`llms.txt`](../llms.txt) | resumo e pontos de entrada, para qualquer ferramenta de IA |
 | [`grafo-de-notas.json`](grafo-de-notas.json) | o grafo do Obsidian em JSON: cada nota (título, tags) e cada link dela, para outra nota ou para um arquivo de código |
 
@@ -120,7 +120,7 @@ graphify path "prepare" "graph_features"  # prepare -> build_features -> graph_f
 graphify explain "propagate_risk"
 ```
 
-O `.graphifyignore` tira do grafo o `docs/proposta-original.pdf` (regra de anonimato),
+O `.graphifyignore` tira do grafo o `docs/proposta-original.pdf` (arquivo de submissão),
 `data/`, `reports/` e os notebooks. O `graphify update .` também lê as notas em Markdown,
 mas só a estrutura (títulos e links), localmente e sem LLM. A leitura *semântica* dos
 docs (conceitos e relações extraídos do texto) exigiria mandar o texto para um LLM, e
@@ -190,9 +190,9 @@ Plugins e aparência ficam só na sua máquina (o `.gitignore` versiona apenas `
 
 ## Regras
 
-- **Nenhum nome de pessoa, orientador ou curso** nas notas do repositório: a proposta é
-  submetida de forma anônima. Anotações pessoais com nomes ficam num cofre separado,
-  fora desta pasta.
+- **LGPD**: nenhum dado pessoal real de usuário do Pix nas notas, e nenhuma pessoa além
+  do autor e do orientador nomeada (ver [CLAUDE.md](../CLAUDE.md)). Anotações pessoais
+  ficam num cofre separado, fora desta pasta.
 - Commits pelo VS Code ou pelo terminal, como o resto do projeto. Plugins de git
   automático não são necessários.
 - Notebooks (`.ipynb`) não abrem no Obsidian: para citá-los, use um link comum para o

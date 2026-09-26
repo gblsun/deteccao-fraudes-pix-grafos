@@ -3,10 +3,27 @@
 Pesquisa de iniciação científica sobre detecção de fraudes no Pix com teoria dos grafos
 (pacote Python `pixfraud`). O repositório inteiro é também um cofre do Obsidian.
 
-## Regra principal
+## Autoria
 
-**Nenhum nome de pessoa, orientador ou curso** em nada do conteúdo: a proposta é
-submetida de forma anônima. Citar autores externos em referências é normal.
+- Autor: Gabriel Muchon Pavanelli
+- Orientador: Prof. Me. Kyung Moo Kim
+
+## Regra principal: LGPD no contexto do Pix
+
+O trabalho segue a LGPD (Lei nº 13.709/2018) e o sigilo bancário (Lei Complementar
+nº 105/2001), que protege os dados de transações Pix.
+
+- **Nenhum dado pessoal real de usuário do Pix** entra no repositório: nome de titular,
+  CPF, chave Pix (CPF, e-mail, telefone ou aleatória), agência e conta, identificador de
+  transação ou qualquer dado que permita reidentificar uma conta. Os dados daqui são
+  sintéticos (gerados pelo `pixfraud`) ou estatísticas agregadas e públicas do Banco Central.
+- Identificadores sintéticos não imitam formatos reais: nada de CPF válido, telefone ou
+  e-mail com cara de verdadeiro em código, exemplos, figuras ou notas.
+- Dataset externo com dados de pessoas: fica em `data/` (fora do git), só anonimizado ou
+  pseudonimizado, com o mínimo de atributos necessário (princípio da necessidade, art. 6º,
+  III) e só para a pesquisa (art. 7º, IV). Resultados publicados são agregados.
+- Nomes: os da autoria (acima) podem aparecer, e citar autores externos em referências é
+  normal. Outras pessoas (colegas, participantes de reuniões) não são nomeadas nas notas.
 
 ## Como se orientar
 

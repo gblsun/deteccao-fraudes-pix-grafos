@@ -30,5 +30,5 @@ liga a ata ao resto do cofre:
 - o que foi lido ou indicado: link para a nota da leitura em
   [`docs/leituras/`](../leituras/mapa-das-leituras.md).
 
-**Sem nomes de pessoas** nas atas do repositório: escreva "a orientação sugeriu...", não o
-nome. Anotações com nomes ficam num cofre pessoal, fora daqui.
+**LGPD** nas atas: além do autor e do orientador, não nomeie outras pessoas, e nada de
+dado pessoal real (ver [CLAUDE.md](../../CLAUDE.md)).
