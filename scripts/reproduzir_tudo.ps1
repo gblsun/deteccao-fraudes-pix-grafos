@@ -41,7 +41,7 @@ function Rodar([string]$descricao, [string[]]$argumentos) {
     Write-Host ("   pronto em {0:N0} s" -f ((Get-Date) - $inicio).TotalSeconds)
 }
 
-Rodar "dataset sintético" @("scripts/gerar_dataset.py")
+Rodar "dataset sintético" @("scripts/gerar_dataset.py", "--seed", "42")
 Rodar "uma rodada completa" @("scripts/rodar_experimento.py", "--saida", $saida)
 Rodar "robustez ($sementes sementes)" @("scripts/avaliar_robustez.py", "--sementes", $sementes, "--saida", $saida)
 Rodar "cenários de dificuldade" @("scripts/avaliar_cenarios.py", "--sementes", $sementes, "--saida", $saida)

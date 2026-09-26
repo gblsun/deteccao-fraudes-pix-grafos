@@ -12,7 +12,7 @@ com exemplos de uso.
 
 | Script | O que faz | Lê | Grava | Tempo aprox. |
 |--------|-----------|----|-------|--------------|
-| [`gerar_dataset.py`](gerar_dataset.py) | gera o dataset sintético | `configs/experimento.yaml` | `data/synthetic/` | segundos |
+| [`gerar_dataset.py`](gerar_dataset.py) | gera um dataset sintético novo a cada execução (semente sorteada, gravada em `dataset_meta.json`; `--seed N` reproduz) | `configs/experimento.yaml` | `data/synthetic/` + `dataset_meta.json` | segundos |
 | [`rodar_experimento.py`](rodar_experimento.py) | uma rodada: grafo, atributos, 2 detectores × 6 conjuntos, figuras | `data/synthetic/` | `reports/results/metricas.csv`, `reports/figures/grafo_de_calor_*`, `heatmap_risco_*` | ~1 min |
 | [`avaliar_robustez.py`](avaliar_robustez.py) | repete com várias sementes; IC e testes pareados | configuração | `reports/results/robustez_*.csv`, `robustez_average_precision.png` | ~4 min (10 sementes) |
 | [`avaliar_cenarios.py`](avaliar_cenarios.py) | repete em cada cenário de dificuldade | `configs/cenarios.yaml` | `reports/results/cenarios_*.csv`, `cenarios_*.png` | ~40 min (8 cenários × 10 sementes) |

@@ -10,6 +10,7 @@ Uso:
 """
 
 import argparse
+import json
 import time
 from pathlib import Path
 
@@ -61,7 +62,11 @@ def main() -> None:
         plt.close(fig)
 
     metrics.to_csv(results / "metricas.csv", index=False)
-    save_metadata(results / "metricas_meta.json", config, dados=args.dados, duracao_s=round(time.time() - began))
+    # a semente que gerou o dataset (gravada pelo gerar_dataset.py), não a seed do YAML
+    dataset_meta = Path(args.dados) / "dataset_meta.json"
+    dataset_seed = json.loads(dataset_meta.read_text(encoding="utf-8")).get("seed") if dataset_meta.exists() else None
+    save_metadata(results / "metricas_meta.json", config, dados=args.dados, seed_do_dataset=dataset_seed,
+                  duracao_s=round(time.time() - began))
     print(metrics.round(3).to_string(index=False))
 
 

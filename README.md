@@ -127,7 +127,8 @@ pytest
 ## Pipeline
 
 ```powershell
-# 1. gera o dataset sintético em data/synthetic/
+# 1. gera o dataset sintético em data/synthetic/ (semente sorteada a cada execução;
+#    --seed 42 refaz o dataset dos resultados em reports/)
 python scripts/gerar_dataset.py
 
 # 2. monta o grafo, extrai atributos, roda os detectores e salva métricas e figuras

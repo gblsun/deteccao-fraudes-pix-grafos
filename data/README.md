@@ -5,7 +5,7 @@ qualquer momento pelos scripts, a partir da configuração e da semente.
 
 | Pasta        | Conteúdo                                               | Como gerar                                      |
 |--------------|--------------------------------------------------------|-------------------------------------------------|
-| `synthetic/` | Dataset sintético (`accounts.csv`, `transactions.csv`) | `python scripts/gerar_dataset.py`               |
+| `synthetic/` | Dataset sintético (`accounts.csv`, `transactions.csv`, `dataset_meta.json` com a semente) | `python scripts/gerar_dataset.py` (semente sorteada; `--seed N` reproduz) |
 | `processed/` | Atributos por conta (`features.csv`)                   | `python scripts/rodar_experimento.py`           |
 | `bcb/`       | Estatísticas públicas do PIX (Banco Central)           | `python scripts/baixar_dados_bcb.py <recurso> <AAAAMM>` |
 | `external/`  | Datasets públicos convertidos para o formato do projeto | `python scripts/importar_dataset.py <fonte> <arquivo>` |

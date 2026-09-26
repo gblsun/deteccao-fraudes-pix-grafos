@@ -71,6 +71,23 @@ def test_avaliar_robustez(tmp_path):
     assert _check_metadata(tmp_path / "results" / "robustez_meta.json")["sementes"] == [1, 2]
 
 
+def test_gerar_dataset_sorteia_semente_e_reproduz_com_seed(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+
+    def gerar(pasta: str, *seed: str) -> tuple[int, str]:
+        _run("gerar_dataset.py", "--config", str(tmp_path / "config.yaml"), "--saida", str(tmp_path / pasta), *seed)
+        meta = json.loads((tmp_path / pasta / "dataset_meta.json").read_text(encoding="utf-8"))
+        assert meta["configuracao"]["seed"] == meta["seed"]
+        return meta["seed"], (tmp_path / pasta / "transactions.csv").read_text(encoding="utf-8")
+
+    seed_a, _ = gerar("a")
+    seed_b, _ = gerar("b")
+    assert seed_a != seed_b  # sem --seed, cada execução sorteia uma semente nova
+    seed_c, dados_c = gerar("c", "--seed", "7")
+    seed_d, dados_d = gerar("d", "--seed", "7")
+    assert seed_c == seed_d == 7 and dados_c == dados_d
+
+
 def test_avaliar_externo(tmp_path):
     # um dataset sintético pequeno fazendo o papel de dataset externo, com o papel como "tipologia"
     accounts, transactions = generate_dataset(SimulationConfig(n_people=200, n_merchants=10, n_days=6, n_rings=3,
