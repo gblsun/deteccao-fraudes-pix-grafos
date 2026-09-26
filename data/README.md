@@ -104,6 +104,7 @@ normalmente, então não é conexão nem código.
   crescente a partir de `--espera` segundos). Se ainda falhar, tente mais tarde ou filtre
   mais no `--filtro` (conferir antes os nomes dos campos do recurso). Em 26/09/2026 falhou
   mesmo com 3 tentativas e com `--top 100`, então o gargalo é o servidor montar o filtro.
+  Nova tentativa no mesmo dia, perto do meio-dia, também deu 504.
 - **Impacto:** nenhum resultado em `reports/` depende desse download. Ele serve só para
   calibrar o gerador sintético, que por enquanto **não está calibrado** com esses dados.
 

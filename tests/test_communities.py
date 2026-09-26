@@ -10,6 +10,8 @@ from pixfraud.communities import (
     core_numbers,
     densest_subgraph,
     detect_communities,
+    fraudar_blocks,
+    fraudar_scores,
     oddball_scores,
     participation_coefficient,
     structural_features,
@@ -54,6 +56,26 @@ def test_densest_subgraph_finds_planted_clique():
     assert density >= 4.5  # 45 arestas / 10 contas
     fraudar_nodes, _ = densest_subgraph(graph, fraudar=True)
     assert set(clique) <= fraudar_nodes
+
+
+def test_fraudar_finds_rings_one_after_another():
+    # rede esparsa com duas "quadrilhas" pequenas e densas: cada uma vira um bloco
+    graph = nx.gnm_random_graph(400, 600, seed=2, directed=True)
+    rings = [list(range(400, 408)), list(range(410, 416))]
+    for ring in rings:
+        graph.add_edges_from((u, v) for u in ring for v in ring if u != v)
+    blocks = fraudar_blocks(graph, max_blocks=5)
+    assert [set(block) for block, _ in blocks[:2]] == [set(rings[0]), set(rings[1])]
+    assert blocks[0][1] > blocks[1][1]  # do mais denso para o menos denso
+    scores = fraudar_scores(graph, max_blocks=2)
+    assert set(scores[scores > 0].index) == set(rings[0] + rings[1])
+
+
+def test_fraudar_scores_ignore_a_block_that_is_most_of_the_network():
+    graph = nx.gnm_random_graph(400, 3000, seed=2, directed=True)  # densa por igual
+    blocks = fraudar_blocks(graph, max_blocks=1)
+    assert len(blocks[0][0]) > 0.05 * 400
+    assert (fraudar_scores(graph, max_blocks=1, max_share=0.05) == 0).all()
 
 
 def test_oddball_flags_star():

@@ -1,5 +1,6 @@
 """Testes de fumaça dos scripts de avaliação, num dataset minúsculo."""
 
+import importlib.util
 import json
 import os
 import subprocess
@@ -91,17 +92,19 @@ def test_gerar_dataset_sorteia_semente_e_reproduz_com_seed(tmp_path):
 def test_reproduzir_tudo_lista_as_etapas_em_ordem():
     etapas = [linha.split()[0] for linha in _run("reproduzir_tudo.py", "--listar").splitlines()
               if linha.split() and linha.split()[0] in {"dataset", "experimento", "robustez", "cenarios", "online",
-                                                         "atributos", "propagacao"}]
-    assert etapas == ["dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao"]
+                                                         "atributos", "propagacao", "fraudar", "gnn"}]
+    esperadas = ["dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao", "fraudar",
+                 "gnn"]
+    assert etapas == [e for e in esperadas if e != "gnn" or importlib.util.find_spec("torch")]
     rapido = _run("reproduzir_tudo.py", "--rapido", "--listar", "--etapas", "experimento")
     assert "--saida reports_teste" in rapido and "robustez" not in rapido
 
 
 def test_reproduzir_tudo_extras_vem_depois_e_mostram_tempo():
     saida = _run("reproduzir_tudo.py", "--listar", "--extras")
-    nomes = [linha.split()[0] for linha in saida.splitlines() if linha.startswith(("propagacao", "rede", "ilustracoes",
+    nomes = [linha.split()[0] for linha in saida.splitlines() if linha.startswith(("fraudar", "rede", "ilustracoes",
                                                                                   "notas", "graphify", "relatorio"))]
-    assert nomes[0] == "propagacao" and nomes[1:4] == ["rede", "ilustracoes", "notas"] and nomes[-1] == "relatorio"
+    assert nomes[0] == "fraudar" and nomes[1:4] == ["rede", "ilustracoes", "notas"] and nomes[-1] == "relatorio"
     assert "total estimado: ~" in saida and "obsidian://open?path=" in saida
     assert "rede_completa" not in _run("reproduzir_tudo.py", "--listar")  # sem --extras, só os resultados
     assert "obsidian://" not in _run("reproduzir_tudo.py", "--listar", "--extras", "--sem-abrir")
@@ -187,6 +190,36 @@ def test_avaliar_propagacao(tmp_path):
     assert "combinado - completo_dbscan" in set(comparisons["comparação"])
     _check_metadata(tmp_path / "results" / "propagacao_meta.json", cenarios={"dificil"})
     assert (tmp_path / "figures" / "propagacao_average_precision.png").exists()
+
+
+def test_avaliar_fraudar(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("avaliar_fraudar.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "base", "dificil", "--sementes", "2", "--saida", str(tmp_path))
+    runs = pd.read_csv(tmp_path / "results" / "fraudar_execucoes.csv")
+    assert set(runs["metodo"]) == {"fraudar", "completo_dbscan", "combinado"}
+    assert runs["average_precision"].between(0, 1).all() and runs["cobertura"].between(0, 1).all()
+    comparisons = pd.read_csv(tmp_path / "results" / "fraudar_comparacoes.csv")
+    assert "fraudar - completo_dbscan" in set(comparisons["comparação"])
+    _check_metadata(tmp_path / "results" / "fraudar_meta.json", cenarios={"base", "dificil"})
+    assert (tmp_path / "figures" / "fraudar_average_precision.png").exists()
+
+
+def test_avaliar_gnn(tmp_path):
+    pytest.importorskip("torch")
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("avaliar_gnn.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "base", "--sementes", "2", "--epocas", "20",
+         "--saida", str(tmp_path))
+    runs = pd.read_csv(tmp_path / "results" / "gnn_execucoes.csv")
+    assert {"dominant_completo", "sage_tabular", "rf_tabular"} <= set(runs["metodo"])
+    assert runs["average_precision"].between(0, 1).all()
+    comparisons = pd.read_csv(tmp_path / "results" / "gnn_comparacoes.csv")
+    assert "sage_tabular - rf_tabular" in set(comparisons["comparação"])
+    _check_metadata(tmp_path / "results" / "gnn_meta.json", cenarios={"base"})
+    assert (tmp_path / "figures" / "gnn_average_precision.png").exists()
 
 
 def test_gerar_relatorio(tmp_path):

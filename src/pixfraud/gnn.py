@@ -1,0 +1,194 @@
+"""Redes neurais para grafos (GNN) aplicadas às contas, com PyTorch.
+
+Depende do ``torch``, que é opcional: ``pip install -e ".[gnn]"`` (a versão só
+para CPU basta: ``--index-url https://download.pytorch.org/whl/cpu``). As
+camadas são escritas aqui mesmo, sem PyTorch Geometric: o grafo do Pix
+sintético cabe numa matriz esparsa, e duas camadas são poucas linhas.
+
+Uma GNN aprende a representação de cada conta misturando os atributos dela com
+os dos vizinhos (*message passing*): em vez de a gente calcular grau, PageRank
+ou intermediação à mão, a rede decide o que combinar. Duas formas de usar:
+
+* ``dominant_scores`` (**não supervisionado**, como os detectores de
+  ``pixfraud.anomaly``): um autoencoder de grafo, o DOMINANT (Ding et al.,
+  2019). Um codificador GCN comprime cada conta; um decodificador reconstrói os
+  atributos e outro reconstrói as ligações. A conta que a rede não consegue
+  reconstruir, nos atributos ou em quem ela conhece, é anômala.
+* ``sage_supervised_scores`` (**supervisionado**, um teto como o Random Forest de
+  ``pixfraud.experiment.supervised_scores``): uma GraphSAGE (Hamilton, Ying e
+  Leskovec, 2017) treinada com os rótulos, em validação cruzada. Mostra o que se
+  ganharia com rótulos e com a estrutura aprendida.
+
+Os dois devolvem um escore por conta (quanto maior, mais suspeita), alinhado
+com o índice de ``features``.
+"""
+
+from __future__ import annotations
+
+import networkx as nx
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import StratifiedKFold
+
+from pixfraud.anomaly import prepare_matrix
+from pixfraud.communities import undirected_simple
+
+try:
+    import torch
+    from torch import nn
+except ImportError:  # pragma: no cover - depende do ambiente
+    torch = None
+
+
+def _require_torch() -> None:
+    if torch is None:
+        raise ImportError('o módulo pixfraud.gnn precisa do torch: pip install -e ".[gnn]"')
+
+
+def _adjacency(graph: nx.Graph, index: pd.Index) -> tuple[torch.Tensor, torch.Tensor]:
+    """Matrizes esparsas do grafo não direcionado, na ordem de ``index``.
+
+    Devolve a adjacência normalizada da GCN, $\\hat A = D^{-1/2}(A + I)D^{-1/2}$,
+    e a média dos vizinhos da GraphSAGE, $D^{-1}A$ (linha zerada para conta sem
+    vizinhos).
+    """
+    simple = undirected_simple(graph)
+    position = {v: i for i, v in enumerate(index)}
+    edges = np.array([(position[u], position[v]) for u, v in simple.edges() if u in position and v in position],
+                     dtype=np.int64).reshape(-1, 2)
+    n = len(index)
+    rows = np.concatenate([edges[:, 0], edges[:, 1]])
+    cols = np.concatenate([edges[:, 1], edges[:, 0]])
+    degree = np.bincount(rows, minlength=n).astype(np.float32)
+
+    self_loops = np.arange(n)
+    gcn_rows, gcn_cols = np.concatenate([rows, self_loops]), np.concatenate([cols, self_loops])
+    inv_sqrt = 1.0 / np.sqrt(degree + 1.0)
+    gcn_values = inv_sqrt[gcn_rows] * inv_sqrt[gcn_cols]
+    gcn = torch.sparse_coo_tensor(np.vstack([gcn_rows, gcn_cols]), gcn_values.astype(np.float32), (n, n),
+                                  check_invariants=False)
+
+    mean_values = 1.0 / np.maximum(degree[rows], 1.0)
+    mean = torch.sparse_coo_tensor(np.vstack([rows, cols]), mean_values.astype(np.float32), (n, n),
+                                   check_invariants=False)
+    return gcn.coalesce(), mean.coalesce()
+
+
+def dominant_scores(
+    graph: nx.Graph,
+    features: pd.DataFrame,
+    hidden: int = 64,
+    latent: int = 32,
+    epochs: int = 300,
+    alpha: float = 0.5,
+    learning_rate: float = 5e-3,
+    seed: int = 42,
+    max_nodes: int = 20_000,
+) -> pd.Series:
+    """Escore de anomalia do DOMINANT: erro de reconstrução dos atributos e das ligações.
+
+    O escore é ``alpha`` × erro dos atributos + (1 - ``alpha``) × erro da
+    estrutura, com os dois erros divididos pela própria média para ficarem na
+    mesma escala. A reconstrução da estrutura compara a linha inteira da
+    adjacência, o que custa memória proporcional ao **quadrado** do nº de
+    contas; acima de ``max_nodes`` contas, a função recusa em vez de travar a
+    máquina.
+    """
+    _require_torch()
+    n = len(features)
+    if n > max_nodes:
+        raise ValueError(f"{n} contas: acima de max_nodes={max_nodes}, a matriz densa de adjacência não cabe")
+    torch.manual_seed(seed)
+    X = torch.tensor(prepare_matrix(features), dtype=torch.float32)
+    gcn, _ = _adjacency(graph, features.index)
+    A = (gcn.to_dense() > 0).float() - torch.eye(n)  # adjacência 0/1 sem laços, alvo da reconstrução
+
+    encoder = nn.ModuleList([nn.Linear(X.shape[1], hidden), nn.Linear(hidden, latent)])
+    attribute_decoder = nn.ModuleList([nn.Linear(latent, hidden), nn.Linear(hidden, X.shape[1])])
+    structure_decoder = nn.Linear(latent, latent)
+    parameters = [*encoder.parameters(), *attribute_decoder.parameters(), *structure_decoder.parameters()]
+    optimizer = torch.optim.Adam(parameters, lr=learning_rate)
+
+    def forward():
+        h = torch.relu(torch.sparse.mm(gcn, encoder[0](X)))
+        z = torch.relu(torch.sparse.mm(gcn, encoder[1](h)))
+        x_hat = torch.sparse.mm(gcn, attribute_decoder[1](torch.relu(torch.sparse.mm(gcn, attribute_decoder[0](z)))))
+        s = torch.relu(torch.sparse.mm(gcn, structure_decoder(z)))
+        a_hat = torch.sigmoid(s @ s.T)
+        attribute_error = ((X - x_hat) ** 2).sum(dim=1).sqrt()
+        structure_error = ((A - a_hat) ** 2).sum(dim=1).sqrt()
+        return attribute_error, structure_error
+
+    for _ in range(epochs):
+        optimizer.zero_grad()
+        attribute_error, structure_error = forward()
+        loss = alpha * attribute_error.mean() + (1 - alpha) * structure_error.mean()
+        loss.backward()
+        optimizer.step()
+
+    with torch.no_grad():
+        attribute_error, structure_error = forward()
+        score = (alpha * attribute_error / attribute_error.mean().clamp_min(1e-12)
+                 + (1 - alpha) * structure_error / structure_error.mean().clamp_min(1e-12))
+    return pd.Series(score.numpy().astype(float), index=features.index, name="score")
+
+
+class _GraphSAGE(nn.Module):
+    """Duas camadas GraphSAGE com agregação pela média: [própria conta ‖ média dos vizinhos]."""
+
+    def __init__(self, n_features: int, hidden: int, dropout: float):
+        super().__init__()
+        self.layer1 = nn.Linear(2 * n_features, hidden)
+        self.layer2 = nn.Linear(2 * hidden, hidden)
+        self.out = nn.Linear(hidden, 1)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, X: torch.Tensor, mean: torch.Tensor) -> torch.Tensor:
+        h = torch.relu(self.layer1(torch.cat([X, torch.sparse.mm(mean, X)], dim=1)))
+        h = self.dropout(h)
+        h = torch.relu(self.layer2(torch.cat([h, torch.sparse.mm(mean, h)], dim=1)))
+        return self.out(self.dropout(h)).squeeze(1)
+
+
+def sage_supervised_scores(
+    graph: nx.Graph,
+    features: pd.DataFrame,
+    labels: pd.Series,
+    folds: int = 5,
+    hidden: int = 64,
+    epochs: int = 200,
+    dropout: float = 0.3,
+    learning_rate: float = 1e-2,
+    seed: int = 42,
+) -> pd.Series:
+    """Probabilidade de fraude fora da amostra, por uma GraphSAGE em validação cruzada.
+
+    Transdutivo, como é comum em GNN: o grafo inteiro (e os atributos de todas
+    as contas) é visto no treino, mas a perda usa só os rótulos das contas de
+    treino da dobra, e cada conta recebe a previsão do modelo em que ela ficou
+    de fora. As fraudes, raras, pesam mais na perda (``pos_weight``).
+    """
+    _require_torch()
+    X = torch.tensor(prepare_matrix(features), dtype=torch.float32)
+    _, mean = _adjacency(graph, features.index)
+    y_np = labels.reindex(features.index).astype(bool).to_numpy()
+    y = torch.tensor(y_np, dtype=torch.float32)
+    proba = np.zeros(len(features))
+    splitter = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)
+    for fold, (train, test) in enumerate(splitter.split(np.zeros(len(y_np)), y_np)):
+        torch.manual_seed(seed + fold)
+        model = _GraphSAGE(X.shape[1], hidden, dropout)
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=5e-4)
+        positives = max(float(y_np[train].sum()), 1.0)
+        loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.tensor((len(train) - positives) / positives))
+        train_idx = torch.tensor(train)
+        for _ in range(epochs):
+            model.train()
+            optimizer.zero_grad()
+            loss = loss_fn(model(X, mean)[train_idx], y[train_idx])
+            loss.backward()
+            optimizer.step()
+        model.eval()
+        with torch.no_grad():
+            proba[test] = torch.sigmoid(model(X, mean)).numpy()[test]
+    return pd.Series(proba, index=features.index, name="score")

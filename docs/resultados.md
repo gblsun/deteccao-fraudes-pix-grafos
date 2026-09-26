@@ -315,7 +315,64 @@ diferença de −0,001). Cheque, dinheiro em espécie e cartão parecem diluir o
 estrutural que as transferências eletrônicas preservam — mais um motivo para preferir
 ACH/Wire como a comparação principal com o Pix.
 
-## 9. Cuidados na interpretação
+## 9. FRAUDAR: blocos densos acham quadrilhas, mas não sozinhos
+
+O [FRAUDAR](glossario/fraudar.md) procura, um depois do outro, os subgrafos mais densos,
+com pesos que ignoram pagamentos a contas muito procuradas (camuflagem). Não usa rótulos
+nem atributos, só a estrutura ([`avaliar_fraudar.py`](../scripts/avaliar_fraudar.py), 10
+sementes). Cada conta recebe a densidade do bloco em que está; blocos com mais de 5% das
+contas não pontuam, porque no Pix o primeiro "bloco" é quase a rede legítima inteira.
+
+| AP média | `base` | `sem_atalhos` | `com_inativos` | `realista` |
+|---|:---:|:---:|:---:|:---:|
+| FRAUDAR | 0,55 | 0,54 | 0,15 | 0,04 |
+| completo, DBSCAN | 0,78 | 0,63 | 0,42 | 0,50 |
+| **combinado** (média dos percentis) | **0,89** | **0,82** | **0,52** | 0,35 |
+
+* **Sozinho, perde** para o melhor detector em todos os cenários; no `sem_atalhos` a
+  diferença não é significativa (vence em 4 das 10 sementes, p de Holm 0,28).
+* **Combinado, ganha**: soma +0,12 no `base` e +0,19 no `sem_atalhos` sobre o DBSCAN
+  (vence em 9 de 10 sementes, p de Holm 0,008). Estrutura densa e atributos erram em
+  contas diferentes.
+* **Quebra quando a rede legítima se parte**: com 30% de pessoas quase inativas
+  (`com_inativos`, `realista`), sobram muitos círculos de contatos pequenos e densos, que
+  competem com as quadrilhas. O FRAUDAR ainda cobre ~60% das fraudes, mas diluídas entre
+  ~170 a 195 contas marcadas (contra ~35 no `base`). No `realista`, com só 2 quadrilhas, a
+  combinação chega a piorar o DBSCAN (−0,15).
+
+## 10. Redes neurais para grafos (GNN)
+
+Primeira avaliação de GNN, decidida na [reunião de 24/09](reunioes/2026-09-24.md)
+([`avaliar_gnn.py`](../scripts/avaliar_gnn.py), 5 sementes; ver
+[redes neurais para grafos](glossario/redes-neurais-para-grafos.md)). Duas perguntas
+diferentes:
+
+| AP média (5 sementes) | `sem_atalhos` | `realista` |
+|---|:---:|:---:|
+| *não supervisionados* | | |
+| completo, DBSCAN | 0,62 | 0,53 |
+| DOMINANT, atributos completos | 0,30 | 0,26 |
+| DOMINANT, atributos tabulares | 0,07 | 0,04 |
+| *supervisionados (tetos, validação cruzada)* | | |
+| Random Forest, tabular | 0,94 | 0,66 |
+| **GraphSAGE, tabular** | **0,99** | **0,92** |
+| Random Forest, completo | 1,00 | 0,99 |
+| GraphSAGE, completo | 1,00 | 1,00 |
+
+* **Sem rótulos, a GNN não ajuda (ainda).** O autoencoder DOMINANT fica bem abaixo do
+  DBSCAN nas 5 sementes dos dois cenários. Reconstruir a rede inteira não isola uma
+  quadrilha pequena: o erro de reconstrução é dominado por contas normais atípicas.
+* **Com rótulos, a GNN aprende sozinha o que os atributos de grafo capturam.** Vendo só os
+  atributos tabulares, a GraphSAGE chega a 0,92 no `realista`, contra 0,66 do Random
+  Forest com os mesmos atributos (vence nas 5 sementes). É quase o teto com todos os
+  atributos feitos à mão (0,99), sem que nenhum deles tenha sido calculado.
+* Com todos os atributos, os dois tetos saturam (~1,00): não há espaço para a GNN mostrar
+  ganho.
+* **Estatística:** com 5 sementes, o menor p possível no Wilcoxon exato é 0,0625, e 0,25
+  depois de Holm; as vitórias de 5 em 5 são consistentes, mas não "significativas" por
+  construção. Para o relatório, vale rodar com 10 sementes (~35 min).
+
+## 11. Cuidados na interpretação
 
 * **A taxa de fraude é muito maior que a real** (seção 3), o que torna a tarefa mais fácil
   aqui do que num banco.
@@ -328,7 +385,7 @@ ACH/Wire como a comparação principal com o Pix.
   para estimar desempenho no Pix.
 * Nada aqui foi avaliado em dados reais de transações, que não são públicos.
 
-## 10. Conclusão parcial
+## 12. Conclusão parcial
 
 1. No dataset sintético, **a vantagem aparente dos atributos tabulares vinha de sinais que
    o próprio gerador embute**. Sem esses atalhos, o grafo vence em todas as sementes e nos
@@ -343,8 +400,14 @@ ACH/Wire como a comparação principal com o Pix.
    de risco com o detector leva a AP de 0,46 para 0,95 no cenário mais difícil.
 5. Fora do gerador, no AMLworld, a tarefa é bem mais difícil, mas a ordem entre as
    abordagens se mantém.
+6. **Estrutura densa e atributos se complementam**: o FRAUDAR sozinho perde, mas combinado
+   com o detector soma até +0,19 de AP, enquanto a rede legítima não se partir em círculos
+   pequenos e densos (seção 9).
+7. **Uma GNN supervisionada aprende a estrutura sozinha**: com só os atributos tabulares,
+   chega a 0,92 de AP no `realista`, contra 0,66 do Random Forest (seção 10). Sem rótulos,
+   o autoencoder de grafo ainda não compete com os detectores.
 
-## 11. Próximos passos
+## 13. Próximos passos
 
 1. Testar o conjunto `completo` **sem o PageRank** (seção 7) e recalibrar o gerador com os
    números do BCB (`p_merchant` ≈ 0,49, valores de P2P e P2B separados).
@@ -353,5 +416,9 @@ ACH/Wire como a comparação principal com o Pix.
    recuperação; e atributos temporais novos (rajadas de pagadores em minutos).
 4. Aprofundar a culpa por associação: propagação com decaimento no tempo, e um cenário em
    que as contestações chegam com atraso, como no MED real.
-5. Avaliar um modelo supervisionado em grafo (GNN) como teto alternativo, quando houver
-   rótulos suficientes.
+5. GNN: rodar com 10 sementes; testar com poucos rótulos (as contestações do MED, como na
+   seção 6), que é o cenário real; e tentar um detector não supervisionado de grafo mais
+   adequado a quadrilhas pequenas que o DOMINANT (por exemplo, contraste entre a conta e a
+   vizinhança).
+6. FRAUDAR: um critério de parada melhor que "5% das contas" e pesos que levem em conta o
+   tempo (quadrilhas agem em poucas horas; círculos de contatos, ao longo do mês).

@@ -42,6 +42,13 @@
    ]
   },
   {
+   "caminho": "docs/diario/2026-09-26.md",
+   "titulo": "Diário 2026-09-26",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
    "caminho": "docs/diario/diario-de-pesquisa.md",
    "titulo": "Diário de pesquisa",
    "tags": [
@@ -182,6 +189,13 @@
    ]
   },
   {
+   "caminho": "docs/glossario/fraudar.md",
+   "titulo": "FRAUDAR",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
    "caminho": "docs/glossario/glossario.md",
    "titulo": "Glossário",
    "tags": [
@@ -282,6 +296,13 @@
   {
    "caminho": "docs/glossario/random-forest.md",
    "titulo": "Random Forest (como teto supervisionado)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/redes-neurais-para-grafos.md",
+   "titulo": "Redes neurais para grafos (GNN)",
    "tags": [
     "glossario"
    ]
@@ -725,6 +746,11 @@
   },
   {
    "de": "docs/diario/2026-09-22.md",
+   "para": "docs/diario/2026-09-26.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-22.md",
    "para": "docs/modelos.md",
    "tipo": "nota"
   },
@@ -744,6 +770,46 @@
    "tipo": "nota"
   },
   {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/glossario/fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/glossario/redes-neurais-para-grafos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "docs/diario/2026-09-21.md",
    "tipo": "nota"
@@ -751,6 +817,11 @@
   {
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "docs/diario/2026-09-22.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/diario/2026-09-26.md",
    "tipo": "nota"
   },
   {
@@ -1149,6 +1220,36 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/glossario/fraudar.md",
+   "para": "docs/glossario/comunidades-e-modularidade.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "docs/glossario/egonet-e-oddball.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "docs/glossario/k-nucleo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/average-precision.md",
    "tipo": "nota"
@@ -1211,6 +1312,11 @@
   {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/fluxo-maximo-e-corte-minimo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/fraudar.md",
    "tipo": "nota"
   },
   {
@@ -1281,6 +1387,11 @@
   {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/redes-neurais-para-grafos.md",
    "tipo": "nota"
   },
   {
@@ -1481,6 +1592,56 @@
   {
    "de": "docs/glossario/random-forest.md",
    "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/dbscan-e-k-distance.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/grau.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/intermediacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/pagerank.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "src/pixfraud/gnn.py",
    "tipo": "arquivo"
   },
   {
@@ -2640,6 +2801,11 @@
   },
   {
    "de": "docs/modelos.md",
+   "para": "docs/glossario/fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
    "para": "docs/glossario/isolation-forest.md",
    "tipo": "nota"
   },
@@ -2665,6 +2831,11 @@
   },
   {
    "de": "docs/modelos.md",
+   "para": "docs/glossario/redes-neurais-para-grafos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
    "para": "docs/glossario/validacao-cruzada.md",
    "tipo": "nota"
   },
@@ -2685,12 +2856,22 @@
   },
   {
    "de": "docs/modelos.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos.md",
    "para": "scripts/mapa-dos-scripts.md",
    "tipo": "nota"
   },
   {
    "de": "docs/modelos.md",
    "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "src/pixfraud/gnn.py",
    "tipo": "arquivo"
   },
   {
@@ -2875,6 +3056,11 @@
   },
   {
    "de": "docs/resultados.md",
+   "para": "docs/glossario/fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
    "para": "docs/glossario/isolation-forest.md",
    "tipo": "nota"
   },
@@ -2915,6 +3101,11 @@
   },
   {
    "de": "docs/resultados.md",
+   "para": "docs/glossario/redes-neurais-para-grafos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
    "para": "docs/glossario/roc-auc.md",
    "tipo": "nota"
   },
@@ -2936,6 +3127,11 @@
   {
    "de": "docs/resultados.md",
    "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/reunioes/2026-09-24.md",
    "tipo": "nota"
   },
   {
@@ -2996,6 +3192,16 @@
   {
    "de": "docs/resultados.md",
    "para": "scripts/avaliar_externo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_gnn.py",
    "tipo": "arquivo"
   },
   {
@@ -3510,6 +3716,16 @@
   },
   {
    "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/fraudar_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/gnn_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
    "para": "reports/figures/grafo_de_calor_dbscan_completo.png",
    "tipo": "arquivo"
   },
@@ -3586,6 +3802,16 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/avaliar_externo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_gnn.py",
    "tipo": "arquivo"
   },
   {

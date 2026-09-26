@@ -26,6 +26,8 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `atributos_ablacao.csv`, `atributos_ablacao_resumo.csv` | `avaliar_atributos.py` | (cenário, semente, modelo, atributo removido) e a queda média de AP |
 | `atributos_teto.csv`, `atributos_teto_resumo.csv` | `avaliar_atributos.py` | AP dos detectores e do Random Forest supervisionado, por conjunto |
 | `propagacao_execucoes.csv`, `propagacao_resumo.csv`, `propagacao_comparacoes.csv` | `avaliar_propagacao.py` | (cenário, semente, fração conhecida, método): AP nas contas ainda desconhecidas |
+| `fraudar_execucoes.csv`, `fraudar_resumo.csv`, `fraudar_comparacoes.csv` | `avaliar_fraudar.py` | (cenário, semente, método): AP, precision@k, contas marcadas e cobertura das fraudes pelos blocos |
+| `gnn_execucoes.csv`, `gnn_resumo.csv`, `gnn_comparacoes.csv` | `avaliar_gnn.py` | (cenário, semente, método): AP e precision@k das GNN, do DBSCAN e do Random Forest |
 | `*_meta.json` | todos os scripts de avaliação | como o resultado foi gerado: commit, configuração, sementes, duração e versões |
 
 ### Colunas
@@ -63,6 +65,8 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `atributos_ablacao.png` | `avaliar_atributos.py` | queda de AP ao tirar cada atributo |
 | `atributos_teto.png` | `avaliar_atributos.py` | detectores não supervisionados × Random Forest com os rótulos |
 | `propagacao_average_precision.png` | `avaliar_propagacao.py` | AP da propagação de risco, dos detectores e da combinação |
+| `fraudar_average_precision.png` | `avaliar_fraudar.py` | AP do FRAUDAR, do DBSCAN e da combinação por cenário |
+| `gnn_average_precision.png` | `avaliar_gnn.py` | AP das GNN e das referências por cenário |
 | `padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | `gerar_ilustracoes.py` | ilustrações do README: os padrões injetados, o dinheiro percorrendo a quadrilha e a fraude dentro do movimento normal |
 | `grafo_de_notas.png`, `grafo_do_codigo.png` | `ilustrar_grafos_de_conhecimento.py` | ilustrações do README: o grafo de notas do Obsidian e o mapa do código pelo Graphify (não são resultados da pesquisa) |
 
@@ -147,6 +151,16 @@ suspeita (DBSCAN, conjunto completo). As demais combinações ficam em
 AMLworld (versão só com ACH e Wire, mais próxima do Pix).
 *Fonte: `avaliar_externo.py`.*
 ![Validação externa: tipologias do AMLworld](amlworld/figures/amlworld_pix_tipologias.png)
+
+**Figura 13** — Average precision do FRAUDAR (blocos densos, só estrutura), do melhor
+detector de atributos e da combinação dos dois, do cenário mais fácil ao mais realista.
+*Fonte: `avaliar_fraudar.py`.*
+![FRAUDAR](figures/fraudar_average_precision.png)
+
+**Figura 14** — Average precision das redes neurais para grafos (DOMINANT, sem rótulos;
+GraphSAGE, com rótulos) ao lado do DBSCAN e do Random Forest.
+*Fonte: `avaliar_gnn.py`.*
+![Redes neurais para grafos](figures/gnn_average_precision.png)
 
 ## Material interativo
 

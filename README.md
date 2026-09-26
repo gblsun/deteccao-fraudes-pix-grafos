@@ -120,6 +120,10 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -e ".[dev,notebooks,app]"
 pytest
+
+# opcional: redes neurais para grafos (scripts/avaliar_gnn.py); a versão só para CPU basta
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install -e ".[gnn]"
 ```
 
 (No Linux/macOS, ative com `source .venv/bin/activate`.)

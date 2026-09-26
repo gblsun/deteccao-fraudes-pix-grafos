@@ -21,6 +21,7 @@ scripts/mapa-dos-scripts.md (só no modo completo).
 
 import argparse
 import csv
+import importlib.util
 import json
 import os
 import shutil
@@ -31,17 +32,19 @@ from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
-RESULTADOS = ("dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao", "externo")
+RESULTADOS = ("dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao", "fraudar",
+              "gnn", "externo")
 EXTRAS = ("rede", "ilustracoes", "notas", "graphify", "relatorio")
 AMLWORLD = ("amlworld_pix", "amlworld")
 HISTORICO = ROOT / "data" / "tempos_reproduzir.csv"
 # *_meta.json de cada etapa, relativo à pasta de saída: dá o tempo quando ainda não há histórico
 META = {"experimento": "results/metricas_meta.json", "robustez": "results/robustez_meta.json",
         "cenarios": "results/cenarios_meta.json", "online": "results/online_meta.json",
-        "atributos": "results/atributos_meta.json", "propagacao": "results/propagacao_meta.json"}
+        "atributos": "results/atributos_meta.json", "propagacao": "results/propagacao_meta.json",
+        "fraudar": "results/fraudar_meta.json", "gnn": "results/gnn_meta.json"}
 # tempo aproximado do modo completo (scripts/mapa-dos-scripts.md), para etapas sem *_meta.json nem histórico
-APROXIMADO = {"dataset": 10, "online": 30 * 60, "rede": 60, "ilustracoes": 60, "notas": 5, "graphify": 30,
-              "relatorio": 20}
+APROXIMADO = {"dataset": 10, "online": 30 * 60, "fraudar": 17 * 60, "gnn": 25 * 60, "rede": 60, "ilustracoes": 60,
+              "notas": 5, "graphify": 30, "relatorio": 20}
 
 
 def graphify() -> str | None:
@@ -73,7 +76,12 @@ def plano(rapido: bool, refazer: bool, saida: str, dados: str) -> list[tuple[str
          [py, "scripts/avaliar_atributos.py", "--sementes", poucas, "--saida", saida]),
         ("propagacao", "culpa por associação",
          [py, "scripts/avaliar_propagacao.py", "--sementes", sementes, "--saida", saida]),
+        ("fraudar", "FRAUDAR (blocos densos)",
+         [py, "scripts/avaliar_fraudar.py", "--sementes", sementes, "--saida", saida]),
     ]
+    if importlib.util.find_spec("torch"):  # dependência opcional: pip install -e ".[gnn]"
+        etapas.append(("gnn", "redes neurais para grafos (DOMINANT e GraphSAGE)",
+                       [py, "scripts/avaliar_gnn.py", "--sementes", poucas, "--saida", saida]))
     if not rapido:  # cada janela do AMLworld leva minutos
         for nome in AMLWORLD:
             if (ROOT / "data" / "external" / nome).exists():
@@ -173,6 +181,8 @@ def main() -> None:
     if "externo" in escolhidas and "externo" not in nomes:
         print("AMLworld pulado: " + ("modo rápido (cada janela leva minutos)." if args.rapido
                                       else "não importado (ver data/README.md)."))
+    if "gnn" in escolhidas and "gnn" not in nomes:
+        print('GNN pulada: torch não instalado (pip install -e ".[gnn]").')
     if "graphify" in escolhidas and "graphify" not in nomes:
         print("Graphify não instalado: pulado (pip install graphifyy, ver docs/obsidian.md).")
     medias = tempos_medios(modo, saida)
