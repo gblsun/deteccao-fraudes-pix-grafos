@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-09-22T18:51:42",
-  "commit": "1fed45d0eb515d7457e0b55d6c0ab62004799b35",
+  "gerado_em": "2026-09-25T12:54:34",
+  "commit": "7e11931aa71564d5b50fb8843909ff372baded53",
   "alteracoes_nao_commitadas": true,
-  "python": "3.14.6",
+  "python": "3.14.7",
   "pacotes": {
     "numpy": "2.5.3",
     "pandas": "3.0.6",
-    "networkx": "3.6.1",
+    "networkx": "3.7",
     "scikit-learn": "1.9.1",
     "scipy": "1.18.1"
   },
@@ -105,5 +105,5 @@
     9,
     10
   ],
-  "duracao_s": 1416
+  "duracao_s": 780
 }

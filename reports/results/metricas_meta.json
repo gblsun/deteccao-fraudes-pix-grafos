@@ -1,0 +1,62 @@
+{
+  "gerado_em": "2026-09-25T12:39:44",
+  "commit": "7e11931aa71564d5b50fb8843909ff372baded53",
+  "alteracoes_nao_commitadas": true,
+  "python": "3.14.7",
+  "pacotes": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "networkx": "3.7",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1"
+  },
+  "configuracao": {
+    "simulacao": {
+      "seed": 42,
+      "start_date": "2026-01-01",
+      "n_days": 30,
+      "n_people": 2000,
+      "n_merchants": 100,
+      "community_size": 20,
+      "tx_per_person_day": 0.6,
+      "p_merchant": 0.4,
+      "p_contact": 0.8,
+      "amount_mu": 4.0,
+      "amount_sigma": 1.1,
+      "n_rings": 6,
+      "mules_per_ring": 4,
+      "victims_per_ring": 15,
+      "p_chain": 0.5,
+      "chain_length": 3,
+      "fraud_amount_shift": 1.5,
+      "forward_delay_min": 30,
+      "camouflage_tx": 3,
+      "fraud_hours": "uniforme",
+      "p_new_fraud_account": 0.7,
+      "quiet_fraction": 0.0,
+      "quiet_activity": 0.1
+    },
+    "atributos": {
+      "betweenness_k": 500,
+      "seed": 42
+    },
+    "modelos": {
+      "isolation_forest": {
+        "n_estimators": 300,
+        "contamination": "auto",
+        "seed": 42
+      },
+      "dbscan": {
+        "eps": "auto",
+        "min_samples": 10,
+        "eps_quantile": 0.95,
+        "max_exact": 20000
+      },
+      "local_outlier_factor": {
+        "n_neighbors": 20
+      }
+    }
+  },
+  "dados": "data/synthetic",
+  "duracao_s": 26
+}
