@@ -532,6 +532,13 @@
    ]
   },
   {
+   "caminho": "docs/reunioes/2026-09-24.md",
+   "titulo": "Reunião 2026-09-24",
+   "tags": [
+    "ata"
+   ]
+  },
+  {
    "caminho": "docs/reunioes/atas-de-reuniao.md",
    "titulo": "Reuniões de orientação",
    "tags": [
@@ -2997,6 +3004,11 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/reunioes/2026-09-24.md",
+   "para": "docs/reunioes/atas-de-reuniao.md",
+   "tipo": "nota"
+  },
+  {
    "de": "docs/reunioes/atas-de-reuniao.md",
    "para": "configs/parametros-dos-experimentos.md",
    "tipo": "nota"
@@ -3029,6 +3041,11 @@
   {
    "de": "docs/reunioes/atas-de-reuniao.md",
    "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/reunioes/2026-09-24.md",
    "tipo": "nota"
   },
   {

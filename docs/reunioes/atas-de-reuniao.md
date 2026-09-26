@@ -13,6 +13,7 @@ Volta para o [índice da documentação](../mapa-da-pesquisa.md).
 
 | Data | Assunto principal | Decisões que saíram dali |
 |------|-------------------|--------------------------|
+| [2026-09-24](2026-09-24.md) | Andamento do projeto e documentação no Obsidian | Andamento aprovado; seguir com redes neurais para grafos aplicadas à fraude |
 <!-- uma linha por ata, com link para AAAA-MM-DD.md -->
 
 ## Como escrever uma ata que ajuda o grafo
