@@ -23,7 +23,7 @@ com exemplos de uso.
 | [`importar_dataset.py`](importar_dataset.py) | converte AMLworld ou PaySim para o formato do projeto | `data/raw/` | `data/external/<nome>/` | ~1 min |
 | [`baixar_dados_bcb.py`](baixar_dados_bcb.py) | baixa estatísticas do Pix do Banco Central | API do BCB | `data/bcb/` | segundos |
 | [`visualizar_rede.py`](visualizar_rede.py) | página HTML da rede inteira, com filtros e linha do tempo | `data/synthetic/` | `reports/estudos/rede_completa.html` | ~1 min |
-| [`reproduzir_tudo.ps1`](reproduzir_tudo.ps1) | refaz todos os resultados na ordem certa (ver abaixo) | configuração | `reports/` | algumas horas |
+| [`reproduzir_tudo.py`](reproduzir_tudo.py) | refaz todos os resultados na ordem certa (ver abaixo); [`reproduzir_tudo.ps1`](reproduzir_tudo.ps1) é um atalho para ele | configuração | `reports/` | algumas horas |
 | [`gerar_ilustracoes.py`](gerar_ilustracoes.py) | figuras explicativas do README: padrões, GIF da quadrilha e recorte da rede | configuração | `reports/figures/padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | ~1 min |
 | [`criar_grafo.py`](criar_grafo.py) | grafos avulsos: padrões, CSVs quaisquer, trilha do dinheiro, fluxo | CSV ou padrão | o arquivo de `--saida` | segundos |
 | [`exportar_grafo_de_notas.py`](exportar_grafo_de_notas.py) | grafo de notas do Obsidian em JSON, para agentes de IA (ver [obsidian.md](../docs/obsidian.md)) | notas `.md` do cofre | `docs/grafo-de-notas.json` | segundos |
@@ -39,10 +39,17 @@ Um comando refaz tudo na ordem certa. Com a configuração versionada, os result
 idênticos (as sementes são fixas):
 
 ```powershell
-.\scripts\reproduzir_tudo.ps1           # completo (algumas horas); o AMLworld entra se já tiver sido importado
-.\scripts\reproduzir_tudo.ps1 -Rapido   # poucas sementes, em reports_teste/: só confere que tudo roda
-.\scripts\reproduzir_tudo.ps1 -Refazer  # recalcula também o progresso salvo das avaliações longas
+python scripts/reproduzir_tudo.py              # completo (algumas horas); o AMLworld entra se já tiver sido importado
+python scripts/reproduzir_tudo.py --rapido     # poucas sementes, em reports_teste/: só confere que tudo roda
+python scripts/reproduzir_tudo.py --refazer    # recalcula também o progresso salvo das avaliações longas
+python scripts/reproduzir_tudo.py --etapas dataset experimento   # só algumas etapas, na ordem do pipeline
+python scripts/reproduzir_tudo.py --listar     # mostra as etapas e os comandos, sem rodar
 ```
+
+As etapas são `dataset`, `experimento`, `robustez`, `cenarios`, `online`, `atributos`,
+`propagacao` e `externo`. O dataset usa `--seed 42`, por isso o modo completo reproduz
+`reports/`. Uma etapa que falha interrompe as seguintes. O `.\scripts\reproduzir_tudo.ps1`
+continua funcionando (`-Rapido`, `-Refazer`) e só chama o `.py`.
 
 Cada script de avaliação grava, ao lado dos resultados, um `*_meta.json` com o commit do
 git, a configuração, as sementes, a duração e as versões dos pacotes usados. Se

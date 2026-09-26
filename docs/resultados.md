@@ -8,7 +8,7 @@ Resultados **preliminares**, obtidos só com o dataset sintético (`pixfraud.sim
 Todos os números abaixo saem dos arquivos de `reports/results/` e podem ser refeitos com:
 
 ```powershell
-.\scripts\reproduzir_tudo.ps1   # refaz tudo na ordem certa (ver scripts/mapa-dos-scripts.md)
+python scripts/reproduzir_tudo.py   # refaz tudo na ordem certa (ver scripts/mapa-dos-scripts.md)
 ```
 
 Cada semente gera um dataset diferente (~2.140 contas e ~42 mil Pix no cenário base) e muda a semente do

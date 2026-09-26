@@ -3635,6 +3635,11 @@
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/reproduzir_tudo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/rodar_experimento.py",
    "tipo": "arquivo"
   },

@@ -88,6 +88,24 @@ def test_gerar_dataset_sorteia_semente_e_reproduz_com_seed(tmp_path):
     assert seed_c == seed_d == 7 and dados_c == dados_d
 
 
+def test_reproduzir_tudo_lista_as_etapas_em_ordem():
+    etapas = [linha.split()[0] for linha in _run("reproduzir_tudo.py", "--listar").splitlines()
+              if linha.split() and linha.split()[0] in {"dataset", "experimento", "robustez", "cenarios", "online",
+                                                         "atributos", "propagacao"}]
+    assert etapas == ["dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao"]
+    rapido = _run("reproduzir_tudo.py", "--rapido", "--listar", "--etapas", "experimento")
+    assert "--saida reports_teste" in rapido and "robustez" not in rapido
+
+
+def test_reproduzir_tudo_roda_so_as_etapas_pedidas(tmp_path):
+    _run("reproduzir_tudo.py", "--rapido", "--etapas", "dataset", "experimento",
+         "--dados", str(tmp_path / "synthetic"), "--saida", str(tmp_path / "reports"))
+    assert (tmp_path / "synthetic" / "dataset_meta.json").exists()
+    assert (tmp_path / "processed" / "features.csv").exists()
+    assert (tmp_path / "reports" / "results" / "metricas.csv").exists()
+    assert not (tmp_path / "reports" / "results" / "robustez_resumo.csv").exists()
+
+
 def test_avaliar_externo(tmp_path):
     # um dataset sintético pequeno fazendo o papel de dataset externo, com o papel como "tipologia"
     accounts, transactions = generate_dataset(SimulationConfig(n_people=200, n_merchants=10, n_days=6, n_rings=3,

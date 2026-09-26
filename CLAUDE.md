@@ -54,3 +54,5 @@ nº 105/2001), que protege os dados de transações Pix.
 - Python ≥ 3.10; `pip install -e ".[dev]"`; `pytest -m "not lento"` para o ciclo rápido;
   `ruff check .` antes de commitar.
 - Scripts rodam da raiz do repositório; ver [scripts/mapa-dos-scripts.md](scripts/mapa-dos-scripts.md).
+- `python scripts/reproduzir_tudo.py` refaz o pipeline inteiro (horas); `--rapido` confere
+  que tudo roda em `reports_teste/`, `--etapas` roda só uma parte e `--listar` mostra os comandos.

@@ -126,6 +126,18 @@ pytest
 
 ## Pipeline
 
+Tudo de uma vez, na ordem certa (dataset, experimento, robustez, cenários, detecção a
+tempo, ablação, propagação e AMLworld, se importado):
+
+```powershell
+python scripts/reproduzir_tudo.py                                  # completo (algumas horas), reproduz reports/
+python scripts/reproduzir_tudo.py --rapido                         # poucas sementes, em reports_teste/: confere que tudo roda
+python scripts/reproduzir_tudo.py --etapas dataset experimento     # só algumas etapas
+python scripts/reproduzir_tudo.py --listar                         # mostra os comandos, sem rodar
+```
+
+Ou passo a passo:
+
 ```powershell
 # 1. gera o dataset sintético em data/synthetic/ (semente sorteada a cada execução;
 #    --seed 42 refaz o dataset dos resultados em reports/)
