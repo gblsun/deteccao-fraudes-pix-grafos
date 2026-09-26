@@ -3555,6 +3555,11 @@
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
    "para": "docs/obsidian.md",
    "tipo": "nota"
   },

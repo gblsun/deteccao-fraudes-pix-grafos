@@ -97,6 +97,16 @@ def test_reproduzir_tudo_lista_as_etapas_em_ordem():
     assert "--saida reports_teste" in rapido and "robustez" not in rapido
 
 
+def test_reproduzir_tudo_extras_vem_depois_e_mostram_tempo():
+    saida = _run("reproduzir_tudo.py", "--listar", "--extras")
+    nomes = [linha.split()[0] for linha in saida.splitlines() if linha.startswith(("propagacao", "rede", "ilustracoes",
+                                                                                  "notas", "graphify", "relatorio"))]
+    assert nomes[0] == "propagacao" and nomes[1:4] == ["rede", "ilustracoes", "notas"] and nomes[-1] == "relatorio"
+    assert "total estimado: ~" in saida and "obsidian://open?path=" in saida
+    assert "rede_completa" not in _run("reproduzir_tudo.py", "--listar")  # sem --extras, só os resultados
+    assert "obsidian://" not in _run("reproduzir_tudo.py", "--listar", "--extras", "--sem-abrir")
+
+
 def test_reproduzir_tudo_roda_so_as_etapas_pedidas(tmp_path):
     _run("reproduzir_tudo.py", "--rapido", "--etapas", "dataset", "experimento",
          "--dados", str(tmp_path / "synthetic"), "--saida", str(tmp_path / "reports"))

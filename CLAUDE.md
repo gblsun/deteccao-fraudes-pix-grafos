@@ -55,4 +55,6 @@ nº 105/2001), que protege os dados de transações Pix.
   `ruff check .` antes de commitar.
 - Scripts rodam da raiz do repositório; ver [scripts/mapa-dos-scripts.md](scripts/mapa-dos-scripts.md).
 - `python scripts/reproduzir_tudo.py` refaz o pipeline inteiro (horas); `--rapido` confere
-  que tudo roda em `reports_teste/`, `--etapas` roda só uma parte e `--listar` mostra os comandos.
+  que tudo roda em `reports_teste/`, `--etapas` roda só uma parte e `--listar` mostra os comandos
+  e o tempo médio de cada etapa. `--extras` acrescenta rede, ilustrações, grafos e relatório e abre
+  Graphify e Obsidian no fim; num agente, use `--sem-abrir`.

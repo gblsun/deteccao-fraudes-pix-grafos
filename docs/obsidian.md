@@ -120,6 +120,10 @@ graphify path "prepare" "graph_features"  # prepare -> build_features -> graph_f
 graphify explain "propagate_risk"
 ```
 
+`python scripts/reproduzir_tudo.py --etapas notas graphify --extras` atualiza os dois
+grafos (notas e código) e abre a página do Graphify no navegador e este cofre no Obsidian
+(a URI `obsidian://` só funciona se o cofre já tiver sido aberto uma vez).
+
 O `.graphifyignore` tira do grafo o `docs/proposta-original.pdf` (arquivo de submissão),
 `data/`, `reports/` e os notebooks. O `graphify update .` também lê as notas em Markdown,
 mas só a estrutura (títulos e links), localmente e sem LLM. A leitura *semântica* dos

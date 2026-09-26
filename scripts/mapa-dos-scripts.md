@@ -43,13 +43,32 @@ python scripts/reproduzir_tudo.py              # completo (algumas horas); o AML
 python scripts/reproduzir_tudo.py --rapido     # poucas sementes, em reports_teste/: só confere que tudo roda
 python scripts/reproduzir_tudo.py --refazer    # recalcula também o progresso salvo das avaliações longas
 python scripts/reproduzir_tudo.py --etapas dataset experimento   # só algumas etapas, na ordem do pipeline
-python scripts/reproduzir_tudo.py --listar     # mostra as etapas e os comandos, sem rodar
+python scripts/reproduzir_tudo.py --extras     # + rede, ilustrações, grafos e relatório; abre Graphify e Obsidian no fim
+python scripts/reproduzir_tudo.py --extras --sem-abrir   # os extras, sem abrir nada
+python scripts/reproduzir_tudo.py --listar     # mostra as etapas, o tempo médio e os comandos, sem rodar
 ```
 
 As etapas são `dataset`, `experimento`, `robustez`, `cenarios`, `online`, `atributos`,
 `propagacao` e `externo`. O dataset usa `--seed 42`, por isso o modo completo reproduz
 `reports/`. Uma etapa que falha interrompe as seguintes. O `.\scripts\reproduzir_tudo.ps1`
 continua funcionando (`-Rapido`, `-Refazer`) e só chama o `.py`.
+
+**Extras** (`--extras`, ou escolhidas uma a uma em `--etapas`): `rede`
+(`visualizar_rede.py`), `ilustracoes` (`gerar_ilustracoes.py`), `notas`
+(`exportar_grafo_de_notas.py`), `graphify` (`graphify update .`, pulada se o Graphify não
+estiver instalado) e `relatorio` (`gerar_relatorio.py`, docx em `relatorio/saida/`). No
+fim, abre no navegador a página da rede e a do Graphify (`graphify-out/graph.html`) e
+abre o cofre no Obsidian pela URI `obsidian://open?path=...`, que só funciona se o cofre
+já tiver sido aberto uma vez no Obsidian. `--sem-abrir` desliga isso. Continuam manuais:
+o download do BCB (instável, ver [data/README.md](../data/README.md)), o
+`importar_dataset.py`, o `criar_grafo.py` e o explorador em Streamlit.
+
+**Tempo médio de cada etapa.** Cada execução anota a duração de cada etapa em
+`data/tempos_reproduzir.csv` (fora do git, porque depende da máquina), separada por modo
+(completo ou rápido). O `--listar` e o início de cada etapa mostram a média desse
+histórico. Enquanto não houver histórico, vale a `duracao_s` do `*_meta.json` da etapa e,
+no modo completo, o tempo aproximado da tabela acima. No fim, sai o tempo de cada etapa
+nesta execução, a média e o total.
 
 Cada script de avaliação grava, ao lado dos resultados, um `*_meta.json` com o commit do
 git, a configuração, as sementes, a duração e as versões dos pacotes usados. Se

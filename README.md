@@ -133,8 +133,12 @@ tempo, ablação, propagação e AMLworld, se importado):
 python scripts/reproduzir_tudo.py                                  # completo (algumas horas), reproduz reports/
 python scripts/reproduzir_tudo.py --rapido                         # poucas sementes, em reports_teste/: confere que tudo roda
 python scripts/reproduzir_tudo.py --etapas dataset experimento     # só algumas etapas
-python scripts/reproduzir_tudo.py --listar                         # mostra os comandos, sem rodar
+python scripts/reproduzir_tudo.py --extras                         # + rede HTML, ilustrações, grafos e relatório; abre Graphify e Obsidian
+python scripts/reproduzir_tudo.py --listar                         # mostra os comandos e o tempo médio de cada etapa, sem rodar
 ```
+
+Cada etapa mostra o tempo médio antes de começar e, no fim, sai uma tabela com o tempo
+de cada uma e o total (ver [scripts/mapa-dos-scripts.md](scripts/mapa-dos-scripts.md)).
 
 Ou passo a passo:
 
