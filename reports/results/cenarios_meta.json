@@ -1,6 +1,6 @@
 {
-  "gerado_em": "2026-09-25T12:54:34",
-  "commit": "7e11931aa71564d5b50fb8843909ff372baded53",
+  "gerado_em": "2026-09-26T11:28:47",
+  "commit": "9ec7449853f7f6f441c086aef887c1320bf46ec7",
   "alteracoes_nao_commitadas": true,
   "python": "3.14.7",
   "pacotes": {
@@ -105,5 +105,5 @@
     9,
     10
   ],
-  "duracao_s": 780
+  "duracao_s": 783
 }

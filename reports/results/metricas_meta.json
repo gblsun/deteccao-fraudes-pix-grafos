@@ -1,6 +1,6 @@
 {
-  "gerado_em": "2026-09-25T12:39:44",
-  "commit": "7e11931aa71564d5b50fb8843909ff372baded53",
+  "gerado_em": "2026-09-26T11:13:52",
+  "commit": "186a6b9106452ba57efe844c44e2c959fa88270b",
   "alteracoes_nao_commitadas": true,
   "python": "3.14.7",
   "pacotes": {
@@ -58,5 +58,6 @@
     }
   },
   "dados": "data/synthetic",
-  "duracao_s": 26
+  "seed_do_dataset": 42,
+  "duracao_s": 25
 }
