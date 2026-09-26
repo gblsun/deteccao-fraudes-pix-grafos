@@ -90,6 +90,25 @@ transações individuais, então elas não formam um grafo). Recursos disponíve
 Sem filtro, `transacoes` tem mais de 50 MB. Use `--filtro "AnoMes eq 202506"` para baixar
 um único mês.
 
+### Problema conhecido: 504 ao baixar `transacoes`
+
+`python scripts/baixar_dados_bcb.py transacoes 202506 --filtro "AnoMes eq 202506"` pode
+falhar com `HTTP Error 504: Gateway Time-out` (visto em 26/09/2026). O `fraudes` baixa
+normalmente, então não é conexão nem código.
+
+- **Causa:** o gateway da API de dados abertos do BCB (olinda.bcb.gov.br) desiste antes de
+  o servidor montar a resposta. O recurso `EstatisticasTransacoesPix` é grande, e mesmo com
+  `--filtro` o servidor às vezes não termina a tempo. O timeout do nosso lado (300 s em
+  `src/pixfraud/bcb.py`) não chega a ser atingido.
+- **Contorno:** tentar de novo mais tarde, ou filtrar mais no `--filtro` (conferir antes os
+  nomes dos campos do recurso).
+- **Impacto:** nenhum resultado em `reports/` depende desse download. Ele serve só para
+  calibrar o gerador sintético, que por enquanto **não está calibrado** com esses dados.
+
+- [ ] Tornar o download robusto: novas tentativas com espera entre elas no `fetch` e uma
+  opção `--top` no script (a função já aceita `top`; a API não aceita `$skip`).
+- [ ] Calibrar o gerador com as estatísticas de transações do BCB quando o download funcionar.
+
 ## Datasets públicos externos
 
 Para não avaliar os detectores só nos padrões que nós mesmos injetamos, `pixfraud.external`
