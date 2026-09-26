@@ -37,6 +37,7 @@ instalado.
 | `test_experiment.py` | `experiment` | uma rodada por semente; cenários válidos |
 | `test_external.py` | `external` | AMLworld e PaySim (com arquivos de exemplo embutidos), formas de pagamento, tipologias, janelas |
 | `test_online.py` | `online` | dinheiro recuperado calculado à mão, exposição, pontos de corte |
+| `test_bcb.py` | `bcb` | novas tentativas em 504 e falha de conexão, sem tentar de novo em erro definitivo (404); parâmetros da URL (sem rede) |
 | `test_explorer.py` | `explorer` | layout por comunidades e página HTML |
 | `test_pipeline.py` | tudo | o pipeline de ponta a ponta num dataset pequeno |
 | `test_scripts.py` | `scripts/` | os scripts de avaliação rodam e gravam o que prometem; progresso salvo é reaproveitado |

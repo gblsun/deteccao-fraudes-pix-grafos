@@ -100,13 +100,15 @@ normalmente, então não é conexão nem código.
   o servidor montar a resposta. O recurso `EstatisticasTransacoesPix` é grande, e mesmo com
   `--filtro` o servidor às vezes não termina a tempo. O timeout do nosso lado (300 s em
   `src/pixfraud/bcb.py`) não chega a ser atingido.
-- **Contorno:** tentar de novo mais tarde, ou filtrar mais no `--filtro` (conferir antes os
-  nomes dos campos do recurso).
+- **Contorno:** o script já tenta de novo sozinho (`--tentativas`, padrão 3, com espera
+  crescente a partir de `--espera` segundos). Se ainda falhar, tente mais tarde ou filtre
+  mais no `--filtro` (conferir antes os nomes dos campos do recurso). Em 26/09/2026 falhou
+  mesmo com 3 tentativas e com `--top 100`, então o gargalo é o servidor montar o filtro.
 - **Impacto:** nenhum resultado em `reports/` depende desse download. Ele serve só para
   calibrar o gerador sintético, que por enquanto **não está calibrado** com esses dados.
 
-- [ ] Tornar o download robusto: novas tentativas com espera entre elas no `fetch` e uma
-  opção `--top` no script (a função já aceita `top`; a API não aceita `$skip`).
+- [x] Tornar o download robusto: novas tentativas com espera entre elas no `fetch` e as
+  opções `--top`, `--tentativas` e `--espera` no script (a API não aceita `$skip`).
 - [ ] Calibrar o gerador com as estatísticas de transações do BCB quando o download funcionar.
 
 ## Datasets públicos externos
