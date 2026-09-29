@@ -1,6 +1,6 @@
 """Detectores de anomalia não supervisionados aplicados aos atributos das contas.
 
-Os três partem da mesma matriz (``prepare_matrix``: log1p e padronização) e
+Todos partem da mesma matriz (``prepare_matrix``: log1p e padronização) e
 devolvem um ``Detection``: um escore contínuo, que ordena as contas, e um
 rótulo binário. O que muda é a ideia de "anômalo":
 
@@ -8,19 +8,32 @@ rótulo binário. O que muda é a ideia de "anômalo":
 * ``dbscan``: a conta está fora das regiões densas (raio único para todos);
 * ``local_outlier_factor``: a vizinhança da conta é menos densa que a dos
   seus vizinhos, o que acha anomalias **locais**, em regiões de densidade
-  diferente, que um raio único não pega.
+  diferente, que um raio único não pega;
+* ``ecod``: a conta está na cauda da distribuição de vários atributos ao mesmo
+  tempo (cada atributo olhado sozinho, sem parâmetro para ajustar);
+* ``one_class_svm``: a conta fica fora da fronteira que envolve a maior parte
+  dos dados;
+* ``autoencoder``: uma rede que aprendeu a reconstruir as contas típicas erra
+  muito ao reconstruir esta.
 """
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+from scipy.stats import rankdata, skew
 from sklearn.cluster import DBSCAN
 from sklearn.ensemble import IsolationForest
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.kernel_approximation import Nystroem
+from sklearn.linear_model import SGDOneClassSVM
 from sklearn.neighbors import LocalOutlierFactor, NearestNeighbors
+from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import OneClassSVM
 
 
 @dataclass
@@ -123,8 +136,105 @@ def local_outlier_factor(features: pd.DataFrame, n_neighbors: int = 20) -> Detec
     )
 
 
+def ecod(features: pd.DataFrame, contamination: float = 0.05) -> Detection:
+    """ECOD: probabilidade de cauda empírica, atributo por atributo (Li et al., 2022).
+
+    Para cada atributo, a função de distribuição empírica diz quão rara é a
+    conta pela esquerda e pela direita; o escore soma ``-log`` dessas
+    probabilidades em todos os atributos. Faz isso três vezes (cauda esquerda,
+    direita e a indicada pela assimetria de cada atributo) e fica com a maior.
+    Não tem parâmetro para ajustar e é muito rápido, mas ignora a relação entre
+    atributos: uma conta comum em cada atributo e rara na combinação passa.
+    O rótulo binário marca a fração ``contamination`` de maior escore.
+    """
+    X = prepare_matrix(features)
+    n = len(X)
+    left = rankdata(X, method="max", axis=0) / n  # P(X <= x)
+    right = (n - rankdata(X, method="min", axis=0) + 1) / n  # P(X >= x)
+    tail_left, tail_right = -np.log(left), -np.log(right)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)  # atributo constante: assimetria indefinida
+        skewness = np.nan_to_num(skew(X, axis=0))
+    tail_auto = np.where(skewness < 0, tail_left, tail_right)
+    scores = np.max([tail_left.sum(axis=1), tail_right.sum(axis=1), tail_auto.sum(axis=1)], axis=0)
+    return _detection(scores, _top_fraction(scores, contamination), features.index)
+
+
+def one_class_svm(
+    features: pd.DataFrame,
+    nu: float = 0.05,
+    gamma: float | str = "scale",
+    max_exact: int = 5_000,
+    n_components: int = 300,
+    seed: int = 42,
+) -> Detection:
+    """One-Class SVM: uma fronteira (núcleo RBF) que envolve a maior parte das contas.
+
+    ``nu`` é, aproximadamente, a fração de contas deixadas do lado de fora
+    (anômalas). O SVM exato custa entre o quadrado e o cubo do número de
+    contas; acima de ``max_exact``, o núcleo é aproximado (Nyström, com
+    ``n_components`` pontos) e o SVM é treinado por gradiente estocástico,
+    com custo linear. O escore é a distância para dentro da fronteira, com o
+    sinal trocado: quanto maior, mais para fora.
+    """
+    X = prepare_matrix(features)
+    if len(X) <= max_exact:
+        model = OneClassSVM(nu=nu, gamma=gamma).fit(X)
+        Z = X
+    else:
+        if gamma == "scale":  # a mesma regra do scikit-learn para o núcleo exato
+            gamma = 1.0 / (X.shape[1] * (X.var() or 1.0))
+        Z = Nystroem(gamma=gamma, n_components=min(n_components, len(X)), random_state=seed).fit_transform(X)
+        model = SGDOneClassSVM(nu=nu, random_state=seed).fit(Z)
+    scores = -model.decision_function(Z)
+    return _detection(scores, model.predict(Z) == -1, features.index)
+
+
+def autoencoder(
+    features: pd.DataFrame,
+    max_iter: int = 300,
+    contamination: float = 0.05,
+    seed: int = 42,
+) -> Detection:
+    """Autoencoder: a conta que a rede não consegue reconstruir é anômala.
+
+    Uma rede neural pequena (``MLPRegressor`` do scikit-learn) aprende a
+    devolver a própria entrada passando por uma camada estreita, com cerca de
+    um terço do número de atributos. Como a maioria das contas é legítima, ela
+    aprende o que é típico; o escore é o erro médio de reconstrução de cada
+    conta. Para de treinar quando o erro de validação deixa de cair.
+    """
+    X = prepare_matrix(features)
+    n_features = X.shape[1]
+    bottleneck = max(1, n_features // 3)
+    hidden = max(bottleneck + 1, (n_features + 1) // 2)
+    model = MLPRegressor(hidden_layer_sizes=(hidden, bottleneck, hidden), alpha=1e-3, max_iter=max_iter,
+                         early_stopping=len(X) >= 50, n_iter_no_change=10, random_state=seed)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", ConvergenceWarning)
+        model.fit(X, X)
+    reconstruction = model.predict(X).reshape(X.shape)
+    scores = ((reconstruction - X) ** 2).mean(axis=1)
+    return _detection(scores, _top_fraction(scores, contamination), features.index)
+
+
+def _top_fraction(scores: np.ndarray, fraction: float) -> np.ndarray:
+    """Rótulo binário dos detectores que só dão escore: a fração ``fraction`` de maior escore."""
+    return scores > np.quantile(scores, 1.0 - fraction)
+
+
+def _detection(scores, is_anomaly, index) -> Detection:
+    return Detection(
+        scores=pd.Series(np.asarray(scores, dtype=float), index=index, name="score"),
+        is_anomaly=pd.Series(np.asarray(is_anomaly, dtype=bool), index=index, name="is_anomaly"),
+    )
+
+
 DETECTORS = {
     "isolation_forest": isolation_forest,
     "dbscan": dbscan,
     "local_outlier_factor": local_outlier_factor,
+    "ecod": ecod,
+    "one_class_svm": one_class_svm,
+    "autoencoder": autoencoder,
 }

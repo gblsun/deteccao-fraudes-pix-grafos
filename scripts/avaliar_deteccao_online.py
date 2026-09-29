@@ -28,7 +28,6 @@ Uso:
 """
 
 import argparse
-import copy
 import time
 from dataclasses import replace
 from pathlib import Path
@@ -42,7 +41,13 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from pixfraud.anomaly import DETECTORS  # noqa: E402
-from pixfraud.experiment import COMPARISONS, load_experiment_config, load_scenarios, save_metadata  # noqa: E402
+from pixfraud.experiment import (  # noqa: E402
+    COMPARISONS,
+    load_experiment_config,
+    load_scenarios,
+    save_metadata,
+    seeded_models,
+)
 from pixfraud.features import FEATURE_SETS  # noqa: E402
 from pixfraud.online import (  # noqa: E402
     checkpoint_flags,
@@ -63,13 +68,14 @@ def main() -> None:
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
     parser.add_argument("--cenarios", nargs="+", default=["sem_atalhos", "realista"])
-    parser.add_argument("--sementes", type=int, default=3)
+    parser.add_argument("--sementes", type=int, default=5)
     parser.add_argument("--conjuntos", nargs="+", default=["tabular", "grafo", "temporal", "completo"],
                         choices=list(FEATURE_SETS))
     parser.add_argument("--frequencia", default="6h", help="intervalo entre os pontos de corte")
     parser.add_argument("--horizonte", default="72h", help="prazo para a detecção contar (bloqueio cautelar)")
     parser.add_argument("--saque", nargs="+", default=["1h", "6h", "24h"],
                         help="tempos até o dinheiro parado ser sacado (um resultado para cada)")
+    parser.add_argument("--modelos", nargs="+", choices=sorted(DETECTORS), help="detectores (padrão: todos)")
     parser.add_argument("--saida", default="reports")
     parser.add_argument("--refazer", action="store_true", help="recalcula as sinalizações já salvas")
     args = parser.parse_args()
@@ -82,6 +88,7 @@ def main() -> None:
     if unknown:
         parser.error(f"cenários desconhecidos: {', '.join(unknown)}")
     feature_sets = {s: FEATURE_SETS[s] for s in args.conjuntos}
+    models = args.modelos or list(DETECTORS)
     horizon = pd.Timedelta(args.horizonte)
     metrics = ["detectadas_72h", "atraso_mediano_h"] + [f"recuperado_{c}" for c in args.saque]
     # As sinalizações (a parte cara) de cada cenário e semente são salvas assim que
@@ -102,15 +109,14 @@ def main() -> None:
             flags = None
             if flags_file.exists() and not args.refazer:
                 flags = pd.read_csv(flags_file, parse_dates=["corte"])
-                if not set(feature_sets) <= set(flags["atributos"]):
-                    flags = None  # salvo sem algum dos conjuntos pedidos: recalcula
+                if not (set(feature_sets) <= set(flags["atributos"]) and set(models) <= set(flags["modelo"])):
+                    flags = None  # salvo sem algum dos conjuntos ou detectores pedidos: recalcula
             if flags is None:
-                run_config = copy.deepcopy(config)
-                run_config["modelos"].setdefault("isolation_forest", {})["seed"] = seed
+                run_config = {**config, "modelos": seeded_models(config["modelos"], seed)}
                 flags = checkpoint_flags(accounts, tx, run_config, checkpoints, k=len(fraud),
-                                         feature_sets=feature_sets)
+                                         feature_sets=feature_sets, models=models)
                 flags.to_csv(flags_file, index=False)
-            flags = flags[flags["atributos"].isin(feature_sets)]
+            flags = flags[flags["atributos"].isin(feature_sets) & flags["modelo"].isin(models)]
 
             ids = {"cenario": name, "semente": seed}
             for (set_name, model), group in flags.groupby(["atributos", "modelo"], sort=False):
@@ -137,8 +143,8 @@ def main() -> None:
         comparisons.to_csv(results / "online_comparacoes.csv", index=False)
     save_metadata(results / "online_meta.json", config, cenarios={n: scenarios[n] for n in args.cenarios},
                   sementes=list(range(1, args.sementes + 1)), conjuntos=args.conjuntos, frequencia=args.frequencia,
-                  horizonte=args.horizonte, saque=args.saque, duracao_s=round(time.time() - began))
-    _plot(summary, args.cenarios, list(feature_sets), figures / "online_deteccao.png", args)
+                  horizonte=args.horizonte, saque=args.saque, modelos=models, duracao_s=round(time.time() - began))
+    _plot(summary, args.cenarios, list(feature_sets), models, figures / "online_deteccao.png", args)
 
     for metric in metrics:
         print(f"\n{metric} (média):")
@@ -159,9 +165,8 @@ def _metrics(first: pd.Series, exposure: pd.Series, tx: pd.DataFrame, fraud, hor
     }
 
 
-def _plot(summary: pd.DataFrame, names: list, sets: list, path: Path, args) -> None:
+def _plot(summary: pd.DataFrame, names: list, sets: list, models: list, path: Path, args) -> None:
     """Painéis modelo × métrica; em cada um, conjunto de atributos (e oráculo) × cenário."""
-    models = list(DETECTORS)
     panels = [("detectadas_72h", f"detectadas em {args.horizonte}")]
     panels += [(f"recuperado_{c}", f"recuperado, saque em {c}") for c in dict.fromkeys([args.saque[0], args.saque[-1]])]
     rows = [*sets, ORACLE]

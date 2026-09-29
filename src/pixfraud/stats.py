@@ -177,32 +177,41 @@ def compare_runs(
     metrics: list[str],
     by: list[str] = (),
     unit: str = "semente",
+    between: str = "atributos",
 ) -> pd.DataFrame:
-    """Testes pareados entre conjuntos de atributos, semente a semente.
+    """Testes pareados, semente a semente, entre conjuntos de atributos ou entre modelos.
 
     ``runs`` tem uma linha por (semente, atributos, modelo), como a saída de
     ``pixfraud.experiment.run_seeds``; ``unit`` é a coluna que identifica a
-    repetição (as janelas de tempo, num dataset externo). Para cada métrica, modelo e par
-    ``(a, b)`` de ``comparisons``, aplica ``paired_comparison`` a ``a - b``.
+    repetição (as janelas de tempo, num dataset externo). Com
+    ``between="atributos"`` (padrão), os pares ``(a, b)`` de ``comparisons`` são
+    conjuntos de atributos, comparados dentro de cada modelo; com
+    ``between="modelo"``, são modelos, comparados dentro de cada conjunto. Um
+    par que não aparece num grupo é pulado. Aplica ``paired_comparison`` a ``a - b``.
     Cada métrica (dentro de cada grupo de ``by``) é uma família de testes, e
     a correção de Holm vale dentro dela: com 10 sementes, o menor p possível
     no Wilcoxon exato é 2/1024 ≈ 0,002, e corrigir por todas as métricas juntas
     tornaria qualquer diferença "não significativa".
     """
+    fixed = "modelo" if between == "atributos" else "atributos"
     rows = []
     groups = runs.groupby(list(by), sort=False) if by else [((), runs)]
     for key, group in groups:
         for metric in metrics:
-            for model in group["modelo"].unique():
-                wide = group[group["modelo"] == model].pivot(index=unit, columns="atributos", values=metric)
+            for value in group[fixed].unique():
+                wide = group[group[fixed] == value].pivot(index=unit, columns=between, values=metric)
                 for a, b in comparisons:
+                    if a not in wide or b not in wide:
+                        continue
                     rows.append({
                         **dict(zip(by, key)),
                         "métrica": metric,
-                        "modelo": model,
+                        fixed: value,
                         "comparação": f"{a} - {b}",
                         **paired_comparison(wide[a], wide[b]),
                     })
+    if not rows:
+        return pd.DataFrame()
     table = pd.DataFrame(rows)
     table["p Wilcoxon (Holm)"] = table.groupby([*by, "métrica"])["p Wilcoxon"].transform(
         lambda p: holm_correction(p.to_numpy())

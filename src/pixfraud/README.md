@@ -51,13 +51,15 @@ rodadas); `bcb.py` serve para calibrar e validar o gerador.
 | [`temporal.py`](temporal.py) | caminhos que respeitam a ordem dos Pix; tempo de permanência | `temporal_trail`, `dwell_time`, `temporal_features` |
 | [`communities.py`](communities.py) | comunidades (Louvain), k-núcleos, subgrafo mais denso, OddBall | `detect_communities`, `oddball_scores`, `structural_features` |
 | [`features.py`](features.py) | atributos por conta, agrupados em conjuntos (tabular, grafo...) | `build_features`, `FEATURE_SETS` |
-| [`anomaly.py`](anomaly.py) | detectores não supervisionados | `isolation_forest`, `dbscan`, `DETECTORS` |
+| [`anomaly.py`](anomaly.py) | detectores não supervisionados: Isolation Forest, DBSCAN, LOF, ECOD, One-Class SVM e autoencoder | `isolation_forest`, `dbscan`, `ecod`, `DETECTORS` |
+| [`graph_models.py`](graph_models.py) | detectores que usam só a estrutura do grafo: FRAUDAR por remoção gulosa e node2vec + Isolation Forest | `fraudar`, `node2vec_isolation_forest`, `GRAPH_DETECTORS` |
 | [`evaluation.py`](evaluation.py) | precision, recall, AP, precision@k; recall por grupo | `evaluate`, `recall_by_group` |
 | [`experiment.py`](experiment.py) | o pipeline inteiro, uma semente ou várias; cenários | `prepare`, `run_detectors`, `run_seeds`, `load_scenarios` |
 | [`stats.py`](stats.py) | Mann-Whitney com delta de Cliff, bootstrap, testes pareados, modelo nulo | `compare_groups`, `compare_runs`, `summarize_runs` |
 | [`online.py`](online.py) | detecção ao longo do tempo e dinheiro recuperável (MED) | `checkpoint_flags`, `recovered_amount` |
 | [`flow.py`](flow.py) | fluxo máximo, corte mínimo ("onde bloquear"), propagação de risco | `max_money_flow`, `blocking_accounts`, `propagate_risk` |
 | [`algorithms.py`](algorithms.py) | algoritmos clássicos aplicados ao dinheiro (Edmonds, gargalo, VF2, HITS, Jaccard e cosseno...) | `widest_path`, `find_pattern`, `hubs_authorities`, `similar_accounts`, `cosine_similarity` |
+| [`gnn.py`](gnn.py) | redes neurais para grafos: DOMINANT, GraphSAGE própria e GraphSAGE direcionada (PyTorch Geometric); extra opcional `gnn` | `dominant_scores`, `sage_supervised_scores`, `graphsage_scores` |
 | [`network.py`](network.py) | que tipo de rede é: lei de potência, componente gigante, comparação com Erdős–Rényi e Barabási–Albert, passeios aleatórios | `fit_power_law`, `component_summary`, `compare_network_models`, `random_walk_visits` |
 | [`patterns.py`](patterns.py) | padrões de fraude pequenos (fan-in, cadeia, ciclo...) e injeção num grafo | `PATTERNS`, `inject` |
 | [`visualization.py`](visualization.py) | desenho, HTML interativo, grafo de calor, heatmap de risco, matrizes de resultados | `draw_graph`, `plot_heat_graph`, `explain_account`, `plot_value_matrix` |

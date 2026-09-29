@@ -15,6 +15,7 @@ com exemplos de uso.
 | [`gerar_dataset.py`](gerar_dataset.py) | gera um dataset sintético novo a cada execução (semente sorteada, gravada em `dataset_meta.json`; `--seed N` reproduz) | `configs/experimento.yaml` | `data/synthetic/` + `dataset_meta.json` | segundos |
 | [`rodar_experimento.py`](rodar_experimento.py) | uma rodada: grafo, atributos, 2 detectores × 6 conjuntos, figuras | `data/synthetic/` | `reports/results/metricas.csv`, `reports/figures/grafo_de_calor_*`, `heatmap_risco_*` | ~1 min |
 | [`avaliar_robustez.py`](avaliar_robustez.py) | repete com várias sementes; IC e testes pareados | configuração | `reports/results/robustez_*.csv`, `robustez_average_precision.png` | ~4 min (10 sementes) |
+| [`avaliar_modelos.py`](avaliar_modelos.py) | vitrine de todos os modelos nas mesmas contas: não supervisionados, só estrutura (FRAUDAR, node2vec), semi-supervisionados (PageRank, label spreading) e tetos (Random Forest, gradient boosting, GraphSAGE); **ainda não rodado** | `configs/cenarios.yaml` | `reports/results/modelos_*`, `modelos_*.png` | horas (20 sementes); `--sem-gnn` e `--processos` aceleram |
 | [`avaliar_sementes.py`](avaliar_sementes.py) | quantas sementes bastam? AP média e IC 95% com 10, 100, 500 e 1000 sementes; variação da média de 10 sementes sorteadas | configuração | `reports/results/sementes_*.csv`, `sementes_convergencia.png` | ~1,5 h (1000 sementes, 4 processos) |
 | [`analisar_tipo_de_rede.py`](analisar_tipo_de_rede.py) | tipo de rede: lei de potência, componente gigante, comparação com Erdős–Rényi e Barabási–Albert, passeios aleatórios a partir das vítimas, cosseno × Jaccard | `configs/cenarios.yaml` | `reports/results/tipo_de_rede_*.csv`, `tipo_de_rede_graus.png` | ~2 min (3 cenários × 5 sementes) |
 | [`avaliar_cenarios.py`](avaliar_cenarios.py) | repete em cada cenário de dificuldade | `configs/cenarios.yaml` | `reports/results/cenarios_*.csv`, `cenarios_*.png` | ~40 min (8 cenários × 10 sementes) |
@@ -33,6 +34,11 @@ com exemplos de uso.
 | [`criar_grafo.py`](criar_grafo.py) | grafos avulsos: padrões, CSVs quaisquer, trilha do dinheiro, fluxo | CSV ou padrão | o arquivo de `--saida` | segundos |
 | [`exportar_grafo_de_notas.py`](exportar_grafo_de_notas.py) | grafo de notas do Obsidian em JSON, para agentes de IA (ver [obsidian.md](../docs/obsidian.md)) | notas `.md` do cofre | `docs/grafo-de-notas.json` | segundos |
 | [`ilustrar_grafos_de_conhecimento.py`](ilustrar_grafos_de_conhecimento.py) | figuras do README: grafo de notas (cores do Obsidian) e mapa do código (Graphify) | `docs/grafo-de-notas.json`, `graphify-out/graph.json` | `reports/figures/grafo_de_notas.png`, `grafo_do_codigo.png` | segundos |
+
+`avaliar_robustez.py`, `avaliar_cenarios.py`, `avaliar_propagacao.py` e `avaliar_modelos.py`
+aceitam `--processos N` (sementes em paralelo; a memória cresce com N) e `--modelos` (só
+alguns detectores), e usam 20 sementes por padrão. O `reproduzir_tudo.py` passa o nº de
+sementes explicitamente, então esse padrão não muda a reprodução oficial.
 
 As avaliações longas (`avaliar_externo.py`, `avaliar_deteccao_online.py` e `avaliar_sementes.py`) salvam cada
 janela ou semente assim que terminam. Se forem interrompidas, rodar de novo continua de

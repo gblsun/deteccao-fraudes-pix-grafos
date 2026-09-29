@@ -852,6 +852,11 @@
   },
   {
    "de": "docs/diario/2026-09-29.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-29.md",
    "para": "docs/resultados.md",
    "tipo": "nota"
   },
@@ -2947,6 +2952,11 @@
   },
   {
    "de": "docs/modelos.md",
+   "para": "scripts/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos.md",
    "para": "scripts/mapa-dos-scripts.md",
    "tipo": "nota"
   },
@@ -3082,6 +3092,11 @@
   },
   {
    "de": "docs/proximos-passos.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
    "para": "docs/resultados.md",
    "tipo": "nota"
   },
@@ -3098,6 +3113,11 @@
   {
    "de": "docs/proximos-passos.md",
    "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "scripts/avaliar_modelos.py",
    "tipo": "arquivo"
   },
   {
@@ -4063,6 +4083,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/avaliar_gnn_rotulos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_modelos.py",
    "tipo": "arquivo"
   },
   {

@@ -184,6 +184,28 @@ DOMINANT, sem rótulos, ainda fica abaixo do DBSCAN (ver [resultados, seção
 
 ---
 
+## 10. Modelos integrados em 29/09 (implementados, ainda sem resultados)
+
+Feitos em paralelo entre 22 e 24/09 e integrados ao `main` em 29/09 (branch
+`local-2026-09-24`). O código e os testes estão prontos; **nenhum deles tem resultado em
+`reports/` ainda**. O script que compara todos nas mesmas contas é
+[`avaliar_modelos.py`](../scripts/avaliar_modelos.py).
+
+| Modelo | Onde | Tipo |
+|---|---|---|
+| ECOD | `anomaly.ecod` (em `DETECTORS`) | não supervisionado, pela cauda de cada atributo |
+| One-Class SVM (aproximado) | `anomaly.one_class_svm` | não supervisionado, fronteira em volta do "normal" |
+| Autoencoder | `anomaly.autoencoder` | não supervisionado, erro de reconstrução |
+| FRAUDAR por remoção gulosa | `graph_models.fraudar` (escore de `communities.peeling_scores`) | só estrutura; diferente do FRAUDAR por blocos da seção 8 (`communities.fraudar_scores`) |
+| node2vec + Isolation Forest | `graph_models.node2vec_isolation_forest` | só estrutura, vetor aprendido |
+| Label spreading | `flow.label_spreading` | semi-supervisionado, com rótulos positivos e negativos |
+| Gradient boosting | `experiment.supervised_scores(model="gradient_boosting")` | teto supervisionado |
+| GraphSAGE direcionada | `gnn.graphsage_scores` (PyTorch Geometric) | teto supervisionado; uma convolução para cada sentido do Pix, diferente da `sage_supervised_scores` da seção 9 |
+
+Como `DETECTORS` agora tem 6 detectores, os scripts que rodam "todos" ficam mais lentos; use
+`--modelos` para escolher. Os números de Isolation Forest, DBSCAN e LOF não mudam (conferido
+com as 1000 sementes de [resultados, seção 12](resultados.md)).
+
 ## Outros modelos que caberiam nesta pesquisa
 
 Ordenados pelo que rende mais com o esforço que exigem. Todos entram pelo mesmo lugar:
@@ -192,7 +214,8 @@ entrada em `DETECTORS`; as comparações e figuras funcionam sem mudança.
 
 > O [LOF](#4-local-outlier-factor--lof-não-supervisionado) (seção 4), o FRAUDAR (seção 8)
 > e as GNN (seção 9) já estão implementados e avaliados; aparecem na tabela só com o que
-> falta fazer com eles.
+> falta fazer com eles. ECOD, One-Class SVM, autoencoder, node2vec, label spreading e
+> gradient boosting já estão **implementados, mas ainda não avaliados** (seção 10).
 
 | Modelo | O que traria de novo | Esforço | Cuidado |
 |---|---|---|---|

@@ -67,9 +67,18 @@ Volta para o [índice da documentação](mapa-da-pesquisa.md).
 
 ## Repositório
 
-- [ ] **Integrar o branch local `local-2026-09-24`** (só nesta máquina): ECOD, One-Class SVM,
-  autoencoder, label spreading, gradient boosting, node2vec e `avaliar_modelos.py`, feitos
-  em paralelo ao `main`. A GNN dele conflita com `src/pixfraud/gnn.py` do `main`.
+- [x] Integrar o branch local `local-2026-09-24` (29/09; ver [modelos, seção 10](modelos.md)
+  e o [diário](diario/2026-09-29.md)).
+- [ ] Rodar [`avaliar_modelos.py`](../scripts/avaliar_modelos.py) pela primeira vez e
+  levar ECOD, One-Class SVM, autoencoder, node2vec, label spreading e gradient boosting para
+  os resultados.
+- [ ] Rodar os cenários novos do branch integrado (`negativos_dificeis`,
+  `quadrilhas_realistas`, `calibrado`) com `avaliar_cenarios.py`.
+- [ ] Comparar as duas GraphSAGE (`sage_supervised_scores` × `graphsage_scores`, direcionada)
+  e os dois FRAUDAR (blocos × remoção gulosa), e ficar com uma de cada, ou explicar por que
+  manter as duas.
+- [ ] Incluir `avaliar_sementes.py`, `analisar_tipo_de_rede.py` e `avaliar_modelos.py` no
+  `reproduzir_tudo.py`.
 - [ ] O Controle Inteligente de Aplicativos do Windows bloqueia a `_liblinear.pyd` do
   scikit-learn 1.9.1 nesta máquina; o `.venv` usa o 1.8.0. Se outro computador tiver o
   mesmo erro ("política de Controle de Aplicativo"), `pip install scikit-learn==1.8.0`.

@@ -131,9 +131,11 @@ def test_avaliar_externo(tmp_path):
     (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
     args = ["--config", str(tmp_path / "config.yaml"), "--dados", str(data), "--dias-janela", "2",
             "--min-fraudes", "1", "--saida", str(tmp_path / "saida")]
-    first = _run("avaliar_externo.py", *args)
+    first = _run("avaliar_externo.py", *args, "--modelos", "isolation_forest")
     assert "reaproveitada" not in first
-    assert "reaproveitada" in _run("avaliar_externo.py", *args)  # as janelas prontas ficam salvas
+    # um detector novo não é esquecido: a janela salva é completada só com os que faltam
+    assert "reaproveitada" not in _run("avaliar_externo.py", *args)
+    assert "reaproveitada" in _run("avaliar_externo.py", *args)  # agora tudo já está salvo
 
     runs = pd.read_csv(tmp_path / "saida" / "results" / "externo_execucoes.csv")
     assert runs["janela"].nunique() >= 1 and set(runs["modelo"]) == set(DETECTORS)
@@ -170,7 +172,8 @@ def test_avaliar_atributos(tmp_path):
     ablation = pd.read_csv(tmp_path / "results" / "atributos_ablacao.csv")
     assert len(ablation) == 2 * len(DETECTORS) * 6  # sementes × detectores × atributos do conjunto "grafo"
     ceiling = pd.read_csv(tmp_path / "results" / "atributos_teto.csv")
-    assert set(ceiling["modelo"]) == {*DETECTORS, "random_forest"}
+    expected = {*DETECTORS, "random_forest", "gradient_boosting"}
+    assert expected <= set(ceiling["modelo"]) and set(ceiling["modelo"]) - expected <= {"graphsage"}
     assert ceiling["average_precision"].between(0, 1).all()
     _check_metadata(tmp_path / "results" / "atributos_meta.json", cenarios={"dificil"})
     for figure in ("atributos_ablacao.png", "atributos_teto.png"):
@@ -184,13 +187,42 @@ def test_avaliar_propagacao(tmp_path):
          str(tmp_path / "cenarios.yaml"), "--cenarios", "dificil", "--sementes", "2", "--fracoes", "0.25",
          "--saida", str(tmp_path))
     runs = pd.read_csv(tmp_path / "results" / "propagacao_execucoes.csv")
-    assert set(runs["metodo"]) == {"propagacao", "propagacao_relativa", "completo_dbscan", "temporal_if", "combinado"}
+    assert set(runs["metodo"]) == {"propagacao", "propagacao_relativa", "label_spreading", "completo_dbscan",
+                                   "temporal_if", "combinado", "label_spreading_combinado"}
     assert runs["average_precision"].between(0, 1).all()
     assert (runs["fraudes_conhecidas"] >= 1).all()
     comparisons = pd.read_csv(tmp_path / "results" / "propagacao_comparacoes.csv")
-    assert "combinado - completo_dbscan" in set(comparisons["comparação"])
+    assert {"combinado - completo_dbscan", "label_spreading - propagacao_relativa"} <= set(comparisons["comparação"])
     _check_metadata(tmp_path / "results" / "propagacao_meta.json", cenarios={"dificil"})
     assert (tmp_path / "figures" / "propagacao_average_precision.png").exists()
+
+    # fraudes conhecidas pelas contestações (MED), e não sorteadas
+    (tmp_path / "contestado.yaml").write_text("contestado: {p_contested: 1.0, contest_delay_h: 1}\n", encoding="utf-8")
+    out = tmp_path / "contestacao"
+    _run("avaliar_propagacao.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "contestado.yaml"), "--cenarios", "contestado", "--sementes", "2", "--conhecidas",
+         "contestacao", "--saida", str(out))
+    contested = pd.read_csv(out / "results" / "propagacao_execucoes.csv")
+    assert set(contested["conhecidas"]) == {"contestacao"}
+
+
+def test_avaliar_modelos(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("avaliar_modelos.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "base", "dificil", "--sementes", "2", "--processos", "2",
+         "--saida", str(tmp_path))
+    runs = pd.read_csv(tmp_path / "results" / "modelos_execucoes.csv")
+    assert {*DETECTORS, "fraudar", "node2vec_if", "label_spreading", "random_forest"} <= set(runs["modelo"])
+    # todos os modelos avaliados nas mesmas contas, em cada semente
+    assert runs.groupby(["cenario", "semente"])["contas_avaliadas"].nunique().eq(1).all()
+    assert runs["average_precision"].between(0, 1).all()
+    comparisons = pd.read_csv(tmp_path / "results" / "modelos_comparacoes.csv")
+    assert "ecod - dbscan" in set(comparisons["comparação"])
+    _check_metadata(tmp_path / "results" / "modelos_meta.json", cenarios={"base", "dificil"})
+    for figure in ("modelos_average_precision.png", "modelos_comparacoes.png"):
+        assert (tmp_path / "figures" / figure).stat().st_size > 0
+    _run("avaliar_modelos.py", "--so-figuras", "--saida", str(tmp_path))  # redesenha só a partir dos CSVs
 
 
 def test_avaliar_fraudar(tmp_path):

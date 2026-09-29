@@ -74,7 +74,7 @@ def test_walks_from_victims_end_at_collectors():
     assert set(table["destino"].head(2).index) == collectors
     assert table["destino"].sum() == pytest.approx(1.0)
     # quando a coletora esvazia o dinheiro, ela deixa de ser o fim do passeio e vira passagem
-    accounts, tx = generate_dataset(replace(cfg, collector_cashout=10))
+    accounts, tx = generate_dataset(replace(cfg, collector_payouts=10))
     graph = build_graph(tx, accounts["account_id"])
     victims = accounts.loc[accounts["is_victim"], "account_id"]
     collectors = list(accounts.loc[accounts["role"] == "coletor", "account_id"])

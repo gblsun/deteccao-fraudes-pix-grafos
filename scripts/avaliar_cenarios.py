@@ -14,8 +14,9 @@ Saídas em reports/results/:
 e as figuras reports/figures/cenarios_average_precision.png e cenarios_efeitos.png.
 
 Uso:
-    python scripts/avaliar_cenarios.py --sementes 10
+    python scripts/avaliar_cenarios.py --sementes 20 --processos 3
     python scripts/avaliar_cenarios.py --cenarios base realista --sementes 3
+    python scripts/avaliar_cenarios.py --cenarios calibrado --modelos isolation_forest dbscan ecod
     python scripts/avaliar_cenarios.py --so-figuras    # redesenha as figuras sem rodar de novo
 """
 
@@ -58,7 +59,9 @@ def main() -> None:
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
     parser.add_argument("--cenarios", nargs="+", help="cenários a rodar (padrão: todos, na ordem do arquivo)")
-    parser.add_argument("--sementes", type=int, default=10, help="nº de repetições por cenário (sementes 1, 2, ...)")
+    parser.add_argument("--sementes", type=int, default=20, help="nº de repetições por cenário (sementes 1, 2, ...)")
+    parser.add_argument("--modelos", nargs="+", choices=sorted(DETECTORS), help="detectores (padrão: todos)")
+    parser.add_argument("--processos", type=int, default=1, help="sementes rodando ao mesmo tempo (memória!)")
     parser.add_argument("--saida", default="reports")
     parser.add_argument("--so-figuras", action="store_true",
                         help="não roda nada: redesenha as figuras a partir dos CSVs já salvos em --saida")
@@ -82,14 +85,15 @@ def main() -> None:
         if unknown:
             parser.error(f"cenários desconhecidos: {', '.join(unknown)} (existem: {', '.join(scenarios)})")
         runs, summary, comparisons, effects = _evaluate(config, base, {n: scenarios[n] for n in names},
-                                                        args.sementes)
+                                                        args.sementes, args.modelos, args.processos)
         results.mkdir(parents=True, exist_ok=True)
         runs.to_csv(results / "cenarios_execucoes.csv", index=False)
         summary.to_csv(results / "cenarios_resumo.csv")
         comparisons.to_csv(results / "cenarios_comparacoes.csv", index=False)
         effects.to_csv(results / "cenarios_efeitos.csv", index=False)
         save_metadata(results / "cenarios_meta.json", config, cenarios={n: scenarios[n] for n in names},
-                      sementes=list(range(1, args.sementes + 1)), duracao_s=round(time.time() - began))
+                      sementes=list(range(1, args.sementes + 1)), modelos=args.modelos or list(DETECTORS),
+                      duracao_s=round(time.time() - began))
 
     figures.mkdir(parents=True, exist_ok=True)
     fraud_rate = (runs["fraudes"] / runs["contas"]).groupby(runs["cenario"]).mean()
@@ -108,12 +112,14 @@ def main() -> None:
     print(key[columns].round(4).to_string(index=False))
 
 
-def _evaluate(config: dict, base, scenarios: dict[str, dict], n_seeds: int):
+def _evaluate(config: dict, base, scenarios: dict[str, dict], n_seeds: int, models: list[str] | None = None,
+              processes: int = 1):
     """Roda cada cenário com ``n_seeds`` sementes; devolve execuções, resumo, comparações e efeitos."""
     runs, effects = [], []
     for name, overrides in scenarios.items():
         simulation = with_overrides(base, overrides)
-        for seed, prepared, metrics in run_seeds(simulation, config, range(1, n_seeds + 1)):
+        for seed, prepared, metrics in run_seeds(simulation, config, range(1, n_seeds + 1), models=models,
+                                                 processes=processes):
             n_fraud = int(prepared.labels.sum())
             runs.append(metrics.assign(cenario=name, fraudes=n_fraud, contas=len(prepared.labels)))
             delta = compare_groups(prepared.features, prepared.labels)["delta de Cliff"]
@@ -138,20 +144,29 @@ def _evaluate(config: dict, base, scenarios: dict[str, dict], n_seeds: int):
 
 
 def _plot_metric(summary: pd.DataFrame, names: list, fraud_rate: pd.Series, path: Path, n: int) -> None:
-    """Matriz conjunto de atributos × cenário da média da métrica, um painel por modelo."""
+    """Matriz conjunto de atributos × cenário da média da métrica, um painel por modelo.
+
+    Com mais de 3 detectores, os painéis ficam numa grade de 2 colunas, para a
+    figura não crescer só para baixo.
+    """
     mean = summary["mean"]
     models = [m for m in DETECTORS if m in set(mean.index.get_level_values("modelo"))]
     sets = [s for s in FEATURE_SETS if s in set(mean.index.get_level_values("atributos"))]
-    fig, axes = plt.subplots(len(models), 1, figsize=(2.6 + 1.05 * len(names), 1.4 + 3.1 * len(models)),
-                             sharex=True, layout="constrained")
-    axes = np.atleast_1d(axes)
-    for ax, model in zip(axes, models):
+    ncols = 2 if len(models) > 3 else 1
+    nrows = -(-len(models) // ncols)
+    cell = 1.05 if ncols == 1 else 0.8
+    fig, axes = plt.subplots(nrows, ncols, figsize=(ncols * (2.2 + cell * len(names)), 1.4 + 2.9 * nrows),
+                             sharex=True, sharey=True, squeeze=False, layout="constrained")
+    for ax in axes.flat[len(models):]:
+        ax.set_visible(False)
+    labels = [f"{c}\n{fraud_rate[c]:.1%} fraude".replace(".", ",") for c in names]
+    for ax, model in zip(axes.flat, models):
         matrix = mean.xs(model, level="modelo").unstack("cenario").reindex(index=sets, columns=names)
         mesh = plot_value_matrix(matrix, SEQUENTIAL_CMAP, vmin=0, vmax=1, fmt="{:.2f}", ax=ax)
         ax.set_title(model.replace("_", " "), color=INK, fontsize=10, loc="left")
         ax.set_yticks(np.arange(len(sets)) + 0.5, sets, fontsize=9)
-    axes[-1].set_xticks(np.arange(len(names)) + 0.5,
-                        [f"{c}\n{fraud_rate[c]:.1%} fraude".replace(".", ",") for c in names], fontsize=8)
+        ax.set_xticks(np.arange(len(names)) + 0.5, labels, fontsize=7, rotation=90 if ncols > 1 else 0)
+        ax.tick_params(labelbottom=True)
     colorbar = fig.colorbar(mesh, ax=axes, shrink=0.6, pad=0.02)
     colorbar.set_label("average precision", color=INK_SECONDARY)
     colorbar.outline.set_visible(False)

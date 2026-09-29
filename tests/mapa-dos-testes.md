@@ -30,7 +30,7 @@ instalado.
 | `test_communities.py` | `communities` | comunidades, k-núcleos, subgrafo denso plantado, FRAUDAR acha as quadrilhas uma depois da outra e ignora o bloco que é a rede inteira, OddBall acha a estrela |
 | `test_flow.py` | `flow` | fluxo máximo = corte mínimo, contas a bloquear, propagação de risco |
 | `test_algorithms.py` | `algorithms` | caminho gargalo, ramificação máxima, VF2, HITS, cosseno = ângulo entre vetores |
-| `test_network.py` | `network` | expoente da lei de potência recuperado, BA × ER, componente gigante fraca e forte, passeios que terminam na coletora (ou passam por ela, com `collector_cashout`) |
+| `test_network.py` | `network` | expoente da lei de potência recuperado, BA × ER, componente gigante fraca e forte, passeios que terminam na coletora (ou passam por ela, com `collector_payouts`) |
 | `test_patterns.py` | `patterns` | formato dos padrões, comissão por salto, injeção |
 | `test_anomaly.py` | `anomaly`, `evaluation` | o detector acha o ponto isolado; métricas num ranking perfeito |
 | `test_evaluation.py` | `evaluation`, `visualization` | recall por grupo; matriz de resultados |
@@ -39,6 +39,8 @@ instalado.
 | `test_external.py` | `external` | AMLworld e PaySim (com arquivos de exemplo embutidos), formas de pagamento, tipologias, janelas |
 | `test_online.py` | `online` | dinheiro recuperado calculado à mão, exposição, pontos de corte |
 | `test_bcb.py` | `bcb` | novas tentativas em 504 e falha de conexão, sem tentar de novo em erro definitivo (404); parâmetros da URL (sem rede) |
+| `test_gnn_direcionada.py` | `gnn` | a GraphSAGE direcionada (`graphsage_scores`) fica bem acima do acaso e é reproduzível pela semente (pulado sem `torch_geometric`) |
+| `test_graph_models.py` | `graph_models` | FRAUDAR por remoção gulosa e node2vec + Isolation Forest |
 | `test_gnn.py` | `gnn` | a GraphSAGE acha a quadrilha só pela estrutura (atributos são ruído); o DOMINANT pontua mais a quadrilha; recusa grafo grande demais (pulado sem torch) |
 | `test_explorer.py` | `explorer` | layout por comunidades e página HTML |
 | `test_pipeline.py` | tudo | o pipeline de ponta a ponta num dataset pequeno |
