@@ -90,7 +90,7 @@ def main() -> None:
             if models is None:
                 models = compare_network_models(graph, seed=seed)
                 degree_graphs = _degree_graphs(graph, seed)
-                first = name
+                first, first_graph = name, graph
             print(f"{name}, semente {seed}: gigante fraca {row['gigante_fraca']:.3f}, "
                   f"alpha {row['alpha_total']:.2f}, passeios na coletora {row['passeios_pela_coletora']:.2f}",
                   flush=True)
@@ -110,7 +110,7 @@ def main() -> None:
     save_metadata(results / "tipo_de_rede_meta.json", None, cenarios=args.cenarios,
                   sementes=list(range(1, args.sementes + 1)), passeios_por_vitima=args.passeios,
                   cenario_da_comparacao=first, duracao_s=round(time.time() - began))
-    _plot_degrees(degree_graphs, models, figures / "tipo_de_rede_graus.png", first)
+    _plot_degrees(degree_graphs, first_graph, figures / "tipo_de_rede_graus.png", first)
 
     pd.set_option("display.width", 160)
     print("\nrede × modelos clássicos:")
@@ -155,33 +155,52 @@ def _degree_graphs(graph: nx.DiGraph, seed: int) -> dict[str, nx.Graph]:
     }
 
 
-def _plot_degrees(graphs: dict[str, nx.Graph], models: pd.DataFrame, path: Path, scenario: str) -> None:
-    """Distribuição acumulada complementar dos graus (log-log), com a lei de potência ajustada à rede."""
-    fig, ax = plt.subplots(figsize=(7.5, 4.8), facecolor=SURFACE)
+def _ccdf(degrees: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    k = np.sort(degrees[degrees > 0])
+    return k, 1.0 - np.arange(k.size) / k.size
+
+
+def _plot_degrees(graphs: dict[str, nx.Graph], graph: nx.DiGraph, path: Path, scenario: str) -> None:
+    """Acumulada complementar dos graus (log-log) em dois painéis.
+
+    Esquerda: grau total da rede × Erdős–Rényi × Barabási–Albert. Direita: graus de
+    entrada e de saída da rede, com a lei de potência ajustada à cauda da entrada.
+    """
+    fig, (left, right) = plt.subplots(1, 2, figsize=(11, 4.4), sharey=True, facecolor=SURFACE)
     for name, g in graphs.items():
-        k = np.sort(degree_sequence(g))
-        k = k[k > 0]
-        ccdf = 1.0 - np.arange(k.size) / k.size
-        ax.loglog(k, ccdf, color=SERIES_COLORS[name], lw=2)
-        ax.annotate(name, (k[-1], ccdf[-1]), xytext=(6, 0), textcoords="offset points",
-                    va="center", fontsize=8, color=INK)
-    fit = models.loc["rede analisada"]
-    k = np.sort(degree_sequence(graphs["rede analisada"]))
-    k = k[k > 0]
-    tail_share = (k >= fit["k_min"]).mean()
+        k, ccdf = _ccdf(degree_sequence(g))
+        left.loglog(k, ccdf, color=SERIES_COLORS[name], lw=2)
+        left.annotate(name, (k[-1], ccdf[-1]), xytext=(4, 6), textcoords="offset points",
+                      ha="left", fontsize=8, color=INK)
+    left.set_title("(a) grau total: rede × modelos clássicos", color=INK, fontsize=10)
+
+    in_color, out_color = SERIES_COLORS["rede analisada"], INK_SECONDARY
+    for kind, label, color in (("in", "entrada", in_color), ("out", "saída", out_color)):
+        k, ccdf = _ccdf(degree_sequence(graph, kind))
+        right.loglog(k, ccdf, color=color, lw=2)
+        right.annotate(f"grau de {label}", (k[-1], ccdf[-1]), xytext=(4, 6), textcoords="offset points",
+                       fontsize=8, color=INK)
+    k, ccdf = _ccdf(degree_sequence(graph, "in"))
+    fit = fit_power_law(k)
+    share = (k >= fit["k_min"]).mean()
     xs = np.geomspace(fit["k_min"], k.max(), 50)
-    ys = tail_share * ((xs - 0.5) / (fit["k_min"] - 0.5)) ** (1 - fit["alpha"])
-    ax.loglog(xs, ys, color=INK_SECONDARY, lw=1, ls="--")
-    ax.annotate(f"lei de potência ajustada, α = {fit['alpha']:.2f}", (xs[len(xs) // 2], ys[len(ys) // 2]),
-                xytext=(8, 8), textcoords="offset points", fontsize=8, color=INK_SECONDARY)
-    ax.set_xlabel("grau k (parceiros distintos)", color=INK)
-    ax.set_ylabel("P(grau ≥ k)", color=INK)
-    ax.set_title(f"Distribuição de graus: rede Pix sintética ('{scenario}') × modelos clássicos", color=INK)
-    ax.set_facecolor(SURFACE)
-    ax.grid(alpha=0.25, which="both")
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.tick_params(colors=INK_SECONDARY)
-    ax.set_xlim(right=ax.get_xlim()[1] * 4)
+    ys = share * ((xs - 0.5) / (fit["k_min"] - 0.5)) ** (1 - fit["alpha"])
+    right.loglog(xs, ys, color=INK, lw=1, ls="--")
+    alpha = f"{fit['alpha']:.2f}".replace(".", ",")
+    right.annotate(f"lei de potência na entrada\nα = {alpha} (k ≥ {fit['k_min']})", (xs[5], ys[5]),
+                   xytext=(-14, -30), textcoords="offset points", ha="right", fontsize=8, color=INK)
+    right.set_title("(b) rede: entrada tem cauda pesada; saída, não", color=INK, fontsize=10)
+
+    left.set_ylabel("P(grau ≥ k)", color=INK)
+    for ax in (left, right):
+        ax.set_xlabel("grau k (contas distintas)", color=INK)
+        ax.set_facecolor(SURFACE)
+        ax.grid(alpha=0.25, which="major")
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.tick_params(colors=INK_SECONDARY)
+        ax.set_xlim(right=ax.get_xlim()[1] * 3)
+    fig.suptitle(f"Distribuição de graus da rede Pix sintética (cenário '{scenario}', semente 1)", color=INK)
+    fig.tight_layout()
     fig.savefig(path, dpi=150, bbox_inches="tight", facecolor=SURFACE)
     plt.close(fig)
 
