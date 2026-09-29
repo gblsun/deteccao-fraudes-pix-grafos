@@ -169,7 +169,8 @@ Não são figuras estáticas, então ficam fora da lista numerada acima:
 - [`quadrilha.gif`](figures/quadrilha.gif): o dinheiro percorrendo a quadrilha, do golpe
   ao saque.
 - [`estudos/rede_completa.html`](estudos/rede_completa.html): toda a rede sintética, com
-  busca, filtro por papel, cor por papel/risco/comunidade e linha do tempo dia a dia
+  busca, filtro por papel, cor por papel/risco/comunidade, setas no sentido do dinheiro
+  (entradas e saídas destacadas ao clicar numa conta) e linha do tempo dia a dia
   (embutida em [`docs/rede-pix.md`](../docs/rede-pix.md)).
 - [`estudos/trilha_coletor.png`](estudos/trilha_coletor.png): a trilha do dinheiro em
   volta de uma conta coletora (`criar_grafo.py`), usada também em `docs/rede-pix.md`.

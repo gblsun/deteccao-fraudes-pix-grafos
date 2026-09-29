@@ -7,7 +7,8 @@ crescendo dia a dia (com botão de "tocar").
 
 O posicionamento é calculado em Python (``community_layout``): cada
 comunidade (Louvain) é desenhada separadamente e as comunidades são dispostas
-em espiral. O navegador só desenha, o que mantém a página leve mesmo com
+em espiral, com as contas da quadrilha (laranjas, intermediários e coletoras)
+juntas no centro. As relações são setas de quem pagou para quem recebeu. O navegador só desenha, o que mantém a página leve mesmo com
 dezenas de milhares de arestas.
 
 Uso típico::
@@ -24,6 +25,7 @@ from __future__ import annotations
 import html
 import json
 import math
+from collections.abc import Iterable
 from pathlib import Path
 
 import networkx as nx
@@ -35,29 +37,59 @@ from pixfraud.communities import detect_communities, undirected_simple
 SIGMA_URL = "https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js"
 GRAPHOLOGY_URL = "https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.umd.min.js"
 GOLDEN_ANGLE = math.pi * (3 - math.sqrt(5))
+CENTER_ROLES = ("laranja", "intermediario", "coletor")  # contas da quadrilha, desenhadas no centro
 
 
-def community_layout(graph: nx.Graph, communities: pd.Series, seed: int = 42) -> dict:
+def community_layout(graph: nx.Graph, communities: pd.Series, seed: int = 42, center: Iterable = ()) -> dict:
     """Posições que deixam as comunidades visíveis.
 
     Cada comunidade recebe um disco de raio proporcional à raiz do seu tamanho
     e é desenhada por dentro com o layout de molas (spring). Os discos são
     dispostos numa espiral de girassol (ângulo áureo), do maior para o menor,
     sem se sobrepor.
+
+    ``center``: contas que saem das suas comunidades e ficam juntas num disco no
+    centro, com folga (por exemplo, as contas das quadrilhas). Assim o dinheiro
+    que chega a elas aparece como setas convergindo para o meio, em vez de
+    riscos cruzando a rede de um lado a outro.
     """
     simple = undirected_simple(graph)
-    groups = sorted(communities.groupby(communities).groups.items(), key=lambda kv: -len(kv[1]))
+    center = [v for v in center if v in communities.index]
+    rest = communities.drop(center)
+    groups = sorted(rest.groupby(rest).groups.items(), key=lambda kv: -len(kv[1]))
     radii = [math.sqrt(len(members)) for _, members in groups]
     spacing = 2.4 * max(radii, default=1.0)
     positions, placed = {}, []
+    if center:
+        hub_radius = _place_center(simple.subgraph(center), spacing, positions, seed)
+        placed.append((np.zeros(2), hub_radius))
     for i, ((_, members), radius) in enumerate(zip(groups, radii)):
-        center = _free_spot(placed, radius, spacing, i)
-        placed.append((center, radius))
+        spot = _free_spot(placed, radius, spacing, i + (1 if center else 0))
+        placed.append((spot, radius))
         sub = simple.subgraph(members)
         local = nx.spring_layout(sub, seed=seed) if len(members) > 1 else {m: np.zeros(2) for m in members}
         for v, xy in local.items():
-            positions[v] = center + radius * np.asarray(xy)
+            positions[v] = spot + radius * np.asarray(xy)
     return positions
+
+
+def _place_center(sub: nx.Graph, spacing: float, positions: dict, seed: int) -> float:
+    """Põe cada grupo ligado de ``sub`` (uma quadrilha, em geral) num círculo em volta da origem.
+
+    Cada quadrilha é desenhada por dentro com o layout de molas, afastada das
+    outras, para que as setas entre as contas dela fiquem legíveis. Devolve o
+    raio ocupado, para os outros grupos ficarem em volta.
+    """
+    parts = sorted(nx.connected_components(sub), key=len, reverse=True)
+    part_radius = [0.22 * spacing * math.sqrt(len(p)) / 2 for p in parts]
+    ring = 0.0 if len(parts) == 1 else 1.4 * max(part_radius) / math.sin(math.pi / len(parts))
+    for k, (part, radius) in enumerate(zip(parts, part_radius)):
+        angle = 2 * math.pi * k / len(parts)
+        spot = np.array([ring * math.cos(angle), ring * math.sin(angle)])
+        local = nx.spring_layout(sub.subgraph(part), seed=seed) if len(part) > 1 else {v: np.zeros(2) for v in part}
+        for v, xy in local.items():
+            positions[v] = spot + radius * np.asarray(xy)
+    return ring + max(part_radius, default=0.0)
 
 
 def explorer_payload(
@@ -68,12 +100,18 @@ def explorer_payload(
     communities: pd.Series | None = None,
     positions: dict | None = None,
     seed: int = 42,
+    center_roles: Iterable[str] = CENTER_ROLES,
 ) -> dict:
-    """Dados compactos (listas de números) que a página do explorador consome."""
+    """Dados compactos (listas de números) que a página do explorador consome.
+
+    As contas com papel em ``center_roles`` (as da quadrilha) ficam no centro do
+    desenho (ver ``community_layout``); passe ``()`` para desligar.
+    """
     if communities is None:
         communities = detect_communities(graph, seed=seed)
     if positions is None:
-        positions = community_layout(graph, communities, seed=seed)
+        center = [v for v in graph.nodes if roles is not None and roles.get(v) in set(center_roles)]
+        positions = community_layout(graph, communities, seed=seed, center=center)
     nodes = list(graph.nodes)
     index = {v: i for i, v in enumerate(nodes)}
     xy = np.array([positions[v] for v in nodes], dtype=float)
@@ -136,9 +174,10 @@ def network_explorer_html(
     subtitle: str = "",
     positions: dict | None = None,
     seed: int = 42,
+    center_roles: Iterable[str] = CENTER_ROLES,
 ) -> str:
     """Página HTML completa do explorador (ver ``save_network_explorer``)."""
-    payload = explorer_payload(graph, transactions, roles, risk, communities, positions, seed)
+    payload = explorer_payload(graph, transactions, roles, risk, communities, positions, seed, center_roles)
     data = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     page = _TEMPLATE
     for key, value in {
@@ -198,8 +237,10 @@ _TEMPLATE = r"""<meta charset="utf-8">
     --accent: #0f766e;
     --accent-soft: #d5ede9;
     --canvas: #fbfcfc;
-    --edge: #e3eae8;
+    --edge: rgb(62, 84, 80);
     --edge-strong: #0f766e;
+    --edge-in: #1d4ed8;
+    --edge-out: #c2410c;
     --fade: #dfe6e4;
     --warn: #b42318;
     --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -215,8 +256,10 @@ _TEMPLATE = r"""<meta charset="utf-8">
       --accent: #2dd4bf;
       --accent-soft: #123b37;
       --canvas: #101918;
-      --edge: #1c2927;
+      --edge: rgb(176, 206, 200);
       --edge-strong: #2dd4bf;
+      --edge-in: #60a5fa;
+      --edge-out: #fb923c;
       --fade: #22302e;
       --warn: #f97066;
     }
@@ -230,8 +273,10 @@ _TEMPLATE = r"""<meta charset="utf-8">
     --accent: #2dd4bf;
     --accent-soft: #123b37;
     --canvas: #101918;
-    --edge: #1c2927;
+    --edge: rgb(176, 206, 200);
     --edge-strong: #2dd4bf;
+    --edge-in: #60a5fa;
+    --edge-out: #fb923c;
     --fade: #22302e;
     --warn: #f97066;
   }
@@ -285,6 +330,9 @@ _TEMPLATE = r"""<meta charset="utf-8">
   #sigma { position: absolute; inset: 0; }
   .legend { position: absolute; left: 12px; bottom: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: calc(100% - 24px); }
   .legend .item { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 22px; height: 3px; border-radius: 2px; flex: none; position: relative; }
+  .swatch::after { content: ""; position: absolute; right: -4px; top: -3px; border: 4.5px solid transparent; border-left: 6px solid; border-left-color: inherit; }
+  .legend .arrow { color: var(--muted); }
   .gradient { width: 120px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #ffe08a, #f58518, #b3001b); }
   .error { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--warn); }
   .details dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-variant-numeric: tabular-nums; }
@@ -361,10 +409,16 @@ _TEMPLATE = r"""<meta charset="utf-8">
           <option value="1000">R$ 1.000 ou mais</option>
           <option value="5000">R$ 5.000 ou mais</option>
         </select>
-        <label class="role" for="show-edges"><input id="show-edges" type="checkbox" checked> Mostrar todas as relações</label>
+      </div>
+      <div class="field">
+        <h2><label for="edge-scale">Espessura das setas</label></h2>
+        <input id="edge-scale" type="range" min="0.5" max="3" step="0.25" value="1">
+        <h2><label for="normal-alpha">Movimento normal</label></h2>
+        <input id="normal-alpha" type="range" min="0" max="0.5" step="0.02" value="0.12" aria-describedby="normal-alpha-hint">
+        <span class="hint" id="normal-alpha-hint">à esquerda some; à direita aparece todo o Pix que não é da quadrilha</span>
         <label class="role" for="only-fraud"><input id="only-fraud" type="checkbox"> Só Pix de fraude (rótulo)</label>
       </div>
-      <p class="hint">Clique numa conta para destacar os vizinhos. Arraste para mover e use a roda do mouse (ou o gesto de pinça) para dar zoom. Clique no fundo para limpar.</p>
+      <p class="hint">Cada seta vai de quem pagou para quem recebeu. Passe o mouse ou clique numa conta para ver as entradas (azul) e as saídas (laranja). Arraste para mover e use a roda do mouse (ou o gesto de pinça) para dar zoom. Clique no fundo para limpar.</p>
     </aside>
 
     <section class="stage" aria-label="Rede de transações">
@@ -391,13 +445,18 @@ _TEMPLATE = r"""<meta charset="utf-8">
   // Cores do tema lidas uma vez (e de novo quando o tema muda), não a cada vértice desenhado.
   let theme = {};
   function readTheme() {
-    theme = { ink: css("--ink"), surface: css("--surface"), line: css("--line"), fade: css("--fade"), edge: css("--edge"), edgeStrong: css("--edge-strong") };
+    theme = { ink: css("--ink"), surface: css("--surface"), line: css("--line"), fade: css("--fade"), edge: css("--edge"), edgeStrong: css("--edge-strong"), edgeIn: css("--edge-in"), edgeOut: css("--edge-out"), canvas: css("--canvas") };
   }
   readTheme();
   const money = (v) => "R$ " + Math.round(v).toLocaleString("pt-BR");
   const nodes = DATA.nodes, E = DATA.edges, nDays = Math.max(DATA.days.length, 1);
 
-  const state = { mode: "role", day: nDays - 1, minAmount: 0, onlyFraud: false, showEdges: true, roles: new Set(), selected: null, neighbors: new Set() };
+  const state = { mode: "role", day: nDays - 1, minAmount: 0, onlyFraud: false, normalAlpha: 0.12, edgeScale: 1, hovered: null, roles: new Set(), selected: null, neighbors: new Set() };
+  const FRAUD_ROLES = new Set(["laranja", "intermediario", "coletor"]);
+  // Cor das setas do dinheiro da quadrilha, pelo papel de quem pagou (mais saturadas que as dos nós).
+  const FLOW_COLORS = { vitima: "#2f9e44", laranja: "#f76707", intermediario: "#ae3ec9", coletor: "#e03131" };
+  const FLOW_NAMES = [["vitima", "golpe: vítima → laranja"], ["laranja", "repasse da laranja"],
+                      ["intermediario", "repasse do intermediário"], ["coletor", "saída da coletora"]];
   nodes.forEach((n) => state.roles.add(n.r));
 
   // ---- controles ----
@@ -437,7 +496,8 @@ _TEMPLATE = r"""<meta charset="utf-8">
   slider.addEventListener("input", () => { state.day = +slider.value; update(); });
   $("min-amount").addEventListener("change", (e) => { state.minAmount = +e.target.value; update(); });
   $("only-fraud").addEventListener("change", (e) => { state.onlyFraud = e.target.checked; update(); });
-  $("show-edges").addEventListener("change", (e) => { state.showEdges = e.target.checked; update(); });
+  $("normal-alpha").addEventListener("input", (e) => { state.normalAlpha = +e.target.value; update(); });
+  $("edge-scale").addEventListener("input", (e) => { state.edgeScale = +e.target.value; update(); });
   let timer = null;
   $("play").addEventListener("click", () => {
     if (timer) { stop(); return; }
@@ -466,21 +526,46 @@ _TEMPLATE = r"""<meta charset="utf-8">
     const [r, g, b] = h < 1 ? [chroma, x, 0] : h < 2 ? [x, chroma, 0] : h < 3 ? [0, chroma, x] : h < 4 ? [0, x, chroma] : h < 5 ? [x, 0, chroma] : [chroma, 0, x];
     return "rgb(" + Math.round((r + m) * 255) + "," + Math.round((g + m) * 255) + "," + Math.round((b + m) * 255) + ")";
   }
+  function withAlpha(color, alpha) {
+    const [r, g, b] = color.startsWith("#") ? hex(color) : color.match(/\d+/g).map(Number);
+    return "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+  }
+  // Papel de quem pagou, quando a seta é dinheiro da quadrilha; null no movimento normal.
+  function flowRole(j) {
+    const payer = nodes[E.s[j]];
+    if (FRAUD_ROLES.has(payer.r)) return payer.r;
+    return E.f[j] && payer.r === "vitima" ? "vitima" : null;
+  }
+  // Mistura opaca de duas cores (o sigma 2 desenha nós translúcidos com cores erradas).
+  function mix(color, other, t) {
+    const rgb = (c) => c.startsWith("#") ? hex(c) : c.match(/\d+/g).map(Number);
+    const [a, b] = [rgb(color), rgb(other)];
+    return "rgb(" + lerp(a[0], b[0], t) + "," + lerp(a[1], b[1], t) + "," + lerp(a[2], b[2], t) + ")";
+  }
   function nodeColor(n) {
     if (state.mode === "risk") return riskColor(n.k);
     if (state.mode === "community") return groupColor(n.c);
     return ROLE_COLORS[n.r] || ROLE_COLORS["?"];
   }
 
+  function arrowItem(color, text) {
+    return '<span class="item"><span class="swatch" style="background:' + color + ";border-left-color:" + color + '"></span>' + text + "</span>";
+  }
   function legend() {
     const box = $("legend");
+    if (state.selected !== null) {
+      box.innerHTML = arrowItem(theme.edgeIn, "entrada: pagou a esta conta") + arrowItem(theme.edgeOut, "saída: esta conta pagou");
+      return;
+    }
+    const direction = '<span class="item arrow">seta: quem paga → quem recebe; mais grossa = mais dinheiro</span>';
     if (state.mode === "risk") {
-      box.innerHTML = '<span class="item">menos suspeita <span class="gradient"></span> mais suspeita</span>';
+      box.innerHTML = '<span class="item">menos suspeita <span class="gradient"></span> mais suspeita</span>' + direction;
     } else if (state.mode === "community") {
-      box.innerHTML = '<span class="item">' + DATA.communities + " grupos detectados pelo algoritmo de Louvain; cada cor é um grupo</span>";
+      box.innerHTML = '<span class="item">' + DATA.communities + " grupos detectados pelo algoritmo de Louvain; cada cor é um grupo</span>" + direction;
     } else {
       box.innerHTML = ROLE_ORDER.filter((r) => roleCounts[r]).map((r) =>
-        '<span class="item"><span class="dot" style="background:' + ROLE_COLORS[r] + '"></span>' + ROLE_NAMES[r] + "</span>").join("");
+        '<span class="item"><span class="dot" style="background:' + ROLE_COLORS[r] + '"></span>' + ROLE_NAMES[r] + "</span>").join("") +
+        FLOW_NAMES.filter(([r]) => roleCounts[r]).map(([r, text]) => arrowItem(FLOW_COLORS[r], text)).join("") + direction;
     }
   }
 
@@ -500,7 +585,7 @@ _TEMPLATE = r"""<meta charset="utf-8">
   const graph = new graphology.Graph({ type: "directed", multi: false, allowSelfLoops: false });
   nodes.forEach((n, i) => graph.addNode(String(i), { x: n.x, y: -n.y, size: n.s, label: n.id }));
   for (let j = 0; j < E.s.length; j++) {
-    graph.addEdgeWithKey("e" + j, String(E.s[j]), String(E.t[j]), { size: Math.min(4, 0.4 + Math.log10(1 + E.a[j]) / 2), j: j });
+    graph.addEdgeWithKey("e" + j, String(E.s[j]), String(E.t[j]), { size: Math.min(4.5, 1 + Math.log10(1 + E.a[j]) / 2), j: j });
   }
 
   let renderer;
@@ -540,8 +625,12 @@ _TEMPLATE = r"""<meta charset="utf-8">
           if (i === state.selected) { out.forceLabel = true; out.zIndex = 2; out.size = attrs.size * 1.6; }
           else if (state.neighbors.has(i)) { out.zIndex = 1; out.forceLabel = true; }
           else { out.color = theme.fade; out.label = ""; out.zIndex = 0; }
-        } else if (n.r === "laranja" || n.r === "intermediario" || n.r === "coletor") {
+        } else if (FRAUD_ROLES.has(n.r)) {
           out.zIndex = 1;
+          if (state.mode === "role") out.size = attrs.size * 1.8 + 2;  // poucas e decisivas: maiores
+        } else if (state.mode === "role" && n.r !== "vitima") {
+          // com o movimento normal apagado, as contas normais também recuam para o fundo
+          out.color = mix(out.color, theme.canvas, Math.max(0, 0.6 - 2 * state.normalAlpha));
         }
         return out;
       },
@@ -549,15 +638,36 @@ _TEMPLATE = r"""<meta charset="utf-8">
         const j = attrs.j;
         const out = Object.assign({}, attrs);
         if (!edgeVisible(j)) { out.hidden = true; return out; }
-        if (state.selected !== null) {
-          const touches = E.s[j] === state.selected || E.t[j] === state.selected;
-          if (!touches) { out.hidden = true; return out; }
+        out.size = attrs.size * state.edgeScale;
+        // clicar tem prioridade; sem clique, a conta sob o mouse ganha o mesmo destaque
+        const focus = state.selected !== null ? state.selected : state.hovered;
+        if (focus !== null) {
+          // entradas e saídas em cores diferentes: o sentido do dinheiro fica evidente
+          const incoming = E.t[j] === focus, outgoing = E.s[j] === focus;
+          if (incoming || outgoing) {
+            out.color = incoming ? theme.edgeIn : theme.edgeOut;
+            out.size += 1.2 * state.edgeScale;
+            out.zIndex = 2;
+            return out;
+          }
+          if (state.selected !== null) { out.hidden = true; return out; }
+          out.color = withAlpha(theme.edge, 0.06);  // passando o mouse: o resto recua, mas não some
+          out.zIndex = 0;
+          return out;
+        }
+        const role = flowRole(j);
+        if (role && (state.mode === "role" || state.onlyFraud)) {
+          // o dinheiro da quadrilha leva a cor de quem pagou: a vítima (golpe), a laranja, o intermediário...
+          out.color = withAlpha(FLOW_COLORS[role], 0.9);
+          out.size = Math.max(out.size + 0.8 * state.edgeScale, 2 * state.edgeScale);
+          out.zIndex = 1;
+        } else if (state.onlyFraud) {
           out.color = theme.edgeStrong;
-          out.size = attrs.size + 0.6;
-        } else if (!state.showEdges && !state.onlyFraud) {
+        } else if (state.normalAlpha <= 0) {
           out.hidden = true;
         } else {
-          out.color = state.onlyFraud ? theme.edgeStrong : theme.edge;
+          out.color = withAlpha(theme.edge, state.normalAlpha);
+          out.zIndex = 0;
         }
         return out;
       },
@@ -574,13 +684,15 @@ _TEMPLATE = r"""<meta charset="utf-8">
       graph.forEachNeighbor(String(i), (k) => state.neighbors.add(+k));
       if (focus) {
         const d = renderer.getNodeDisplayData(String(i));
-        if (d) renderer.getCamera().animate({ x: d.x, y: d.y, ratio: 0.12 }, { duration: 500 });
+        if (d) renderer.getCamera().animate({ x: d.x, y: d.y, ratio: 0.7 }, { duration: 500 });
       }
     }
     details();
     update();
   }
   renderer.on("clickNode", ({ node }) => select(+node, false));
+  renderer.on("enterNode", ({ node }) => { state.hovered = +node; renderer.refresh(); });
+  renderer.on("leaveNode", () => { state.hovered = null; renderer.refresh(); });
   renderer.on("clickStage", () => select(null, false));
   $("search").addEventListener("change", (e) => {
     const i = idIndex.get(e.target.value.trim());
