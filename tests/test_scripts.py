@@ -92,10 +92,11 @@ def test_gerar_dataset_sorteia_semente_e_reproduz_com_seed(tmp_path):
 def test_reproduzir_tudo_lista_as_etapas_em_ordem():
     etapas = [linha.split()[0] for linha in _run("reproduzir_tudo.py", "--listar").splitlines()
               if linha.split() and linha.split()[0] in {"dataset", "experimento", "robustez", "cenarios", "online",
-                                                         "atributos", "propagacao", "fraudar", "gnn"}]
+                                                         "atributos", "propagacao", "fraudar", "gnn",
+                                                         "gnn_rotulos"}]
     esperadas = ["dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao", "fraudar",
-                 "gnn"]
-    assert etapas == [e for e in esperadas if e != "gnn" or importlib.util.find_spec("torch")]
+                 "gnn", "gnn_rotulos"]
+    assert etapas == [e for e in esperadas if not e.startswith("gnn") or importlib.util.find_spec("torch")]
     rapido = _run("reproduzir_tudo.py", "--rapido", "--listar", "--etapas", "experimento")
     assert "--saida reports_teste" in rapido and "robustez" not in rapido
 
@@ -220,6 +221,22 @@ def test_avaliar_gnn(tmp_path):
     assert "sage_tabular - rf_tabular" in set(comparisons["comparação"])
     _check_metadata(tmp_path / "results" / "gnn_meta.json", cenarios={"base"})
     assert (tmp_path / "figures" / "gnn_average_precision.png").exists()
+
+
+def test_avaliar_gnn_rotulos(tmp_path):
+    pytest.importorskip("torch")
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("avaliar_gnn_rotulos.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "base", "--sementes", "2", "--fracoes", "0.25",
+         "--epocas", "20", "--saida", str(tmp_path))
+    runs = pd.read_csv(tmp_path / "results" / "gnn_rotulos_execucoes.csv")
+    assert {"sage_tabular", "rf_tabular", "propagacao_combinado"} <= set(runs["metodo"])
+    assert runs["average_precision"].between(0, 1).all() and (runs["fraudes_conhecidas"] >= 1).all()
+    comparisons = pd.read_csv(tmp_path / "results" / "gnn_rotulos_comparacoes.csv")
+    assert "sage_tabular - rf_tabular" in set(comparisons["comparação"])
+    _check_metadata(tmp_path / "results" / "gnn_rotulos_meta.json", cenarios={"base"})
+    assert (tmp_path / "figures" / "gnn_rotulos_average_precision.png").exists()
 
 
 def test_gerar_relatorio(tmp_path):

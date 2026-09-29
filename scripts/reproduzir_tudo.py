@@ -33,7 +33,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 RESULTADOS = ("dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao", "fraudar",
-              "gnn", "externo")
+              "gnn", "gnn_rotulos", "externo")
 EXTRAS = ("rede", "ilustracoes", "notas", "graphify", "relatorio")
 AMLWORLD = ("amlworld_pix", "amlworld")
 HISTORICO = ROOT / "data" / "tempos_reproduzir.csv"
@@ -41,10 +41,11 @@ HISTORICO = ROOT / "data" / "tempos_reproduzir.csv"
 META = {"experimento": "results/metricas_meta.json", "robustez": "results/robustez_meta.json",
         "cenarios": "results/cenarios_meta.json", "online": "results/online_meta.json",
         "atributos": "results/atributos_meta.json", "propagacao": "results/propagacao_meta.json",
-        "fraudar": "results/fraudar_meta.json", "gnn": "results/gnn_meta.json"}
+        "fraudar": "results/fraudar_meta.json", "gnn": "results/gnn_meta.json",
+        "gnn_rotulos": "results/gnn_rotulos_meta.json"}
 # tempo aproximado do modo completo (scripts/mapa-dos-scripts.md), para etapas sem *_meta.json nem histórico
-APROXIMADO = {"dataset": 10, "online": 30 * 60, "fraudar": 17 * 60, "gnn": 25 * 60, "rede": 60, "ilustracoes": 60,
-              "notas": 5, "graphify": 30, "relatorio": 20}
+APROXIMADO = {"dataset": 10, "online": 30 * 60, "fraudar": 17 * 60, "gnn": 25 * 60, "gnn_rotulos": 40 * 60,
+              "rede": 60, "ilustracoes": 60, "notas": 5, "graphify": 30, "relatorio": 20}
 
 
 def graphify() -> str | None:
@@ -82,6 +83,8 @@ def plano(rapido: bool, refazer: bool, saida: str, dados: str) -> list[tuple[str
     if importlib.util.find_spec("torch"):  # dependência opcional: pip install -e ".[gnn]"
         etapas.append(("gnn", "redes neurais para grafos (DOMINANT e GraphSAGE)",
                        [py, "scripts/avaliar_gnn.py", "--sementes", poucas, "--saida", saida]))
+        etapas.append(("gnn_rotulos", "GraphSAGE com poucos rótulos",
+                       [py, "scripts/avaliar_gnn_rotulos.py", "--sementes", sementes, "--saida", saida]))
     if not rapido:  # cada janela do AMLworld leva minutos
         for nome in AMLWORLD:
             if (ROOT / "data" / "external" / nome).exists():

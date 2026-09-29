@@ -18,10 +18,11 @@ from datetime import datetime
 from pathlib import Path
 
 import networkx as nx
+import numpy as np
 import pandas as pd
 import yaml
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.model_selection import KFold, StratifiedKFold, cross_val_predict
 
 from pixfraud.anomaly import DETECTORS, Detection
 from pixfraud.evaluation import evaluate
@@ -155,6 +156,28 @@ def supervised_scores(features: pd.DataFrame, labels: pd.Series, seed: int = 42,
     model = RandomForestClassifier(n_estimators=300, class_weight="balanced_subsample", random_state=seed, n_jobs=-1)
     splitter = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)
     proba = cross_val_predict(model, features.to_numpy(dtype=float), y, cv=splitter, method="predict_proba")[:, 1]
+    return pd.Series(proba, index=features.index, name="score")
+
+
+def known_fraud_scores(features: pd.DataFrame, known: list, seed: int = 42, folds: int = 5) -> pd.Series:
+    """Random Forest treinado só com as fraudes **já conhecidas**; o resto conta como "não fraude".
+
+    É o par tabular de ``pixfraud.gnn.sage_known_fraud_scores``, com a mesma
+    divisão: as contas não rotuladas são separadas em ``folds`` dobras, e cada
+    uma recebe a previsão de um modelo treinado com as fraudes conhecidas e as
+    outras dobras. As contas de ``known`` recebem 1.0; avalie só nas demais.
+    """
+    X = features.to_numpy(dtype=float)
+    y = features.index.isin(known)
+    positives, unlabeled = np.flatnonzero(y), np.flatnonzero(~y)
+    proba = np.ones(len(features))
+    splitter = KFold(n_splits=folds, shuffle=True, random_state=seed)
+    for rest, held_out in splitter.split(unlabeled):
+        train = np.concatenate([positives, unlabeled[rest]])
+        model = RandomForestClassifier(n_estimators=300, class_weight="balanced_subsample", random_state=seed,
+                                       n_jobs=-1)
+        model.fit(X[train], y[train])
+        proba[unlabeled[held_out]] = model.predict_proba(X[unlabeled[held_out]])[:, 1]
     return pd.Series(proba, index=features.index, name="score")
 
 

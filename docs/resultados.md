@@ -372,7 +372,45 @@ diferentes:
   depois de Holm; as vitórias de 5 em 5 são consistentes, mas não "significativas" por
   construção. Para o relatório, vale rodar com 10 sementes (~35 min).
 
-## 11. Cuidados na interpretação
+## 11. GNN com poucos rótulos: a vantagem da GraphSAGE não sobrevive
+
+Na seção 10, a GraphSAGE treina com os rótulos de 80% das contas. No Pix, só parte das
+fraudes vira conhecida (as contestações do MED) e todo o resto aparece como "não fraude".
+Aqui, como na culpa por associação (seção 6),
+10% ou 25% das contas fraudulentas são sorteadas como conhecidas; os modelos treinam só com
+elas e a AP é medida **só nas contas restantes**
+([`avaliar_gnn_rotulos.py`](../scripts/avaliar_gnn_rotulos.py), 10 sementes;
+[`gnn.sage_known_fraud_scores`](../src/pixfraud/gnn.py) e
+[`experiment.known_fraud_scores`](../src/pixfraud/experiment.py)).
+
+| AP média (10 sementes) | `sem_atalhos` 10% | `sem_atalhos` 25% | `realista` 10% | `realista` 25% |
+|---|:---:|:---:|:---:|:---:|
+| completo, DBSCAN (sem rótulos) | 0,61 | 0,56 | 0,48 | 0,46 |
+| propagação + DBSCAN (seção 6) | 0,63 | 0,83 | **0,70** | 0,95 |
+| Random Forest, tabular | 0,43 | 0,64 | 0,22 | 0,41 |
+| GraphSAGE, tabular | 0,46 | 0,71 | 0,29 | 0,43 |
+| Random Forest, completo | **0,89** | **0,97** | 0,65 | **0,97** |
+| GraphSAGE, completo | 0,65 | 0,87 | 0,55 | 0,65 |
+
+* **A estrutura aprendida deixa de compensar.** Com os atributos tabulares, a GraphSAGE
+  ainda fica um pouco acima do Random Forest (+0,02 a +0,07, vence em 6 ou 7 de 10
+  sementes, sem significância), mas longe do salto de 0,66 → 0,92 da seção 10. Com poucos
+  exemplos de fraude, a rede não tem de onde aprender o padrão da vizinhança.
+* **Com todos os atributos, a GNN perde para o Random Forest** nos quatro casos (−0,10 a
+  −0,31; perde em todas as sementes em três deles, p ≤ 0,016 com Holm). Os atributos de
+  grafo feitos à mão carregam a estrutura de um jeito que pouco rótulo já basta para usar;
+  a GraphSAGE mistura os atributos dos vizinhos, e as "fraudes não descobertas" rotuladas
+  como normais contaminam essa mistura.
+* **O método simples de grafo é o mais robusto sem atributos supervisionados**: a
+  propagação de risco + DBSCAN supera a GraphSAGE completa no `realista` (0,70 contra 0,55
+  com 10%; 0,95 contra 0,65 com 25%).
+* A GraphSAGE completa ainda bate o DBSCAN sem rótulos (+0,31 no `sem_atalhos` com 25%,
+  10 de 10 sementes): qualquer rótulo ajuda, mas não a coloca no topo.
+* **Limite do desenho:** as contas não rotuladas contam como normais (a forma mais simples
+  de aprendizado *positivo e não rotulado*). Uma perda própria para esse caso, ou a
+  GraphSAGE partindo do escore da propagação, são o próximo teste natural.
+
+## 12. Cuidados na interpretação
 
 * **A taxa de fraude é muito maior que a real** (seção 3), o que torna a tarefa mais fácil
   aqui do que num banco.
@@ -385,7 +423,7 @@ diferentes:
   para estimar desempenho no Pix.
 * Nada aqui foi avaliado em dados reais de transações, que não são públicos.
 
-## 12. Conclusão parcial
+## 13. Conclusão parcial
 
 1. No dataset sintético, **a vantagem aparente dos atributos tabulares vinha de sinais que
    o próprio gerador embute**. Sem esses atalhos, o grafo vence em todas as sementes e nos
@@ -406,8 +444,12 @@ diferentes:
 7. **Uma GNN supervisionada aprende a estrutura sozinha**: com só os atributos tabulares,
    chega a 0,92 de AP no `realista`, contra 0,66 do Random Forest (seção 10). Sem rótulos,
    o autoencoder de grafo ainda não compete com os detectores.
+8. **Mas a vantagem da GNN depende de muitos rótulos**: com só 10% ou 25% das fraudes
+   conhecidas, a GraphSAGE fica abaixo do Random Forest com todos os atributos e da
+   propagação de risco (seção 11). No cenário realista do Pix, o método simples de grafo
+   ainda é o melhor.
 
-## 13. Próximos passos
+## 14. Próximos passos
 
 1. Testar o conjunto `completo` **sem o PageRank** (seção 7) e recalibrar o gerador com os
    números do BCB (`p_merchant` ≈ 0,49, valores de P2P e P2B separados).
@@ -416,8 +458,8 @@ diferentes:
    recuperação; e atributos temporais novos (rajadas de pagadores em minutos).
 4. Aprofundar a culpa por associação: propagação com decaimento no tempo, e um cenário em
    que as contestações chegam com atraso, como no MED real.
-5. GNN: rodar com 10 sementes; testar com poucos rótulos (as contestações do MED, como na
-   seção 6), que é o cenário real; e tentar um detector não supervisionado de grafo mais
+5. GNN: rodar com 10 sementes; com poucos rótulos (seção 11), testar uma perda para
+   aprendizado positivo e não rotulado e a GraphSAGE partindo do escore da propagação; e tentar um detector não supervisionado de grafo mais
    adequado a quadrilhas pequenas que o DOMINANT (por exemplo, contraste entre a conta e a
    vizinhança).
 6. FRAUDAR: um critério de parada melhor que "5% das contas" e pesos que levem em conta o

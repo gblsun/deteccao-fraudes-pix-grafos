@@ -49,6 +49,13 @@
    ]
   },
   {
+   "caminho": "docs/diario/2026-09-28.md",
+   "titulo": "Diário 2026-09-28",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
    "caminho": "docs/diario/diario-de-pesquisa.md",
    "titulo": "Diário de pesquisa",
    "tags": [
@@ -776,6 +783,11 @@
   },
   {
    "de": "docs/diario/2026-09-26.md",
+   "para": "docs/diario/2026-09-28.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
    "para": "docs/glossario/fraudar.md",
    "tipo": "nota"
   },
@@ -810,6 +822,21 @@
    "tipo": "nota"
   },
   {
+   "de": "docs/diario/2026-09-28.md",
+   "para": "docs/diario/2026-09-26.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-28.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-28.md",
+   "para": "scripts/avaliar_gnn_rotulos.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "docs/diario/2026-09-21.md",
    "tipo": "nota"
@@ -822,6 +849,11 @@
   {
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "docs/diario/2026-09-26.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/diario/2026-09-28.md",
    "tipo": "nota"
   },
   {
@@ -3206,12 +3238,27 @@
   },
   {
    "de": "docs/resultados.md",
+   "para": "scripts/avaliar_gnn_rotulos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
    "para": "scripts/avaliar_propagacao.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
    "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "src/pixfraud/gnn.py",
    "tipo": "arquivo"
   },
   {
@@ -3812,6 +3859,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_gnn_rotulos.py",
    "tipo": "arquivo"
   },
   {

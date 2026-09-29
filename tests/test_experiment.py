@@ -12,6 +12,7 @@ from pixfraud.anomaly import DETECTORS
 from pixfraud.experiment import (
     COMPARISONS,
     feature_ablation,
+    known_fraud_scores,
     load_scenarios,
     run_seeds,
     save_metadata,
@@ -89,3 +90,13 @@ def test_supervised_scores_are_out_of_fold():
     scores = supervised_scores(features, labels, seed=0)
     assert scores.index.equals(features.index) and scores.between(0, 1).all()
     assert average_precision_score(labels, scores) > 0.9  # o sinal é fácil: fraudes no topo
+
+
+def test_known_fraud_scores_learn_from_a_few_known():
+    features, labels = _planted()
+    fraud = labels.index[labels]
+    known = list(fraud[: max(1, len(fraud) // 4)])
+    scores = known_fraud_scores(features, known, seed=0)
+    assert scores.index.equals(features.index) and (scores[known] == 1.0).all()
+    rest = labels.drop(known)
+    assert average_precision_score(rest, scores[rest.index]) > 0.3  # ao acaso, ~4%

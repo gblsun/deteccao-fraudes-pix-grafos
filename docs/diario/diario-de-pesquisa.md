@@ -22,6 +22,7 @@ assim. É o registro que nenhum resultado salvo em `reports/` guarda.
 | [2026-09-21](2026-09-21.md) | estrutura inicial do pacote `pixfraud`, grafos, padrões de fraude, material de estudo e os algoritmos mais avançados (temporal, comunidades, fluxo, estatística) |
 | [2026-09-22](2026-09-22.md) | cenários de dificuldade, AMLworld, detecção a tempo, LOF, legibilidade do cofre do Obsidian, bibliografia e ideias futuras |
 | [2026-09-26](2026-09-26.md) | regra da LGPD, dataset com semente sorteada, pipeline em um comando com tempo por etapa, FRAUDAR avaliado e primeira GNN (DOMINANT e GraphSAGE) |
+| [2026-09-28](2026-09-28.md) | GraphSAGE com poucos rótulos: a vantagem da GNN não sobrevive, e a propagação de risco segue melhor |
 
 Cada nota diária deve apontar para o que ela menciona: a seção de
 [resultados](../resultados.md), o script que rodou em [`scripts/`](../../scripts/mapa-dos-scripts.md)

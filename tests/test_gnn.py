@@ -7,7 +7,7 @@ import pytest
 
 pytest.importorskip("torch")
 
-from pixfraud.gnn import dominant_scores, sage_supervised_scores  # noqa: E402
+from pixfraud.gnn import dominant_scores, sage_known_fraud_scores, sage_supervised_scores  # noqa: E402
 
 
 @pytest.fixture
@@ -31,6 +31,16 @@ def test_sage_learns_the_ring_from_structure_alone(ring_in_sparse_network):
     assert scores.index.equals(features.index) and scores.between(0, 1).all()
     top = scores.nlargest(int(labels.sum())).index
     assert labels[top].mean() >= 0.75  # sem estrutura, o esperado ao acaso seria ~4%
+
+
+def test_sage_finds_the_rest_of_the_ring_from_a_few_known(ring_in_sparse_network):
+    graph, features, labels = ring_in_sparse_network
+    known = [300, 301, 302]  # 3 das 12 contas da quadrilha já contestadas
+    scores = sage_known_fraud_scores(graph, features, known, folds=3, epochs=150)
+    assert scores.index.equals(features.index) and (scores[known] == 1.0).all()
+    rest = labels.drop(known)
+    top = scores[rest.index].nlargest(int(rest.sum())).index
+    assert rest[top].mean() >= 0.25  # ao acaso, ~3%: com 3 rótulos, o PU é bem mais difícil
 
 
 def test_dominant_scores_are_aligned_and_flag_the_ring(ring_in_sparse_network):

@@ -18,6 +18,9 @@ ou intermediação à mão, a rede decide o que combinar. Duas formas de usar:
   ``pixfraud.experiment.supervised_scores``): uma GraphSAGE (Hamilton, Ying e
   Leskovec, 2017) treinada com os rótulos, em validação cruzada. Mostra o que se
   ganharia com rótulos e com a estrutura aprendida.
+* ``sage_known_fraud_scores`` (**poucos rótulos**): a mesma GraphSAGE, mas só
+  com uma parte das fraudes conhecida e o resto das contas sem rótulo, como na
+  culpa por associação (``pixfraud.flow.propagate_risk``).
 
 Os dois devolvem um escore por conta (quanto maior, mais suspeita), alinhado
 com o índice de ``features``.
@@ -28,7 +31,7 @@ from __future__ import annotations
 import networkx as nx
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold, StratifiedKFold
 
 from pixfraud.anomaly import prepare_matrix
 from pixfraud.communities import undirected_simple
@@ -172,23 +175,70 @@ def sage_supervised_scores(
     X = torch.tensor(prepare_matrix(features), dtype=torch.float32)
     _, mean = _adjacency(graph, features.index)
     y_np = labels.reindex(features.index).astype(bool).to_numpy()
-    y = torch.tensor(y_np, dtype=torch.float32)
     proba = np.zeros(len(features))
     splitter = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)
     for fold, (train, test) in enumerate(splitter.split(np.zeros(len(y_np)), y_np)):
-        torch.manual_seed(seed + fold)
-        model = _GraphSAGE(X.shape[1], hidden, dropout)
-        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=5e-4)
-        positives = max(float(y_np[train].sum()), 1.0)
-        loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.tensor((len(train) - positives) / positives))
-        train_idx = torch.tensor(train)
-        for _ in range(epochs):
-            model.train()
-            optimizer.zero_grad()
-            loss = loss_fn(model(X, mean)[train_idx], y[train_idx])
-            loss.backward()
-            optimizer.step()
-        model.eval()
-        with torch.no_grad():
-            proba[test] = torch.sigmoid(model(X, mean)).numpy()[test]
+        proba[test] = _fit_sage(X, mean, y_np, train, hidden, epochs, dropout, learning_rate, seed + fold)[test]
     return pd.Series(proba, index=features.index, name="score")
+
+
+def sage_known_fraud_scores(
+    graph: nx.Graph,
+    features: pd.DataFrame,
+    known: list,
+    folds: int = 5,
+    hidden: int = 64,
+    epochs: int = 200,
+    dropout: float = 0.3,
+    learning_rate: float = 1e-2,
+    seed: int = 42,
+) -> pd.Series:
+    """GraphSAGE treinada só com as fraudes **já conhecidas**, como no Pix real.
+
+    Numa instituição, só parte das contas fraudulentas vira conhecida (quando as
+    vítimas contestam pelo MED); todas as outras aparecem como "não fraude",
+    inclusive as fraudes ainda não descobertas. É um problema *positivo e não
+    rotulado* (PU): aqui tratado do jeito mais simples, com as contas não
+    rotuladas como negativas.
+
+    Para a rede não decorar o "não fraude" das próprias contas que vai avaliar,
+    as contas não rotuladas são divididas em ``folds`` dobras: cada dobra recebe
+    a previsão de um modelo treinado com as fraudes conhecidas e as **outras**
+    dobras. As contas de ``known`` recebem 1.0; avalie só nas demais.
+    """
+    _require_torch()
+    X = torch.tensor(prepare_matrix(features), dtype=torch.float32)
+    _, mean = _adjacency(graph, features.index)
+    y_np = features.index.isin(known)
+    positives, unlabeled = np.flatnonzero(y_np), np.flatnonzero(~y_np)
+    proba = np.ones(len(features))
+    splitter = KFold(n_splits=folds, shuffle=True, random_state=seed)
+    for fold, (rest, held_out) in enumerate(splitter.split(unlabeled)):
+        train = np.concatenate([positives, unlabeled[rest]])
+        test = unlabeled[held_out]
+        proba[test] = _fit_sage(X, mean, y_np, train, hidden, epochs, dropout, learning_rate, seed + fold)[test]
+    return pd.Series(proba, index=features.index, name="score")
+
+
+def _fit_sage(X, mean, y_np: np.ndarray, train: np.ndarray, hidden: int, epochs: int, dropout: float,
+              learning_rate: float, seed: int) -> np.ndarray:
+    """Treina uma GraphSAGE com os rótulos de ``train`` e devolve a probabilidade de todas as contas.
+
+    As fraudes, raras, pesam mais na perda (``pos_weight``).
+    """
+    torch.manual_seed(seed)
+    y = torch.tensor(y_np, dtype=torch.float32)
+    model = _GraphSAGE(X.shape[1], hidden, dropout)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=5e-4)
+    positives = max(float(y_np[train].sum()), 1.0)
+    loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.tensor((len(train) - positives) / positives))
+    train_idx = torch.tensor(train)
+    for _ in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        loss = loss_fn(model(X, mean)[train_idx], y[train_idx])
+        loss.backward()
+        optimizer.step()
+    model.eval()
+    with torch.no_grad():
+        return torch.sigmoid(model(X, mean)).numpy()
