@@ -1,0 +1,16 @@
+comparacao,modelo,diferenca_media,desvio_das_diferencas,a_vence_em,sementes_necessarias
+grafo - tabular,dbscan,-0.3198872996956845,0.06889415318110095,0.0,6
+grafo - tabular,isolation_forest,-0.019078857501080827,0.06534741053457019,0.383,95
+grafo - tabular,local_outlier_factor,-0.45662663579404933,0.12402848353834646,0.0,6
+combinado - tabular,dbscan,-0.04505223717404898,0.039408349571218866,0.12,9
+combinado - tabular,isolation_forest,0.006421031362537149,0.05528855992454217,0.568,584
+combinado - tabular,local_outlier_factor,-0.2606100969782938,0.07278421910175081,0.0,6
+grafo_avancado - grafo,dbscan,0.13066224730656747,0.04177986552538657,0.998,6
+grafo_avancado - grafo,isolation_forest,0.22895790057837695,0.04990397834253258,1.0,6
+grafo_avancado - grafo,local_outlier_factor,0.014840785342662314,0.025901947558333836,0.702,26
+completo - combinado,dbscan,0.061715395554491605,0.02023068557864171,0.997,6
+completo - combinado,isolation_forest,0.17569384923753986,0.0522332457085274,1.0,6
+completo - combinado,local_outlier_factor,-0.10903183145637686,0.0658420834393547,0.023,6
+completo - tabular,dbscan,0.01666315838044263,0.04808851741927313,0.612,68
+completo - tabular,isolation_forest,0.18211488060007702,0.06101438635385623,0.998,6
+completo - tabular,local_outlier_factor,-0.3696419284346706,0.10533246365877172,0.0,6

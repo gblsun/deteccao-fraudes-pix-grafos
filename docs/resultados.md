@@ -410,20 +410,157 @@ elas e a AP é medida **só nas contas restantes**
   de aprendizado *positivo e não rotulado*). Uma perda própria para esse caso, ou a
   GraphSAGE partindo do escore da propagação, são o próximo teste natural.
 
-## 12. Cuidados na interpretação
+## 12. Quantas sementes bastam? A AP média com 10, 100, 500 e 1000
+
+Pedido da [reunião de 24/09](reunioes/2026-09-24.md): as seções 1 e 2 usam 10 sementes por
+chave (atributos, modelo). O cenário `base` foi repetido com **1000 sementes**
+([`avaliar_sementes.py`](../scripts/avaliar_sementes.py), 4 processos, ~2 h;
+[`sementes_convergencia.csv`](../reports/results/sementes_convergencia.csv),
+[`sementes_sorteios.csv`](../reports/results/sementes_sorteios.csv) e
+[`sementes_pareadas.csv`](../reports/results/sementes_pareadas.csv); Figura 15).
+
+| AP média (IC 95%) | 10 sementes | 100 | 1000 |
+|---|:---:|:---:|:---:|
+| completo, DBSCAN | 0,776 ± 0,016 | 0,769 ± 0,005 | 0,770 ± 0,002 |
+| tabular, DBSCAN | 0,755 ± 0,036 | 0,755 ± 0,010 | 0,753 ± 0,003 |
+| completo, Isolation Forest | 0,576 ± 0,055 | 0,563 ± 0,013 | 0,561 ± 0,004 |
+| grafo_avancado, Isolation Forest | 0,615 ± 0,033 | 0,593 ± 0,010 | 0,588 ± 0,004 |
+| tabular, LOF | 0,513 ± 0,085 | 0,511 ± 0,026 | 0,518 ± 0,008 |
+
+* **A média de 10 sementes já estava certa.** Nas 18 chaves, ela fica a no máximo 0,026 da
+  média de 1000 (o pior caso é `grafo_avancado` com Isolation Forest, 0,615 contra 0,588), e
+  sempre dentro do IC 95% das 10 sementes. Nenhuma conclusão das seções 1 e 2 muda de
+  sentido.
+* **O IC encolhe como $1/\sqrt n$** (Figura 15): de ±0,013–0,085 com 10 sementes para
+  ±0,005–0,026 com 100 e ±0,001–0,008 com 1000. Cada fator 10 em sementes (e em tempo)
+  deixa o IC só ~3 vezes mais estreito.
+* **Sorteando 10 sementes quaisquer** entre as 1000 (2000 sorteios), a média do melhor
+  detector (completo, DBSCAN) cai entre 0,754 e 0,783 em 95% das vezes; a do LOF tabular,
+  a mais instável, entre 0,44 e 0,59. As 10 sementes apontam a mesma melhor chave que as
+  1000 em 86% dos sorteios; nos outros, o empate é entre `completo` (0,770) e `tabular`
+  (0,753) com DBSCAN.
+* **O que decide o nº de sementes é o tamanho da diferença que se quer detectar.** Para um
+  teste pareado com poder de 80%:
+
+  | comparação (AP) | diferença média | sementes necessárias |
+  |---|:---:|:---:|
+  | grafo_avancado − grafo, Isolation Forest | +0,229 | 6 (o mínimo do Wilcoxon) |
+  | completo − combinado, DBSCAN | +0,062 | 6 |
+  | combinado − tabular, DBSCAN | −0,045 | 9 |
+  | grafo_avancado − grafo, LOF | +0,015 | 26 |
+  | **completo − tabular, DBSCAN** | **+0,017** | **68** |
+  | grafo − tabular, Isolation Forest | −0,019 | 95 |
+  | combinado − tabular, Isolation Forest | +0,006 | 584 |
+
+  O único ponto da seção 1 que muda de status é `completo − tabular` com DBSCAN: com 10
+  sementes, "não significativo (p = 0,46)"; com 1000, o `completo` vence em 61% das
+  sementes e a diferença é real, mas de só **+0,017** de AP. Com sementes suficientes,
+  qualquer diferença vira "significativa", e o que importa passa a ser o tamanho do efeito
+  (diferença e IC), não o p-valor.
+* **Mais sementes reduzem o acaso do sorteio, não o viés do gerador.** As 1000 sementes saem
+  do mesmo simulador, com as mesmas hipóteses. A média fica precisa sobre o mundo
+  sintético, mas não chega mais perto do Pix real; para isso servem os cenários (seção 2) e
+  a validação externa (seção 8).
+
+**Recomendação** (a levar ao orientador): 10 sementes para explorar ideias, **100 nos
+números do relatório** (IC de ±0,005 a ±0,026) e, quando uma comparação específica importar,
+o número dado pela coluna `sementes_necessarias`. Mil sementes serviram uma vez, como
+referência.
+
+## 13. Tipo de rede, passeios aleatórios, cosseno e a coletora que esvazia o dinheiro
+
+Pedidos da [reunião de 24/09](reunioes/2026-09-24.md): estudar o tipo de rede, a lei de
+potência, o Barabási–Albert, a componente gigante, o passeio aleatório e a similaridade de
+cosseno, e depois implementar; e aumentar a movimentação do vértice do coletor. Estudo no
+[notebook 06](../estudos/06_tipo_de_rede.ipynb); código em
+[`pixfraud.network`](../src/pixfraud/network.py) e [`algorithms`](../src/pixfraud/algorithms.py);
+números de [`analisar_tipo_de_rede.py`](../scripts/analisar_tipo_de_rede.py) (5 sementes por
+cenário) e de `avaliar_cenarios.py --cenarios realista coletor_ativo --sementes 10`
+(em `reports/coletor_ativo/`).
+
+**Que tipo de rede é.** Semente 1 do `base`, a rede tratada como não direcionada, ao lado de
+modelos com o mesmo nº de vértices e arestas:
+
+| | rede Pix sintética | Erdős–Rényi | Barabási–Albert |
+|---|:---:|:---:|:---:|
+| grau máximo | 1573 | 48 | 278 |
+| agrupamento médio | **0,25** | 0,01 | 0,04 |
+| distância média | 2,2 | 2,7 | 2,6 |
+| componente gigante | 100% | 100% | 100% |
+
+* **As arestas são direcionadas, e isso muda a resposta.** O grau de **entrada** tem cauda
+  de lei de potência com $\alpha = 2{,}0$ (KS ≈ 0,05, igual nos três cenários): são os
+  comércios, sorteados com popularidade de Zipf. O grau de **saída** não tem cauda
+  ($\alpha \approx 8$): ninguém paga milhares de contas. O $\alpha$ do grau total oscila
+  entre 2 e 4 de uma semente para outra, porque mistura as duas distribuições; por isso
+  ele não é reportado como "o" expoente da rede (Figura 16).
+* A rede **não é um Barabási–Albert**: tem hubs de recebimento (grau máximo quase 6 vezes o
+  do BA) e um agrupamento 6 vezes maior, que vem dos círculos de contatos. É uma mistura de
+  cauda pesada nos recebimentos com comunidades, como em Watts–Strogatz.
+* **Componente gigante:** a fraca tem todas as contas em todos os cenários. A **forte** (dá
+  para ir e voltar seguindo o dinheiro) tem 95% no `base` e 85% no `realista`: quem só
+  recebe fica fora: os 100 comércios e, no `realista`, ~230 pessoas (quase metade delas não
+  fez nenhum Pix no mês, só recebeu; as outras não têm caminho de volta até elas a partir
+  do núcleo da rede). As contas
+  de fraude ficam dentro, por causa dos Pix de camuflagem.
+
+**Passeios aleatórios que seguem o dinheiro** (20 por vítima, próximo Pix sorteado com
+probabilidade proporcional ao valor):
+
+* Os passeios **terminam** nos comércios (91 a 100%): eles nunca pagam ninguém, então são
+  sorvedouros. Nenhum termina numa coletora, que também faz Pix de camuflagem.
+* No caminho, **20 a 30% dos passeios passam por alguma coletora** (0,21 no `base`, 0,28 no
+  `realista`, 0,30 no `coletor_ativo`), sendo que há só 2 a 6 coletoras entre ~2100
+  contas. Por conta, um intermediário ou uma coletora recebe ~40 vezes mais visitas que uma
+  pessoa comum (notebook 06). É a mesma intuição da culpa por associação (seção 6), agora
+  partindo das vítimas e sem nenhum rótulo de fraude.
+
+**Cosseno × Jaccard.** Para cada laranja, a fração de fraudes entre as 5 contas mais
+parecidas com ela:
+
+| | `base` | `realista` | `coletor_ativo` |
+|---|:---:|:---:|:---:|
+| Jaccard (só **quem** recebe) | 0,59 | 0,50 | 0,48 |
+| **cosseno** (quem recebe **e quanto**) | **0,61** | **0,63** | **0,60** |
+
+A similaridade de cosseno é o cosseno do ângulo entre os vetores de valores pagos por cada
+conta. Ela acha mais "irmãs" fraudulentas, sobretudo nos cenários difíceis (+0,13 no
+`realista`): as laranjas repassam quase tudo para o mesmo destino, e os Pix de camuflagem,
+de valor pequeno, pesam pouco no ângulo, mas contam inteiros no Jaccard.
+
+**A coletora que esvazia o dinheiro** (`collector_cashout = 20`, cenário `coletor_ativo`).
+No gerador padrão a coletora só recebe. Com o parâmetro, ela repassa ~90% do recebido em
+~20 Pix para pessoas e comércios (arestas com o rótulo `saida_coletor`).
+
+* O grau de saída médio das coletoras vai de 3,4 para 22,2, e o `pass_through` (fração do
+  recebido que sai) vai de 0,03 para 0,93: a coletora deixa de ser um sorvedouro e vira uma
+  conta de passagem com muito dinheiro.
+* **A detecção não piora.** A AP média sobe um pouco na maioria das combinações (+0,01 a
+  +0,03) e fica igual no melhor detector (completo com DBSCAN: 0,50 nos dois). As vantagens
+  do grafo sobre o tabular continuam significativas (Isolation Forest +0,13 e DBSCAN +0,10,
+  p = 0,03 com Holm, nos dois cenários).
+* As coletoras continuam, em média, acima do percentil 98,9 do escore nos dois cenários. Muda o
+  detector que as põe no top-k: o DBSCAN perde um pouco (100% → 85% das coletoras) e o
+  Isolation Forest ganha (10% → 25%). A amostra é pequena (20 coletoras em 10 sementes), e
+  essa medida foi uma conferência avulsa, ainda fora de um script.
+* Ressalva: ligar o parâmetro muda o sorteio das quadrilhas seguintes, então as sementes dos
+  dois cenários não geram as mesmas contas. A comparação é entre médias, não pareada.
+
+## 14. Cuidados na interpretação
 
 * **A taxa de fraude é muito maior que a real** (seção 3), o que torna a tarefa mais fácil
   aqui do que num banco.
 * **Os sinais que sobrevivem ainda são hipóteses do gerador**: as laranjas repassam em
   ~30 min, as vítimas de um mesmo golpe não se conhecem, a coletora não movimenta o
-  dinheiro depois. O cenário `repasse_lento` testa a primeira; as outras, não.
+  dinheiro depois. O cenário `repasse_lento` testa a primeira e o `coletor_ativo` a
+  terceira (seção 13); a segunda, não.
 * **O MED é modelado de forma simples**: a recuperação depende do prazo de saque, que é um
   parâmetro nosso (1, 6 ou 24 h), e o bloqueio é instantâneo e perfeito.
 * **O AMLworld também é sintético** e trata de lavagem; serve para testar o método, não
   para estimar desempenho no Pix.
 * Nada aqui foi avaliado em dados reais de transações, que não são públicos.
 
-## 13. Conclusão parcial
+## 15. Conclusão parcial
 
 1. No dataset sintético, **a vantagem aparente dos atributos tabulares vinha de sinais que
    o próprio gerador embute**. Sem esses atalhos, o grafo vence em todas as sementes e nos
@@ -448,8 +585,14 @@ elas e a AP é medida **só nas contas restantes**
    conhecidas, a GraphSAGE fica abaixo do Random Forest com todos os atributos e da
    propagação de risco (seção 11). No cenário realista do Pix, o método simples de grafo
    ainda é o melhor.
+9. **10 sementes bastavam para as conclusões**: com 1000, nenhuma muda de sentido, e o IC
+   só encolhe como $1/\sqrt n$. Diferenças pequenas (~0,02 de AP) pedem ~70 a 100 sementes
+   (seção 12).
+10. **A rede Pix sintética não é livre de escala**: só os recebimentos têm cauda de lei de
+    potência. A similaridade de cosseno acha mais contas fraudulentas parecidas que o
+    Jaccard, e uma coletora que esvazia o dinheiro continua no topo do ranking (seção 13).
 
-## 14. Próximos passos
+## 16. Próximos passos
 
 1. Testar o conjunto `completo` **sem o PageRank** (seção 7) e recalibrar o gerador com os
    números do BCB (`p_merchant` ≈ 0,49, valores de P2P e P2B separados).
@@ -464,3 +607,10 @@ elas e a AP é medida **só nas contas restantes**
    vizinhança).
 6. FRAUDAR: um critério de parada melhor que "5% das contas" e pesos que levem em conta o
    tempo (quadrilhas agem em poucas horas; círculos de contatos, ao longo do mês).
+7. Sementes: usar 100 nos números do relatório (seção 12) e refazer as seções 1 e 2 com
+   elas; o número exato de cada comparação sai de `sementes_pareadas.csv`.
+8. Cosseno como atributo ou como propagação: similaridade de cada conta com as fraudes já
+   conhecidas (seção 6), e passeios aleatórios a partir das vítimas como escore sem rótulo
+   (seção 13).
+9. Coletora ativa: levar a conferência por papel (percentil das coletoras) para um script, e
+   decidir se `collector_cashout` passa a valer no gerador padrão.

@@ -15,6 +15,8 @@ com exemplos de uso.
 | [`gerar_dataset.py`](gerar_dataset.py) | gera um dataset sintético novo a cada execução (semente sorteada, gravada em `dataset_meta.json`; `--seed N` reproduz) | `configs/experimento.yaml` | `data/synthetic/` + `dataset_meta.json` | segundos |
 | [`rodar_experimento.py`](rodar_experimento.py) | uma rodada: grafo, atributos, 2 detectores × 6 conjuntos, figuras | `data/synthetic/` | `reports/results/metricas.csv`, `reports/figures/grafo_de_calor_*`, `heatmap_risco_*` | ~1 min |
 | [`avaliar_robustez.py`](avaliar_robustez.py) | repete com várias sementes; IC e testes pareados | configuração | `reports/results/robustez_*.csv`, `robustez_average_precision.png` | ~4 min (10 sementes) |
+| [`avaliar_sementes.py`](avaliar_sementes.py) | quantas sementes bastam? AP média e IC 95% com 10, 100, 500 e 1000 sementes; variação da média de 10 sementes sorteadas | configuração | `reports/results/sementes_*.csv`, `sementes_convergencia.png` | ~1,5 h (1000 sementes, 4 processos) |
+| [`analisar_tipo_de_rede.py`](analisar_tipo_de_rede.py) | tipo de rede: lei de potência, componente gigante, comparação com Erdős–Rényi e Barabási–Albert, passeios aleatórios a partir das vítimas, cosseno × Jaccard | `configs/cenarios.yaml` | `reports/results/tipo_de_rede_*.csv`, `tipo_de_rede_graus.png` | ~2 min (3 cenários × 5 sementes) |
 | [`avaliar_cenarios.py`](avaliar_cenarios.py) | repete em cada cenário de dificuldade | `configs/cenarios.yaml` | `reports/results/cenarios_*.csv`, `cenarios_*.png` | ~40 min (8 cenários × 10 sementes) |
 | [`avaliar_deteccao_online.py`](avaliar_deteccao_online.py) | detecção ao longo do tempo: bloqueou a tempo? | `configs/cenarios.yaml` | `reports/results/online_*`, `online_deteccao.png` | dezenas de minutos |
 | [`avaliar_atributos.py`](avaliar_atributos.py) | ablação por atributo e teto supervisionado (Random Forest com os rótulos) | `configs/cenarios.yaml` | `reports/results/atributos_*`, `atributos_*.png` | ~20 min (5 sementes) |
@@ -32,7 +34,7 @@ com exemplos de uso.
 | [`exportar_grafo_de_notas.py`](exportar_grafo_de_notas.py) | grafo de notas do Obsidian em JSON, para agentes de IA (ver [obsidian.md](../docs/obsidian.md)) | notas `.md` do cofre | `docs/grafo-de-notas.json` | segundos |
 | [`ilustrar_grafos_de_conhecimento.py`](ilustrar_grafos_de_conhecimento.py) | figuras do README: grafo de notas (cores do Obsidian) e mapa do código (Graphify) | `docs/grafo-de-notas.json`, `graphify-out/graph.json` | `reports/figures/grafo_de_notas.png`, `grafo_do_codigo.png` | segundos |
 
-As avaliações longas (`avaliar_externo.py` e `avaliar_deteccao_online.py`) salvam cada
+As avaliações longas (`avaliar_externo.py`, `avaliar_deteccao_online.py` e `avaliar_sementes.py`) salvam cada
 janela ou semente assim que terminam. Se forem interrompidas, rodar de novo continua de
 onde parou; `--refazer` recalcula tudo.
 

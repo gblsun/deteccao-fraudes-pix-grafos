@@ -7,11 +7,11 @@ tags: [pesquisa]
 O que ficou em aberto, para retomar numa próxima sessão (de pessoa ou de agente de IA).
 Marque `[x]` e aponte para onde foi feito; quando tudo de uma seção acabar, apague-a.
 Os próximos passos de pesquisa com mais contexto estão em
-[resultados, seção 14](resultados.md) e no [diário](diario/diario-de-pesquisa.md).
+[resultados, seção 16](resultados.md) e no [diário](diario/diario-de-pesquisa.md).
 
 Volta para o [índice da documentação](mapa-da-pesquisa.md).
 
-Última atualização: 2026-09-28.
+Última atualização: 2026-09-29.
 
 ## Pesquisa
 
@@ -34,10 +34,30 @@ Volta para o [índice da documentação](mapa-da-pesquisa.md).
 
 ## Para a próxima reunião
 
+- [ ] Levar as anotações da [reunião de 24/09](reunioes/2026-09-24.md) já resolvidas: tipo de
+  rede (só os recebimentos têm lei de potência), cosseno × Jaccard e coletora ativa
+  ([resultados, seção 13](resultados.md)).
+
+- [ ] **Quantas sementes usar** (pedido de 24/09): 1000 sementes serviram uma vez, como
+  referência. Proposta: 10 para explorar, **100 nos números do relatório**, e o número
+  exato pela análise de poder (`reports/results/sementes_pareadas.csv`). Com sementes
+  demais, diferenças irrelevantes (0,006 de AP) viram "significativas", e mais sementes não
+  corrigem o viés do gerador. Argumento completo no [diário de 29/09](diario/2026-09-29.md)
+  e em [resultados, seção 12](resultados.md).
+
 - [ ] Levar as seções 10 e 11 dos [resultados](resultados.md): a GNN só compensa com muitos
   rótulos; no Pix, com poucas contestações, a propagação de risco ainda é melhor.
 - [ ] Levar os cenários de dificuldade e a detecção a tempo (pendente desde 22/09).
 - [ ] Discutir se a taxa de fraude do cenário `realista` (0,6% das contas) é alta demais.
+
+## Pesquisa (reunião de 24/09)
+
+- [ ] Refazer as seções 1 e 2 dos resultados com 100 sementes, se o orientador concordar
+  ([resultados, seção 12](resultados.md)).
+- [ ] Transformar a conferência por papel da coletora (percentil no ranking) num script; hoje
+  ela é avulsa ([resultados, seção 13](resultados.md)).
+- [ ] Usar o cosseno e os passeios aleatórios como escore (similaridade com as fraudes
+  conhecidas; visitas a partir das vítimas) e comparar com a propagação de risco.
 
 ## Dados
 
@@ -46,6 +66,13 @@ Volta para o [índice da documentação](mapa-da-pesquisa.md).
 - [ ] Calibração do gerador com o BCB, bloqueada pelo erro 504 do servidor.
 
 ## Repositório
+
+- [ ] **Integrar o branch local `local-2026-09-24`** (só nesta máquina): ECOD, One-Class SVM,
+  autoencoder, label spreading, gradient boosting, node2vec e `avaliar_modelos.py`, feitos
+  em paralelo ao `main`. A GNN dele conflita com `src/pixfraud/gnn.py` do `main`.
+- [ ] O Controle Inteligente de Aplicativos do Windows bloqueia a `_liblinear.pyd` do
+  scikit-learn 1.9.1 nesta máquina; o `.venv` usa o 1.8.0. Se outro computador tiver o
+  mesmo erro ("política de Controle de Aplicativo"), `pip install scikit-learn==1.8.0`.
 
 - [ ] Marcar no [cronograma](cronograma.md) as etapas que já têm entrega (dataset, grafos,
   métricas, modelos, visualizações, comparação tabular × grafos): hoje nenhuma está `[x]`.

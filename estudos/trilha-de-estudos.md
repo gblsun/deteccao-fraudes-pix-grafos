@@ -30,6 +30,7 @@ GitHub. Mesmo assim, o melhor é rodar célula por célula e mexer nos exemplos.
 | 03 | [Métricas de centralidade](03_metricas_de_centralidade.ipynb) | grau, proximidade, intermediação (à mão e aproximada), PageRank (método da potência), agrupamento, reciprocidade | Easley & Kleinberg, cap. 3 e 14; Brandes (2001) | 5 |
 | 04 | [Padrões de fraude](04_padroes_de_fraude.ipynb) | fan-in, fan-out, cadeia, ciclo, scatter-gather; injeção de padrões; por que "anomalia tem dois lados" | Altman et al. (2023); Akoglu et al. (2015) | 6, 7, 9 |
 | 05 | [Modelos de redes](05_modelos_de_redes.ipynb) | Erdős–Rényi, Barabási–Albert, Watts–Strogatz, lei de potência, mundo pequeno, modelo nulo | Easley & Kleinberg, cap. 18 e 20 | 11 |
+| 06 | [Tipo de rede](06_tipo_de_rede.ipynb) | arestas direcionadas (grau de entrada × saída), lei de potência e estimador de máxima verossimilhança, Barabási–Albert (ligação preferencial), componente gigante fraca e forte e transição de fase, passeio aleatório e matriz de transição, similaridade de cosseno = ângulo entre vetores | Barabási, *Network Science*, cap. 3 a 5; Clauset et al. (2009); Easley & Kleinberg, cap. 14 | 5, 11 |
 
 As referências estão em [docs/referencias.bib](../docs/referencias.bib). Anote as leituras
 em [docs/revisao-bibliografica.md](../docs/revisao-bibliografica.md).
@@ -50,6 +51,16 @@ Todas estão no pacote `pixfraud` e são usadas nos notebooks.
 | `money_trail(G, conta, max_hops, direction)` | trilha do dinheiro: para frente (`"forward"`), para trás (`"backward"`) ou os dois (`"both"`) |
 | `adjacency_matrix(G, weight=None)` | matriz de adjacência rotulada (`DataFrame`) |
 | `describe(G)` | resumo: vértices, arestas, densidade, componentes, reciprocidade… |
+
+**Tipo de rede** (`pixfraud.network` e `pixfraud.algorithms`)
+
+| Função | Para quê |
+|--------|----------|
+| `degree_sequence(G, "in")`, `fit_power_law(graus)` | graus de entrada/saída/total e expoente da lei de potência (com `k_min` e distância KS) |
+| `component_summary(G)`, `giant_component(G, strong=True)` | componentes fracas e fortes e a componente gigante |
+| `compare_network_models(G)` | a rede ao lado de um Erdős–Rényi e de um Barabási–Albert do mesmo tamanho |
+| `random_walk(G, conta)`, `random_walk_visits(G, vitimas)` | passeios aleatórios que seguem o dinheiro |
+| `cosine_similarity(a, b)`, `vector_angle(a, b)`, `similar_accounts(G, conta, "cosine_out")` | similaridade de cosseno, ângulo entre vetores e contas parecidas pelos valores |
 
 **Padrões de fraude** (`pixfraud.patterns`)
 

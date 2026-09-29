@@ -1,0 +1,29 @@
+{
+  "gerado_em": "2026-09-29T00:26:19",
+  "commit": "3a6b1798778db3f004f6bc03ee14e8941f01ba04",
+  "alteracoes_nao_commitadas": true,
+  "python": "3.14.6",
+  "pacotes": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "networkx": "3.6.1",
+    "scikit-learn": "1.8.0",
+    "scipy": "1.18.1"
+  },
+  "configuracao": null,
+  "cenarios": [
+    "base",
+    "realista",
+    "coletor_ativo"
+  ],
+  "sementes": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "passeios_por_vitima": 20,
+  "cenario_da_comparacao": "base",
+  "duracao_s": 32
+}

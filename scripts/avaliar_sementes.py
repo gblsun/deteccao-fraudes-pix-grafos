@@ -238,19 +238,19 @@ def _plot(convergence: pd.DataFrame, feature_set: str, path: Path, scenario: str
         group = group.sort_values("n")
         left.fill_between(group["n"], group["ic_inferior"], group["ic_superior"], color=color, alpha=0.18, lw=0)
         left.plot(group["n"], group["mean"], color=color, lw=2, marker="o", ms=5)
-        right.plot(group["n"], group["meia_largura"], color=color, lw=2, marker="o", ms=5)
-        for ax, y in ((left, group["mean"].iloc[-1]), (right, group["meia_largura"].iloc[-1])):
-            ax.annotate(model.replace("_", " "), (group["n"].iloc[-1], y), xytext=(6, 0),
-                        textcoords="offset points", va="center", fontsize=8, color=INK)
+        right.plot(group["n"], group["meia_largura"], color=color, lw=2, marker="o", ms=5,
+                   label=model.replace("_", " "))
+        left.annotate(model.replace("_", " "), (group["n"].iloc[-1], group["mean"].iloc[-1]), xytext=(6, 0),
+                      textcoords="offset points", va="center", fontsize=8, color=INK)
     first = data.sort_values("n").groupby("modelo").first()
     n0 = data["n"].min()
     ns = np.array(sorted(data["n"].unique()))
-    reference = first["meia_largura"].mean() * np.sqrt(n0 / ns)
-    right.plot(ns, reference, color=INK_SECONDARY, lw=1, ls="--")
-    right.annotate("∝ 1/√n", (ns[-1], reference[-1]), xytext=(6, -8), textcoords="offset points",
-                   fontsize=8, color=INK_SECONDARY)
+    reference = first["meia_largura"].max() * 1.3 * np.sqrt(n0 / ns)
+    right.plot(ns, reference, color=INK_SECONDARY, lw=1, ls="--", label="referência ∝ 1/√n")
+    right.set_yscale("log")  # em log-log, 1/√n é uma reta de inclinação -1/2
+    right.legend(frameon=False, fontsize=8, labelcolor=INK)
     left.set_ylabel("average precision média (IC 95%)", color=INK)
-    right.set_ylabel("meia-largura do IC 95%", color=INK)
+    right.set_ylabel("meia-largura do IC 95% (escala log)", color=INK)
     for ax in (left, right):
         ax.set_xscale("log")
         ax.set_xlabel("nº de sementes", color=INK)

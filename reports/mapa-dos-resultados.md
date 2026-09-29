@@ -28,6 +28,12 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `propagacao_execucoes.csv`, `propagacao_resumo.csv`, `propagacao_comparacoes.csv` | `avaliar_propagacao.py` | (cenário, semente, fração conhecida, método): AP nas contas ainda desconhecidas |
 | `fraudar_execucoes.csv`, `fraudar_resumo.csv`, `fraudar_comparacoes.csv` | `avaliar_fraudar.py` | (cenário, semente, método): AP, precision@k, contas marcadas e cobertura das fraudes pelos blocos |
 | `gnn_execucoes.csv`, `gnn_resumo.csv`, `gnn_comparacoes.csv` | `avaliar_gnn.py` | (cenário, semente, método): AP e precision@k das GNN, do DBSCAN e do Random Forest |
+| `sementes_execucoes.csv` | `avaliar_sementes.py` | (semente, atributos, modelo), até 1000 sementes; também é o progresso salvo |
+| `sementes_convergencia.csv` | `avaliar_sementes.py` | (nº de sementes, atributos, modelo): AP média, desvio e IC 95% usando as sementes 1..n |
+| `sementes_sorteios.csv` | `avaliar_sementes.py` | (atributos, modelo): faixa de 95% da média de 10 sementes sorteadas |
+| `tipo_de_rede_execucoes.csv`, `tipo_de_rede_resumo.csv` | `analisar_tipo_de_rede.py` | (cenário, semente): componentes, lei de potência, passeios e cosseno × Jaccard |
+| `tipo_de_rede_modelos.csv` | `analisar_tipo_de_rede.py` | rede × Erdős–Rényi × Barabási–Albert |
+| `tipo_de_rede_passeios.csv` | `analisar_tipo_de_rede.py` | (cenário, papel): onde terminam os passeios que saem das vítimas |
 | `*_meta.json` | todos os scripts de avaliação | como o resultado foi gerado: commit, configuração, sementes, duração e versões |
 
 ### Colunas
@@ -67,6 +73,8 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `propagacao_average_precision.png` | `avaliar_propagacao.py` | AP da propagação de risco, dos detectores e da combinação |
 | `fraudar_average_precision.png` | `avaliar_fraudar.py` | AP do FRAUDAR, do DBSCAN e da combinação por cenário |
 | `gnn_average_precision.png` | `avaliar_gnn.py` | AP das GNN e das referências por cenário |
+| `sementes_convergencia.png` | `avaliar_sementes.py` | AP média e meia-largura do IC 95% contra o nº de sementes |
+| `tipo_de_rede_graus.png` | `analisar_tipo_de_rede.py` | distribuição de graus: rede × modelos clássicos; entrada × saída |
 | `padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | `gerar_ilustracoes.py` | ilustrações do README: os padrões injetados, o dinheiro percorrendo a quadrilha e a fraude dentro do movimento normal |
 | `grafo_de_notas.png`, `grafo_do_codigo.png` | `ilustrar_grafos_de_conhecimento.py` | ilustrações do README: o grafo de notas do Obsidian e o mapa do código pelo Graphify (não são resultados da pesquisa) |
 
@@ -77,6 +85,12 @@ Saída de `avaliar_externo.py` sobre o AMLworld (ver [`data/README.md`](../data/
 (recall@k por tipologia de lavagem), além de `<dataset>_janelas/` (cada janela salva, **não versionada**) e
 `figures/<dataset>_tipologias.png`. O `<dataset>` é `amlworld_pix` (só ACH e Wire) ou
 `amlworld` (todas as formas de pagamento).
+
+## `coletor_ativo/`: coletora que esvazia o dinheiro
+
+Saída de `avaliar_cenarios.py --cenarios realista coletor_ativo --sementes 10 --saida reports/coletor_ativo`
+(pedido da reunião de 24/09): as mesmas tabelas e figuras de `cenarios_*`, só com esses dois
+cenários, para não misturar com a rodada completa dos cenários em `results/`.
 
 ## `estudos/`: grafos dos estudos
 
@@ -161,6 +175,17 @@ detector de atributos e da combinação dos dois, do cenário mais fácil ao mai
 GraphSAGE, com rótulos) ao lado do DBSCAN e do Random Forest.
 *Fonte: `avaliar_gnn.py`.*
 ![Redes neurais para grafos](figures/gnn_average_precision.png)
+
+**Figura 15** — Quantas sementes bastam: average precision média (com IC 95%) e
+meia-largura do IC com 10, 100, 500 e 1000 sementes (conjunto completo).
+*Fonte: `avaliar_sementes.py`.*
+![Convergência da AP média](figures/sementes_convergencia.png)
+
+**Figura 16** — Distribuição de graus da rede Pix sintética: (a) ao lado de um
+Erdős–Rényi e de um Barabási–Albert do mesmo tamanho; (b) grau de entrada, com cauda
+de lei de potência, e grau de saída, sem ela.
+*Fonte: `analisar_tipo_de_rede.py`.*
+![Tipo de rede](figures/tipo_de_rede_graus.png)
 
 ## Material interativo
 

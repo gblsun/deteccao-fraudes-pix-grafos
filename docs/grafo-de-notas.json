@@ -56,6 +56,13 @@
    ]
   },
   {
+   "caminho": "docs/diario/2026-09-29.md",
+   "titulo": "Diário 2026-09-29",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
    "caminho": "docs/diario/diario-de-pesquisa.md",
    "titulo": "Diário de pesquisa",
    "tags": [
@@ -844,6 +851,36 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/diario/2026-09-29.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-29.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-29.md",
+   "para": "estudos/06_tipo_de_rede.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-29.md",
+   "para": "scripts/analisar_tipo_de_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-29.md",
+   "para": "scripts/avaliar_sementes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-29.md",
+   "para": "src/pixfraud/network.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "docs/diario/2026-09-21.md",
    "tipo": "nota"
@@ -861,6 +898,11 @@
   {
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "docs/diario/2026-09-28.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/diario/2026-09-29.md",
    "tipo": "nota"
   },
   {
@@ -3015,6 +3057,11 @@
   },
   {
    "de": "docs/proximos-passos.md",
+   "para": "docs/diario/2026-09-29.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
    "para": "docs/diario/diario-de-pesquisa.md",
    "tipo": "nota"
   },
@@ -3235,6 +3282,11 @@
   },
   {
    "de": "docs/resultados.md",
+   "para": "estudos/06_tipo_de_rede.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
    "para": "notebooks/01_analise_exploratoria.ipynb",
    "tipo": "arquivo"
   },
@@ -3280,6 +3332,26 @@
   },
   {
    "de": "docs/resultados.md",
+   "para": "reports/results/sementes_convergencia.csv",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/results/sementes_pareadas.csv",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/results/sementes_sorteios.csv",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/analisar_tipo_de_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
    "para": "scripts/avaliar_atributos.py",
    "tipo": "arquivo"
   },
@@ -3315,6 +3387,16 @@
   },
   {
    "de": "docs/resultados.md",
+   "para": "scripts/avaliar_sementes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "src/pixfraud/algorithms.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
    "para": "src/pixfraud/experiment.py",
    "tipo": "arquivo"
   },
@@ -3329,9 +3411,39 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/resultados.md",
+   "para": "src/pixfraud/network.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/reunioes/2026-09-24.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
    "de": "docs/reunioes/2026-09-24.md",
    "para": "docs/reunioes/atas-de-reuniao.md",
    "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-09-24.md",
+   "para": "estudos/06_tipo_de_rede.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/reunioes/2026-09-24.md",
+   "para": "scripts/analisar_tipo_de_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/reunioes/2026-09-24.md",
+   "para": "scripts/avaliar_sementes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/reunioes/2026-09-24.md",
+   "para": "src/pixfraud/network.py",
+   "tipo": "arquivo"
   },
   {
    "de": "docs/reunioes/atas-de-reuniao.md",
@@ -3635,6 +3747,11 @@
   },
   {
    "de": "estudos/trilha-de-estudos.md",
+   "para": "estudos/06_tipo_de_rede.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
    "para": "estudos/cola-networkx.md",
    "tipo": "nota"
   },
@@ -3880,6 +3997,16 @@
   },
   {
    "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/sementes_convergencia.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/tipo_de_rede_graus.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
    "para": "scripts/mapa-dos-scripts.md",
    "tipo": "nota"
   },
@@ -3897,6 +4024,11 @@
    "de": "scripts/mapa-dos-scripts.md",
    "para": "reports/mapa-dos-resultados.md",
    "tipo": "nota"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/analisar_tipo_de_rede.py",
+   "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
@@ -3941,6 +4073,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/avaliar_robustez.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_sementes.py",
    "tipo": "arquivo"
   },
   {
