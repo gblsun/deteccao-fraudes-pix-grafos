@@ -45,6 +45,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 
+from pixfraud.anomaly import DETECTORS  # noqa: E402
 from pixfraud.experiment import (  # noqa: E402
     COMPARISONS,
     load_experiment_config,
@@ -69,6 +70,8 @@ def main() -> None:
     parser.add_argument("--cenario", default="base", help="cenário de configs/cenarios.yaml")
     parser.add_argument("--sementes", type=int, default=1000, help="sementes 1, 2, ..., N")
     parser.add_argument("--processos", type=int, default=1, help="sementes rodando ao mesmo tempo")
+    parser.add_argument("--modelos", nargs="+", default=list(MODEL_COLORS), choices=sorted(DETECTORS),
+                        help="detectores (padrão: os 3 das 1000 sementes salvas, para a retomada continuar comparável)")
     parser.add_argument("--marcos", nargs="+", type=int, default=[10, 100, 500, 1000])
     parser.add_argument("--sorteios", type=int, default=2000, help="nº de sorteios de --tamanho-sorteio sementes")
     parser.add_argument("--tamanho-sorteio", type=int, default=10, help="sementes por sorteio (hoje, 10)")
@@ -94,7 +97,7 @@ def main() -> None:
         done = set(pd.read_csv(runs_path)["semente"]) if runs_path.exists() else set()
         todo = [s for s in range(1, args.sementes + 1) if s not in done]
         print(f"{len(done)} sementes já no CSV; faltam {len(todo)}", flush=True)
-        _run(simulation, config, todo, args.processos, runs_path)
+        _run(simulation, config, todo, args.processos, args.modelos, runs_path)
 
     runs = pd.read_csv(runs_path)
     runs = runs[runs["semente"] <= args.sementes]
@@ -165,13 +168,13 @@ def _suffix(scenario: str) -> str:
     return "" if scenario == "base" else f"_{scenario}"
 
 
-def _one_seed(simulation, config, seed: int) -> pd.DataFrame:
+def _one_seed(simulation, config, seed: int, models: list[str]) -> pd.DataFrame:
     """Roda uma semente (em outro processo, com ``--processos`` > 1)."""
-    (_, _, metrics), = run_seeds(simulation, config, [seed])
+    (_, _, metrics), = run_seeds(simulation, config, [seed], models=models)
     return metrics
 
 
-def _run(simulation, config, seeds: list[int], processes: int, path: Path) -> None:
+def _run(simulation, config, seeds: list[int], processes: int, models: list[str], path: Path) -> None:
     """Roda ``seeds`` e acrescenta cada resultado ao CSV assim que fica pronto."""
     began = time.time()
 
@@ -184,10 +187,10 @@ def _run(simulation, config, seeds: list[int], processes: int, path: Path) -> No
 
     if processes <= 1:
         for i, seed in enumerate(seeds, 1):
-            save(_one_seed(simulation, config, seed), i)
+            save(_one_seed(simulation, config, seed, models), i)
         return
     with ProcessPoolExecutor(max_workers=processes) as pool:
-        futures = [pool.submit(_one_seed, simulation, config, s) for s in seeds]
+        futures = [pool.submit(_one_seed, simulation, config, s, models) for s in seeds]
         for i, future in enumerate(as_completed(futures), 1):
             save(future.result(), i)
 

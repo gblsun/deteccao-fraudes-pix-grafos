@@ -16,6 +16,7 @@ from pixfraud.experiment import (
     load_scenarios,
     run_seeds,
     save_metadata,
+    seeded_models,
     supervised_scores,
 )
 from pixfraud.features import FEATURE_SETS
@@ -37,6 +38,27 @@ def test_run_seeds_one_dataset_per_seed():
     assert len(metrics) == len(FEATURE_SETS) * len(DETECTORS)
     assert first.labels.sum() > 0 and not first.labels.index.equals(second.labels.index)
     assert CONFIG["modelos"]["isolation_forest"] == {"n_estimators": 50}  # a configuração não é alterada
+
+
+def test_seeded_models_reach_every_random_detector():
+    seeded = seeded_models(CONFIG["modelos"], 7)
+    assert {m for m, params in seeded.items() if params.get("seed") == 7} == {
+        "isolation_forest", "one_class_svm", "autoencoder", "node2vec_if"}
+    assert "seed" not in seeded["dbscan"]  # determinístico: não recebe semente
+    assert seeded["isolation_forest"]["n_estimators"] == 50
+    assert "seed" not in CONFIG["modelos"]["isolation_forest"]  # a original não muda
+
+
+def test_run_seeds_in_parallel_gives_the_same_results():
+    sequential = [m for _, _, m in run_seeds(TINY, CONFIG, [1, 2], models=["dbscan", "ecod"])]
+    parallel = [m for _, _, m in run_seeds(TINY, CONFIG, [1, 2], models=["dbscan", "ecod"], processes=2)]
+    for a, b in zip(sequential, parallel):
+        pd.testing.assert_frame_equal(a, b)
+
+
+def test_run_seeds_can_run_only_some_detectors():
+    (_, _, metrics), = run_seeds(TINY, CONFIG, [1], models=["ecod", "dbscan"])
+    assert set(metrics["modelo"]) == {"ecod", "dbscan"}
 
 
 def test_comparisons_use_known_feature_sets():
@@ -85,9 +107,10 @@ def test_feature_ablation_finds_the_informative_feature():
     assert (table["queda"] == table["ap_com_todos"] - table["ap_sem"]).all()
 
 
-def test_supervised_scores_are_out_of_fold():
+@pytest.mark.parametrize("model", ["random_forest", "gradient_boosting"])
+def test_supervised_scores_are_out_of_fold(model):
     features, labels = _planted()
-    scores = supervised_scores(features, labels, seed=0)
+    scores = supervised_scores(features, labels, seed=0, model=model)
     assert scores.index.equals(features.index) and scores.between(0, 1).all()
     assert average_precision_score(labels, scores) > 0.9  # o sinal é fácil: fraudes no topo
 
@@ -100,3 +123,9 @@ def test_known_fraud_scores_learn_from_a_few_known():
     assert scores.index.equals(features.index) and (scores[known] == 1.0).all()
     rest = labels.drop(known)
     assert average_precision_score(rest, scores[rest.index]) > 0.3  # ao acaso, ~4%
+
+
+def test_supervised_scores_rejects_unknown_model():
+    features, labels = _planted()
+    with pytest.raises(ValueError, match="desconhecido"):
+        supervised_scores(features, labels, model="svm")

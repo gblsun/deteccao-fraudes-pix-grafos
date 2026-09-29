@@ -2,9 +2,10 @@
 
 from pathlib import Path
 
+import networkx as nx
 import pytest
 
-from pixfraud.flow import blocking_accounts, blocking_cut, max_money_flow, propagate_risk
+from pixfraud.flow import blocking_accounts, blocking_cut, label_spreading, max_money_flow, propagate_risk
 from pixfraud.graph import build_graph, graph_from_csv
 from pixfraud.simulation import SimulationConfig, generate_dataset
 
@@ -51,3 +52,27 @@ def test_propagate_risk_reaches_ring_members():
     assert precision > 5 * fraud.mean()  # bem melhor que sortear ao acaso
     with pytest.raises(ValueError):
         propagate_risk(graph, ["não existe"])
+
+
+def test_label_spreading_pulls_toward_known_sides():
+    # uma fila a - b - c - d - e: fraude conhecida numa ponta, legítima na outra
+    graph = nx.DiGraph([("a", "b"), ("b", "c"), ("c", "d"), ("d", "e")])
+    scores = label_spreading(graph, positives=["a"], negatives=["e"])
+    assert list(scores.sort_values(ascending=False).index) == ["a", "b", "c", "d", "e"]
+    assert scores["a"] > 0 > scores["e"]
+    assert scores["c"] == pytest.approx(0.0, abs=1e-9)  # no meio, equidistante dos dois lados
+    with pytest.raises(ValueError):
+        label_spreading(graph, positives=["não existe"])
+
+
+def test_label_spreading_reaches_ring_members():
+    accounts, tx = generate_dataset(SimulationConfig(n_people=400, n_merchants=20, n_days=10, n_rings=3))
+    graph = build_graph(tx, accounts["account_id"])
+    labels = accounts.set_index("account_id")["is_fraud"]
+    roles = accounts.set_index("account_id")["role"]
+    positives = list(roles[roles == "laranja"].index[::4])
+    negatives = list(labels[~labels].index[::4])
+    scores = label_spreading(graph, positives, negatives).drop(positives + negatives)
+    rest = labels[scores.index]
+    precision = rest[scores.head(int(rest.sum())).index].mean()
+    assert precision > 5 * rest.mean()

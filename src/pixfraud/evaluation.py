@@ -41,6 +41,22 @@ def evaluate(y_true: pd.Series, detection: Detection, k: int | None = None) -> d
     }
 
 
+def ranking_metrics(y_true: pd.Series, scores: pd.Series, k: int | None = None) -> dict[str, float]:
+    """As métricas que só dependem da ordenação: AP, ROC-AUC e precision@k.
+
+    Para abordagens que dão um escore mas não um rótulo binário (propagação de
+    risco, tetos supervisionados). Contas sem escore contam como escore 0.
+    """
+    y = y_true.astype(bool)
+    s = scores.reindex(y.index).fillna(0.0)
+    k = int(y.sum()) if k is None else k
+    return {
+        "average_precision": average_precision_score(y, s),
+        "roc_auc": roc_auc_score(y, s),
+        "precision_at_k": float(y.loc[s.nlargest(k).index].mean()),
+    }
+
+
 def recall_by_group(members: pd.DataFrame, scores: pd.Series, k: int, by: str = "typology") -> pd.DataFrame:
     """Fração das contas de cada grupo que está entre as ``k`` de maior escore.
 

@@ -528,7 +528,10 @@ conta. Ela acha mais "irmãs" fraudulentas, sobretudo nos cenários difíceis (+
 `realista`): as laranjas repassam quase tudo para o mesmo destino, e os Pix de camuflagem,
 de valor pequeno, pesam pouco no ângulo, mas contam inteiros no Jaccard.
 
-**A coletora que esvazia o dinheiro** (`collector_cashout = 20`, cenário `coletor_ativo`).
+**A coletora que esvazia o dinheiro** (`collector_payouts = 20`, cenário `coletor_ativo`;
+o parâmetro se chamava `collector_cashout` quando os resultados foram gerados, e foi
+renomeado na integração de 29/09, porque o branch integrado já usava esse nome para o
+saque numa corretora. O dataset gerado é o mesmo).
 No gerador padrão a coletora só recebe. Com o parâmetro, ela repassa ~90% do recebido em
 ~20 Pix para pessoas e comércios (arestas com o rótulo `saida_coletor`).
 
@@ -613,4 +616,4 @@ No gerador padrão a coletora só recebe. Com o parâmetro, ela repassa ~90% do 
    conhecidas (seção 6), e passeios aleatórios a partir das vítimas como escore sem rótulo
    (seção 13).
 9. Coletora ativa: levar a conferência por papel (percentil das coletoras) para um script, e
-   decidir se `collector_cashout` passa a valer no gerador padrão.
+   decidir se `collector_payouts` passa a valer no gerador padrão.

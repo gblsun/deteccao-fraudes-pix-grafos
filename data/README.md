@@ -34,15 +34,28 @@ qualquer momento pelos scripts, a partir da configuração e da semente.
 | `receiver`  | conta recebedora                                                 |
 | `amount`    | valor em R$                                                      |
 | `is_fraud`  | rótulo verdadeiro da transação                                    |
-| `scenario`  | `normal`, `falso_suporte`, `clonagem_whatsapp`, `repasse_laranja`, `lavagem_em_cadeia` ou `saida_coletor` |
+| `scenario`  | o que gerou o Pix (ver abaixo)                                    |
+| `contestado_em` | quando a vítima contestou o golpe; **só existe** com `p_contested > 0`, e fica vazia nos demais Pix |
 
-`role`, `is_fraud`, `is_victim` e `scenario` são **rótulos**: servem só para avaliar os
-modelos e nunca devem entrar como atributo de entrada.
+Valores de `scenario`:
+
+* legítimos: `normal` e, com os negativos difíceis ligados, `salario`, `fornecedor`,
+  `vaquinha` e `repasse_salario`;
+* golpes: `falso_suporte` e `clonagem_whatsapp`;
+* lavagem: `repasse_laranja`, `lavagem_em_cadeia`, `espalha_junta`, `ciclo` e `bipartido`;
+* `saque`: a coletora tira o dinheiro para uma corretora (`collector_cashout`);
+* `saida_coletor`: a coletora espalha o dinheiro em vários Pix para pessoas e comércios
+  (`collector_payouts`).
+
+`role`, `is_fraud`, `is_victim`, `scenario` e `contestado_em` são **rótulos**: servem só
+para avaliar os modelos e nunca devem entrar como atributo de entrada. A exceção é
+`contestado_em` na propagação de risco, que simula o que o banco fica sabendo pelo MED, e
+só a partir do instante da contestação.
 
 ### Como uma quadrilha é simulada
 
 ```
-vítimas ──golpe──▶ contas laranja ──repasse──▶ [intermediário ▶ intermediário ▶ ...] ──▶ coletora
+vítimas ──golpe──▶ contas laranja ──repasse──▶ [intermediário ▶ intermediário ▶ ...] ──▶ coletora ──▶ [saque]
 ```
 
 * **falso suporte**: uma vítima faz de 1 a 3 Pix seguidos para uma laranja;
@@ -51,9 +64,32 @@ vítimas ──golpe──▶ contas laranja ──repasse──▶ [intermediá
 * cada valor recebido é repassado em até ~30 min, com uma pequena comissão retida a cada
   salto, direto para a coletora (`repasse_laranja`) ou por uma cadeia de intermediários
   (`lavagem_em_cadeia`);
-* com `collector_cashout` > 0, a coletora esvazia ~90% do que recebeu em vários Pix para
-  pessoas e comércios (`saida_coletor`); no padrão (0) ela só recebe;
-* as contas fraudulentas também fazem alguns Pix comuns (camuflagem).
+* com `laundering_typologies`, cada quadrilha sorteia a forma de lavagem, inspirada nas
+  tipologias do AMLworld:
+  * `espalha_junta`: a laranja divide o valor entre os intermediários, e eles o juntam
+    de novo na coletora;
+  * `ciclo`: o dinheiro dá uma volta e passa pela laranja de novo;
+  * `bipartido`: cada repasse usa um intermediário sorteado;
+* com `collector_cashout`, a coletora saca cada valor para uma corretora (um comércio)
+  depois de algumas horas, em vez de só acumular;
+* com `collector_payouts` (alternativa ao `collector_cashout`), a coletora esvazia ~90%
+  do que recebeu em vários Pix para pessoas e comércios (`saida_coletor`);
+* as contas criadas para a fraude fazem alguns Pix comuns (camuflagem); com
+  `p_recruited_mule`, parte das laranjas é uma pessoa que já existia, com todo o seu
+  histórico (conta cedida ou alugada).
+
+### Negativos difíceis
+
+São contas **legítimas** que se comportam como partes de uma quadrilha. Sem elas, só a
+fraude repassa dinheiro, e isso é um atalho:
+
+* `salario`: comércios pagam a folha no 5º dia útil (`employees_per_merchant`). É um leque
+  de saída, como o de uma coletora que espalha dinheiro;
+* `fornecedor`: comércios pagam outros comércios toda semana (`supplier_tx_per_week`);
+* `vaquinha`: uma pessoa junta dinheiro de 3 a 8 contatos em poucas horas e paga um
+  comércio (`p_organizer`), como uma laranja que recebe de várias vítimas e repassa;
+* `repasse_salario`: uma pessoa repassa de 30% a 60% do salário (o aluguel) em poucas
+  horas (`p_fast_forwarder`), o que dá tempo de permanência curto a uma conta legítima.
 
 ### Limitações conhecidas (importantes para a análise)
 
@@ -66,15 +102,32 @@ resultados, lembre-se de que, com a configuração padrão:
 | os golpes acontecem em **qualquer horário com a mesma probabilidade**, enquanto os Pix legítimos seguem o perfil horário `HOUR_WEIGHTS` | `night_ratio` é um sinal forte **por construção** | `fraud_hours: comercial` |
 | 70% das contas fraudulentas são recém-abertas (`account_age_days` < 60) | a idade da conta denuncia a fraude | `p_new_fraud_account: 0.0` |
 | toda pessoa legítima é razoavelmente ativa (~18 Pix enviados por mês) | qualquer conta com poucos Pix já parece anômala (exercício 4 de `estudos/04_padroes_de_fraude.ipynb`) | `quiet_fraction: 0.3` |
-| a taxa de fraude (~2% das contas) é muito maior que a real: segundo o BCB, há cerca de 5 contestações aceitas a cada 100 mil Pix | métricas mais altas do que num cenário real | menos quadrilhas (`n_rings`) ou mais pessoas (`n_people`) |
+| a taxa de fraude (~2% das contas) é muito maior que a real: segundo o BCB, há cerca de 5 contestações aceitas a cada 100 mil Pix | métricas mais altas do que num cenário real | menos quadrilhas (`n_rings`) e mais pessoas (`n_people`); o `calibrado` fica em ~10x a real |
+| P2P e P2B têm o mesmo valor, e o golpe vale ~3x um Pix comum (BCB: R$ 257, R$ 114 e ~9x) | valores fora da escala real | `amount_mu`, `merchant_amount_mu`, `fraud_amount_shift`, `p_merchant` (valores no `calibrado`) |
 | as laranjas repassam em ~30 min | o tempo de permanência (`dwell_time_min`) é um sinal forte | `forward_delay_min: 360` |
-| comércios só recebem (não pagam fornecedores nem salários) | comércios nunca parecem contas de passagem | ainda não configurável |
+| **só a fraude repassa dinheiro**: comércios só recebem, e nenhuma pessoa legítima recebe e repassa logo | comércios nunca parecem contas de passagem; repasse rápido denuncia a fraude | negativos difíceis: `employees_per_merchant`, `supplier_tx_per_week`, `p_organizer`, `p_fast_forwarder` |
+| as laranjas são contas novas, com ~3 Pix de camuflagem | a falta de histórico denuncia a laranja | `p_recruited_mule` |
+| a coletora só acumula | a coletora é um "sumidouro" fácil de achar | `collector_cashout: true` |
+| toda quadrilha lava em cadeia ou repassa direto | uma única forma de lavagem | `laundering_typologies` |
+| todo dia tem o mesmo movimento | sem ritmo de semana nem de começo de mês | `calendar: semanal` |
 
 A taxa de fraude foi inflada de propósito, para haver exemplos suficientes. Os cenários
 de [`configs/cenarios.yaml`](../configs/cenarios.yaml) combinam esses parâmetros, do mais
 fácil ao mais difícil, e `python scripts/avaliar_cenarios.py` mede o quanto cada
-resultado depende deles (ver [`docs/resultados.md`](../docs/resultados.md)). Validar e
-calibrar essas escolhas faz parte da etapa de análise exploratória.
+resultado depende deles (ver [`docs/resultados.md`](../docs/resultados.md)).
+
+Com todos os parâmetros de realismo desligados (o padrão), o gerador produz **exatamente**
+o mesmo dataset de antes de eles existirem. Um teste confere isso com uma impressão
+digital do dataset. Por isso os resultados antigos continuam reproduzíveis. O cenário
+**`calibrado`** liga tudo e usa os números do BCB; é o cenário principal da pesquisa.
+
+O que continua simplificado, mesmo no `calibrado`:
+
+* as vítimas do falso suporte são sorteadas ao acaso;
+* os feriados não entram no calendário;
+* a contestação é um sorteio, com atraso lognormal, e não depende do valor;
+* não há dispositivos, CPFs nem telefones: o grafo tem um só tipo de vértice (ver
+  [grafos heterogêneos](../docs/futuro/grafos-heterogeneos-e-custo-operacional.md)).
 
 ## Dados públicos do Banco Central
 

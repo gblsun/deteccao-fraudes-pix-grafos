@@ -60,12 +60,14 @@ def main() -> None:
     parser.add_argument("--max-fracao-fraude", type=float, default=0.2,
                         help="pula janelas em que as contas fraudulentas passam dessa fração (sem movimento normal)")
     parser.add_argument("--max-janelas", type=int, help="para depois de N janelas avaliadas (teste rápido)")
+    parser.add_argument("--modelos", nargs="+", choices=sorted(DETECTORS), help="detectores (padrão: todos)")
     parser.add_argument("--saida", default="reports/externo")
     parser.add_argument("--refazer", action="store_true", help="recalcula as janelas já salvas")
     args = parser.parse_args()
     began = time.time()
 
     config = load_experiment_config(args.config)
+    models = args.modelos or list(DETECTORS)
     data = Path(args.dados)
     name = data.name
     _, transactions = load_dataset(data)
@@ -81,27 +83,34 @@ def main() -> None:
             print(f"janela {i} ({start.date()}): {n_fraud} de {len(accounts)} contas fraudulentas, pulada")
             continue
         metrics_file, typology_file = cache / f"janela_{i:02d}.csv", cache / f"janela_{i:02d}_tipologias.csv"
-        if metrics_file.exists() and not args.refazer:
-            runs.append(pd.read_csv(metrics_file))
-            if typology_file.exists():
-                recalls.append(pd.read_csv(typology_file))
+        cached = pd.read_csv(metrics_file) if metrics_file.exists() and not args.refazer else None
+        cached_recalls = pd.read_csv(typology_file) if cached is not None and typology_file.exists() else None
+        # Uma janela salva antes de um detector existir é completada só com o que falta.
+        missing = models if cached is None else [m for m in models if m not in set(cached["modelo"])]
+        if not missing:
+            runs.append(cached[cached["modelo"].isin(models)])
+            if cached_recalls is not None:
+                recalls.append(cached_recalls[cached_recalls["modelo"].isin(models)])
             print(f"janela {i} ({start.date()}): já calculada, reaproveitada", flush=True)
         else:
             window_began = time.time()
             prepared = prepare(accounts, tx, config)
-            metrics, detections = run_detectors(prepared.features, prepared.labels, config["modelos"])
+            metrics, detections = run_detectors(prepared.features, prepared.labels, config["modelos"], models=missing)
             metrics = metrics.assign(janela=i, inicio=start.date(), fraudes=n_fraud, contas=len(accounts))
+            if cached is not None:
+                metrics = pd.concat([cached, metrics], ignore_index=True)
             if members is not None:
                 fraud = members[members["account_id"].isin(prepared.labels.index[prepared.labels])]
                 window_recalls = pd.concat(
-                    [recall_by_group(fraud, detection.scores, k=n_fraud).assign(janela=i, atributos=s, modelo=m)
-                     for (s, m), detection in detections.items()],
+                    [cached_recalls] * (cached_recalls is not None)
+                    + [recall_by_group(fraud, detection.scores, k=n_fraud).assign(janela=i, atributos=s, modelo=m)
+                       for (s, m), detection in detections.items()],
                     ignore_index=True,
                 )
                 window_recalls.to_csv(typology_file, index=False)
-                recalls.append(window_recalls)
+                recalls.append(window_recalls[window_recalls["modelo"].isin(models)])
             metrics.to_csv(metrics_file, index=False)  # por último: marca a janela como pronta
-            runs.append(metrics)
+            runs.append(metrics[metrics["modelo"].isin(models)])
             size = f"{len(accounts):,} contas e {len(tx):,} transações".replace(",", ".")
             print(f"janela {i} ({start.date()}): {size}, {n_fraud} fraudulentas, "
                   f"{time.time() - window_began:.0f} s", flush=True)
@@ -120,7 +129,8 @@ def main() -> None:
     summary = pd.concat({m: summarize_runs(runs, m) for m in REPEATED_METRICS}, names=["métrica"])
     summary.to_csv(results / f"{name}_resumo.csv")
     save_metadata(results / f"{name}_meta.json", config, dados=str(data), dias_janela=args.dias_janela,
-                  janelas=sorted(runs["janela"].unique().tolist()), duracao_s=round(time.time() - began))
+                  janelas=sorted(runs["janela"].unique().tolist()), modelos=models,
+                  duracao_s=round(time.time() - began))
     print("\naverage precision média por janela:")
     print(summary.loc["average_precision"].round(3).to_string())
 

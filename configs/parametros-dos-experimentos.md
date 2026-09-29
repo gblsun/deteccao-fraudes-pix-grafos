@@ -26,13 +26,27 @@ por isso gasta memória proporcional ao **quadrado** do nº de contas). Acima di
 rótulo passa a ser "não é ponto de núcleo", e as métricas principais (average precision e
 precision@k) não mudam, porque dependem só do escore.
 
-Os parâmetros de realismo da simulação (`fraud_hours`, `p_new_fraud_account`,
-`quiet_fraction`...) desligam sinais que o gerador embute por construção; a tabela de
-"Limitações conhecidas" em [`data/README.md`](../data/README.md) mostra qual parâmetro
-desliga qual sinal. `collector_cashout` faz o contrário: acrescenta um comportamento que o gerador padrão
-não tem (a coletora esvaziar o dinheiro em vários Pix de saída) e fica em 0 no
-`experimento.yaml`, para não mudar os resultados já salvos; o cenário `coletor_ativo`
-liga esse parâmetro.
+Os parâmetros de realismo da simulação desligam sinais que o gerador embute por
+construção. A tabela de "Limitações conhecidas" em [`data/README.md`](../data/README.md)
+mostra qual parâmetro desliga qual sinal. Eles se dividem em quatro grupos:
+
+| Grupo | Parâmetros |
+|-------|------------|
+| atalhos originais | `fraud_hours`, `p_new_fraud_account`, `quiet_fraction`, `forward_delay_min` |
+| calibração com o BCB | `p_merchant`, `amount_mu`, `merchant_amount_mu` e `merchant_amount_sigma`, `fraud_amount_shift`, `calendar`, e a escala (`n_people`, `n_merchants`, `n_rings`) |
+| negativos difíceis | `employees_per_merchant`, `salary_business_day`, `supplier_tx_per_week`, `p_organizer`, `p_fast_forwarder` |
+| quadrilhas | `p_recruited_mule`, `collector_cashout` e `cashout_delay_min`, `collector_payouts`, `laundering_typologies`, `p_contested` e `contest_delay_h` |
+
+Todos ficam desligados no `base`, que por isso continua gerando o mesmo dataset de sempre.
+Os cenários `negativos_dificeis`, `quadrilhas_realistas` e `calibrado` os ligam. O
+`calibrado` tem ~10 mil pessoas, e só o cálculo dos atributos leva perto de 1 minuto por
+semente (contra ~5 s no `base`).
+
+`collector_cashout` e `collector_payouts` são duas formas de a coletora mover o dinheiro,
+e não podem ser ligadas juntas: a primeira saca cada valor para uma corretora (uma aresta
+só); a segunda, pedida na reunião de 24/09, espalha ~90% do recebido em vários Pix para
+pessoas e comércios (muitas arestas, rótulo `saida_coletor`). O cenário `coletor_ativo`
+liga a segunda (`collector_payouts: 20`).
 
 ## Criar um cenário
 
