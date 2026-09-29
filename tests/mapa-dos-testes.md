@@ -29,7 +29,8 @@ instalado.
 | `test_temporal.py` | `temporal` | caminhos que respeitam o tempo, espera máxima, tempo de permanência |
 | `test_communities.py` | `communities` | comunidades, k-núcleos, subgrafo denso plantado, FRAUDAR acha as quadrilhas uma depois da outra e ignora o bloco que é a rede inteira, OddBall acha a estrela |
 | `test_flow.py` | `flow` | fluxo máximo = corte mínimo, contas a bloquear, propagação de risco |
-| `test_algorithms.py` | `algorithms` | caminho gargalo, ramificação máxima, VF2, HITS |
+| `test_algorithms.py` | `algorithms` | caminho gargalo, ramificação máxima, VF2, HITS, cosseno = ângulo entre vetores |
+| `test_network.py` | `network` | expoente da lei de potência recuperado, BA × ER, componente gigante fraca e forte, passeios que terminam na coletora (ou passam por ela, com `collector_cashout`) |
 | `test_patterns.py` | `patterns` | formato dos padrões, comissão por salto, injeção |
 | `test_anomaly.py` | `anomaly`, `evaluation` | o detector acha o ponto isolado; métricas num ranking perfeito |
 | `test_evaluation.py` | `evaluation`, `visualization` | recall por grupo; matriz de resultados |

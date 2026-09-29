@@ -1,5 +1,6 @@
 """Testes de `pixfraud.algorithms`: caminho gargalo, ramificação máxima, VF2, HITS e similaridade."""
 
+import math
 from pathlib import Path
 
 import networkx as nx
@@ -7,12 +8,14 @@ import pytest
 
 from pixfraud.algorithms import (
     bipartite_projection,
+    cosine_similarity,
     find_pattern,
     hubs_authorities,
     laundering_depth,
     longest_chain,
     money_backbone,
     similar_accounts,
+    vector_angle,
     widest_path,
 )
 from pixfraud.graph import graph_from_csv, graph_from_edges
@@ -64,3 +67,25 @@ def test_hits_similarity_and_projection():
     projection = bipartite_projection(ring, victims, mules)
     assert nx.number_connected_components(projection) == 2  # uma por laranja
     assert projection["vitima_0"]["vitima_2"]["weight"] == 1
+
+
+def test_cosine_similarity_is_the_angle_between_vectors():
+    assert cosine_similarity([1, 0], [0, 1]) == pytest.approx(0.0)
+    assert cosine_similarity([1, 2, 3], [2, 4, 6]) == pytest.approx(1.0)  # só a direção importa
+    assert cosine_similarity([1, 0], [-1, 0]) == pytest.approx(-1.0)
+    assert cosine_similarity([0, 0], [1, 1]) == 0.0
+    assert vector_angle([1, 0], [0, 1]) == pytest.approx(90.0)
+    assert vector_angle([1, 0], [1, 1]) == pytest.approx(45.0)
+    a, b = [3, 1, 0], [1, 2, 2]
+    assert cosine_similarity(a, b) == pytest.approx(math.cos(math.radians(vector_angle(a, b))))
+
+
+def test_similar_accounts_cosine_uses_amounts():
+    # a e b pagam as mesmas contas nas mesmas proporções; c paga as mesmas, mas quase tudo para y
+    graph = graph_from_edges([("a", "x", 10), ("a", "y", 20), ("b", "x", 50), ("b", "y", 100),
+                              ("c", "x", 1), ("c", "y", 200)])
+    cos = similar_accounts(graph, "a", method="cosine_out")
+    assert cos["b"] == pytest.approx(1.0)
+    assert cos["c"] < cos["b"]
+    assert similar_accounts(graph, "a", method="jaccard_out")["c"] == 1.0  # Jaccard não vê a diferença
+    assert similar_accounts(graph, "x", method="cosine_in")["y"] > 0

@@ -23,6 +23,7 @@ simulacao:
   fraud_amount_shift: 1.5  # golpes valem ~e^1.5 ≈ 4,5x o valor típico
   forward_delay_min: 30    # tempo médio (min) até cada repasse
   camouflage_tx: 3         # nº médio de Pix "normais" feitos por conta fraudulenta
+  collector_cashout: 0     # nº médio de Pix de saída da coletora por quadrilha (0 = só recebe)
   # realismo: os valores abaixo mantêm os sinais que o gerador embute por construção
   # (ver data/README.md). configs/cenarios.yaml mostra como desligá-los.
   fraud_hours: uniforme    # horário dos golpes: uniforme (qualquer hora) ou comercial (perfil dos Pix legítimos)

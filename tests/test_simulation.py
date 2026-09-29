@@ -123,3 +123,25 @@ def test_quiet_people_send_fewer_pix():
         return (tx.groupby("sender").size().reindex(people, fill_value=0) <= 1).mean()
 
     assert share_almost_inactive(replace(SMALL, quiet_fraction=0.5)) > share_almost_inactive(SMALL) + 0.2
+
+
+def test_collector_cashout_off_by_default_keeps_dataset(dataset):
+    _, tx = dataset
+    assert "saida_coletor" not in set(tx["scenario"])
+    _, same = generate_dataset(replace(SMALL, collector_cashout=0))
+    pd.testing.assert_frame_equal(same, tx)
+
+
+def test_collector_cashout_empties_the_collector():
+    accounts, tx = generate_dataset(replace(SMALL, collector_cashout=10))
+    collectors = set(accounts.loc[accounts["role"] == "coletor", "account_id"])
+    out = tx[tx["scenario"] == "saida_coletor"]
+    assert set(out["sender"]) == collectors
+    assert out["is_fraud"].all()
+    for collector in collectors:
+        received = tx.loc[(tx["receiver"] == collector) & tx["is_fraud"], "amount"].sum()
+        sent = out.loc[out["sender"] == collector]
+        assert 0.8 * received < sent["amount"].sum() < received
+        # a saída vem depois de todo o dinheiro da quadrilha ter chegado
+        last_in = tx.loc[(tx["receiver"] == collector) & tx["is_fraud"], "timestamp"].max()
+        assert (sent["timestamp"] >= last_in).all()

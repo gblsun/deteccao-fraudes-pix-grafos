@@ -29,7 +29,10 @@ precision@k) não mudam, porque dependem só do escore.
 Os parâmetros de realismo da simulação (`fraud_hours`, `p_new_fraud_account`,
 `quiet_fraction`...) desligam sinais que o gerador embute por construção; a tabela de
 "Limitações conhecidas" em [`data/README.md`](../data/README.md) mostra qual parâmetro
-desliga qual sinal.
+desliga qual sinal. `collector_cashout` faz o contrário: acrescenta um comportamento que o gerador padrão
+não tem (a coletora esvaziar o dinheiro em vários Pix de saída) e fica em 0 no
+`experimento.yaml`, para não mudar os resultados já salvos; o cenário `coletor_ativo`
+liga esse parâmetro.
 
 ## Criar um cenário
 

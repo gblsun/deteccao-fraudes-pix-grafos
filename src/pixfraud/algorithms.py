@@ -7,7 +7,8 @@
 | ``laundering_depth``, ``longest_chain`` | condensação + maior caminho em DAG | por quantas camadas o dinheiro passa? |
 | ``find_pattern`` | monomorfismo de subgrafos (VF2) | onde este formato aparece na rede? |
 | ``hubs_authorities`` | HITS | quem distribui e quem concentra? |
-| ``similar_accounts`` | Jaccard / SimRank | que contas se parecem com esta? |
+| ``similar_accounts`` | Jaccard / cosseno / SimRank | que contas se parecem com esta? |
+| ``cosine_similarity``, ``vector_angle`` | produto interno | quão alinhados estão dois vetores? |
 | ``bipartite_projection`` | projeção de grafo bipartido | que vítimas pagaram as mesmas laranjas? |
 """
 
@@ -18,6 +19,7 @@ import itertools
 from collections.abc import Iterable
 
 import networkx as nx
+import numpy as np
 import pandas as pd
 from networkx.algorithms import isomorphism
 
@@ -134,6 +136,10 @@ def similar_accounts(graph: nx.DiGraph, account, method: str = "jaccard_out", to
       repassam para o mesmo intermediário);
     * ``"jaccard_in"``: quem recebe das mesmas contas;
     * ``"jaccard"``: vizinhos em qualquer sentido;
+    * ``"cosine_out"`` e ``"cosine_in"``: como os Jaccard de mesmo sentido, mas
+      cada conta vira o vetor dos **valores** pagos a (ou recebidos de) cada
+      conta, e a similaridade é o cosseno do ângulo entre os vetores
+      (``cosine_similarity``): pagar as mesmas contas em proporções parecidas;
     * ``"simrank"``: "são parecidas as contas pagas por contas parecidas"
       (recursivo, bem mais lento).
 
@@ -142,25 +148,62 @@ def similar_accounts(graph: nx.DiGraph, account, method: str = "jaccard_out", to
     if method == "simrank":
         scores = pd.Series(nx.simrank_similarity(graph, source=account))
         return scores.drop(account, errors="ignore").sort_values(ascending=False).head(top)
-    neighbors = {
-        "jaccard_out": graph.successors,
-        "jaccard_in": graph.predecessors,
-        "jaccard": lambda v: itertools.chain(graph.successors(v), graph.predecessors(v)),
-    }
-    if method not in neighbors:
-        raise ValueError("method deve ser 'jaccard_out', 'jaccard_in', 'jaccard' ou 'simrank'")
-    reverse = {
-        "jaccard_out": graph.predecessors,
-        "jaccard_in": graph.successors,
-        "jaccard": lambda v: itertools.chain(graph.successors(v), graph.predecessors(v)),
-    }[method]
-    mine = set(neighbors[method](account))
+    both = lambda v: itertools.chain(graph.successors(v), graph.predecessors(v))  # noqa: E731
+    neighbors, reverse = {
+        "jaccard_out": (graph.successors, graph.predecessors),
+        "jaccard_in": (graph.predecessors, graph.successors),
+        "jaccard": (both, both),
+        "cosine_out": (graph.successors, graph.predecessors),
+        "cosine_in": (graph.predecessors, graph.successors),
+    }.get(method, (None, None))
+    if neighbors is None:
+        raise ValueError("method deve ser 'jaccard_out', 'jaccard_in', 'jaccard', 'cosine_out', "
+                         "'cosine_in' ou 'simrank'")
+    mine = set(neighbors(account))
     candidates = {c for n in mine for c in reverse(n)} - {account}
     scores = {}
     for c in candidates:
-        theirs = set(neighbors[method](c))
-        scores[c] = len(mine & theirs) / len(mine | theirs)
+        theirs = set(neighbors(c))
+        if method.startswith("cosine"):
+            keys = list(mine | theirs)
+            scores[c] = cosine_similarity(_amounts(graph, account, keys, method), _amounts(graph, c, keys, method))
+        else:
+            scores[c] = len(mine & theirs) / len(mine | theirs)
     return pd.Series(scores, name=method, dtype=float).sort_values(ascending=False).head(top)
+
+
+def _amounts(graph: nx.DiGraph, account, partners: list, method: str) -> list[float]:
+    """Vetor dos valores entre ``account`` e cada conta de ``partners`` (0 se não houve Pix)."""
+    edge = (lambda p: (account, p)) if method == "cosine_out" else (lambda p: (p, account))
+    return [graph.edges[edge(p)].get("amount", 1.0) if graph.has_edge(*edge(p)) else 0.0 for p in partners]
+
+
+def cosine_similarity(a, b) -> float:
+    """Cosseno do ângulo entre os vetores ``a`` e ``b``.
+
+    $$\\cos\\theta = \\frac{a \\cdot b}{\\lVert a \\rVert \\, \\lVert b \\rVert}
+    = \\frac{\\sum_i a_i b_i}{\\sqrt{\\sum_i a_i^2}\\,\\sqrt{\\sum_i b_i^2}}$$
+
+    Vale 1 quando os vetores apontam no mesmo sentido (ângulo 0°), 0 quando
+    são perpendiculares (90°) e -1 quando são opostos (180°). Só a direção
+    importa: ``a`` e ``2a`` têm cosseno 1. Com valores de Pix, que nunca são
+    negativos, o resultado fica entre 0 e 1. Com um vetor nulo, devolve 0.
+    """
+    a = np.asarray(a, dtype=float)
+    b = np.asarray(b, dtype=float)
+    norms = np.linalg.norm(a) * np.linalg.norm(b)
+    return float(a @ b / norms) if norms else 0.0
+
+
+def vector_angle(a, b, degrees: bool = True) -> float:
+    """Ângulo entre ``a`` e ``b``: $\\theta = \\arccos(\\cos\\theta)$, em graus (ou radianos).
+
+    É a mesma informação que ``cosine_similarity`` em outra escala: cosseno
+    1 ↔ 0°, cosseno 0 ↔ 90°. Por isso "similaridade de cosseno" e "ângulo
+    entre vetores" são a mesma medida.
+    """
+    angle = float(np.arccos(np.clip(cosine_similarity(a, b), -1.0, 1.0)))
+    return float(np.degrees(angle)) if degrees else angle
 
 
 def bipartite_projection(graph: nx.DiGraph, left: Iterable, right: Iterable) -> nx.Graph:

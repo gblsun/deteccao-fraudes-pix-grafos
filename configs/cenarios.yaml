@@ -38,6 +38,13 @@ realista:                       # + fraudes 3x mais raras (ainda bem acima da ta
   quiet_fraction: 0.3
   n_rings: 2
 
+coletor_ativo:                  # realista + a coletora esvazia o dinheiro em ~20 Pix de saída
+  fraud_hours: comercial        # (reunião de 24/09: mais movimentação no vértice do coletor)
+  p_new_fraud_account: 0.0
+  quiet_fraction: 0.3
+  n_rings: 2
+  collector_cashout: 20
+
 repasse_lento:                  # teste de estresse: + laranjas esperam ~6 h antes de repassar
   fraud_hours: comercial
   p_new_fraud_account: 0.0

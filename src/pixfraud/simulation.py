@@ -12,7 +12,9 @@ injetados padrões de fraude conhecidos:
 * ``repasse_laranja``: a conta laranja repassa rapidamente o valor recebido
   para a conta coletora da quadrilha;
 * ``lavagem_em_cadeia``: o repasse passa por uma cadeia de contas
-  intermediárias antes de chegar à coletora.
+  intermediárias antes de chegar à coletora;
+* ``saida_coletor`` (só com ``collector_cashout`` > 0): a coletora esvazia o
+  que recebeu em vários Pix para pessoas e comércios.
 
 Os parâmetros ficam em ``configs/experimento.yaml`` e a semente torna o dataset
 reprodutível. Os valores padrão são ilustrativos e devem ser calibrados na
@@ -70,6 +72,7 @@ class SimulationConfig:
     fraud_amount_shift: float = 1.5
     forward_delay_min: float = 30.0
     camouflage_tx: float = 3.0
+    collector_cashout: float = 0.0  # nº médio de Pix de saída da coletora por quadrilha (0 = não esvazia)
     # realismo: estes parâmetros desligam sinais que o gerador embute por construção
     fraud_hours: str = "uniforme"   # "uniforme" ou "comercial" (golpes e repasses no perfil horário legítimo)
     p_new_fraud_account: float = 0.7  # fração das contas fraudulentas recém-abertas (< 60 dias)
@@ -115,6 +118,9 @@ def generate_dataset(cfg: SimulationConfig) -> tuple[pd.DataFrame, pd.DataFrame]
     for _ in range(cfg.n_rings):
         ring_tx, ring_roles, ring_victims = _fraud_ring(rng, cfg, people, community, fraud_pool)
         parts.append(ring_tx)
+        if cfg.collector_cashout > 0:
+            collector = next(a for a, r in ring_roles.items() if r == "coletor")
+            parts.append(_collector_cashout(rng, cfg, ring_tx, collector, people, merchants))
         roles |= ring_roles
         victims |= ring_victims
     parts.append(_camouflage_transactions(rng, cfg, np.array(list(roles)), people, merchants))
@@ -259,6 +265,27 @@ def _launder(rng, cfg, t, amount, path):
         amount *= rng.uniform(0.90, 0.99)
         rows.append((t, sender, receiver, amount, scenario))
     return rows
+
+
+def _collector_cashout(rng, cfg, ring_tx, collector, people, merchants) -> pd.DataFrame:
+    """A coletora esvazia o que recebeu: vários Pix de saída para pessoas e comércios.
+
+    Sem isso a coletora é quase só um sorvedouro (recebe e não paga ninguém). Aqui
+    ela repassa ~90% do recebido em ``Poisson(collector_cashout)`` Pix (pelo menos
+    um), de valores desiguais, nas horas seguintes à última entrada. As arestas
+    ganham o cenário ``saida_coletor``, para serem identificadas na rede.
+    """
+    incoming = ring_tx[ring_tx["receiver"] == collector]
+    n = max(1, int(rng.poisson(cfg.collector_cashout)))
+    receivers = np.where(rng.random(n) < cfg.p_merchant, rng.choice(merchants, n), rng.choice(people, n))
+    amounts = incoming["amount"].sum() * rng.uniform(0.85, 0.95) * rng.dirichlet(np.ones(n))
+    t = incoming["t"].max()
+    rows = []
+    for receiver, amount in zip(receivers, amounts):
+        delay = rng.exponential(cfg.forward_delay_min * 60)
+        t = t + delay if cfg.fraud_hours == "uniforme" else _after_activity(t, delay)
+        rows.append((t, collector, receiver, amount, "saida_coletor"))
+    return pd.DataFrame(rows, columns=COLUMNS)
 
 
 def _camouflage_transactions(rng, cfg, accounts, people, merchants) -> pd.DataFrame:

@@ -34,7 +34,7 @@ qualquer momento pelos scripts, a partir da configuração e da semente.
 | `receiver`  | conta recebedora                                                 |
 | `amount`    | valor em R$                                                      |
 | `is_fraud`  | rótulo verdadeiro da transação                                    |
-| `scenario`  | `normal`, `falso_suporte`, `clonagem_whatsapp`, `repasse_laranja` ou `lavagem_em_cadeia` |
+| `scenario`  | `normal`, `falso_suporte`, `clonagem_whatsapp`, `repasse_laranja`, `lavagem_em_cadeia` ou `saida_coletor` |
 
 `role`, `is_fraud`, `is_victim` e `scenario` são **rótulos**: servem só para avaliar os
 modelos e nunca devem entrar como atributo de entrada.
@@ -51,6 +51,8 @@ vítimas ──golpe──▶ contas laranja ──repasse──▶ [intermediá
 * cada valor recebido é repassado em até ~30 min, com uma pequena comissão retida a cada
   salto, direto para a coletora (`repasse_laranja`) ou por uma cadeia de intermediários
   (`lavagem_em_cadeia`);
+* com `collector_cashout` > 0, a coletora esvazia ~90% do que recebeu em vários Pix para
+  pessoas e comércios (`saida_coletor`); no padrão (0) ela só recebe;
 * as contas fraudulentas também fazem alguns Pix comuns (camuflagem).
 
 ### Limitações conhecidas (importantes para a análise)

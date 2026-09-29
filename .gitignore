@@ -46,6 +46,7 @@ site/
 relatorio/saida/
 
 # Progresso salvo das avaliações longas: recalculável, serve só para retomar
+reports/logs/
 reports/**/online_cortes/
 reports/**/*_janelas/
 

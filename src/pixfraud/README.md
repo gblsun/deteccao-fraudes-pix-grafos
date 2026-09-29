@@ -57,7 +57,8 @@ rodadas); `bcb.py` serve para calibrar e validar o gerador.
 | [`stats.py`](stats.py) | Mann-Whitney com delta de Cliff, bootstrap, testes pareados, modelo nulo | `compare_groups`, `compare_runs`, `summarize_runs` |
 | [`online.py`](online.py) | detecção ao longo do tempo e dinheiro recuperável (MED) | `checkpoint_flags`, `recovered_amount` |
 | [`flow.py`](flow.py) | fluxo máximo, corte mínimo ("onde bloquear"), propagação de risco | `max_money_flow`, `blocking_accounts`, `propagate_risk` |
-| [`algorithms.py`](algorithms.py) | algoritmos clássicos aplicados ao dinheiro (Edmonds, gargalo, VF2, HITS...) | `widest_path`, `find_pattern`, `hubs_authorities` |
+| [`algorithms.py`](algorithms.py) | algoritmos clássicos aplicados ao dinheiro (Edmonds, gargalo, VF2, HITS, Jaccard e cosseno...) | `widest_path`, `find_pattern`, `hubs_authorities`, `similar_accounts`, `cosine_similarity` |
+| [`network.py`](network.py) | que tipo de rede é: lei de potência, componente gigante, comparação com Erdős–Rényi e Barabási–Albert, passeios aleatórios | `fit_power_law`, `component_summary`, `compare_network_models`, `random_walk_visits` |
 | [`patterns.py`](patterns.py) | padrões de fraude pequenos (fan-in, cadeia, ciclo...) e injeção num grafo | `PATTERNS`, `inject` |
 | [`visualization.py`](visualization.py) | desenho, HTML interativo, grafo de calor, heatmap de risco, matrizes de resultados | `draw_graph`, `plot_heat_graph`, `explain_account`, `plot_value_matrix` |
 | [`explorer.py`](explorer.py) | página HTML da rede inteira (sigma.js), com filtros e linha do tempo | `save_network_explorer` |
