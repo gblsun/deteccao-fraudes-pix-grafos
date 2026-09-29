@@ -50,7 +50,7 @@ try:
     import torch
     from torch import nn
 except ImportError:  # pragma: no cover - depende do ambiente
-    torch = None
+    torch = nn = None
 
 
 def _require_torch() -> None:
@@ -146,7 +146,9 @@ def dominant_scores(
     return pd.Series(score.numpy().astype(float), index=features.index, name="score")
 
 
-class _GraphSAGE(nn.Module):
+# Sem torch o módulo ainda importa (para ``available()`` e os scripts que pulam a GNN);
+# a classe só é usada depois de ``_require_torch()``.
+class _GraphSAGE(nn.Module if nn is not None else object):
     """Duas camadas GraphSAGE com agregação pela média: [própria conta ‖ média dos vizinhos]."""
 
     def __init__(self, n_features: int, hidden: int, dropout: float):
