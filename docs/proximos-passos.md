@@ -49,8 +49,6 @@ Volta para o [índice da documentação](mapa-da-pesquisa.md).
 
 - [ ] Marcar no [cronograma](cronograma.md) as etapas que já têm entrega (dataset, grafos,
   métricas, modelos, visualizações, comparação tabular × grafos): hoje nenhuma está `[x]`.
-- [ ] Atualizar título e descrição da PR #1 no GitHub: ela nasceu para os grafos de
-  conhecimento e hoje leva também FRAUDAR, GNN, orquestrador e o explorador da rede.
 - [ ] A etapa `gnn_rotulos` do `reproduzir_tudo.py` ainda não rodou dentro de uma
   reprodução completa (foi rodada à parte, com 10 sementes).
 - [ ] Os `*_meta.json` da última reprodução completa registram
