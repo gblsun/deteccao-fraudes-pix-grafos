@@ -89,6 +89,71 @@ repositório rapidamente. Ele existe **além** do grafo, não em vez dele — co
 o mesmo padrão nota-mapa + README, e o `llms.txt` deve ser atualizado quando um ponto de
 entrada novo (uma pasta documentada, uma seção grande) for criado.
 
+Três peças deixam o cofre legível para um agente:
+
+| Arquivo | Para quê |
+|---------|----------|
+| [`CLAUDE.md`](../CLAUDE.md) | instruções que o Claude Code carrega sozinho ao abrir o repositório (a regra da LGPD, a autoria, por onde começar, como editar notas) |
+| [`llms.txt`](../llms.txt) | resumo e pontos de entrada, para qualquer ferramenta de IA |
+| [`grafo-de-notas.json`](grafo-de-notas.json) | o grafo do Obsidian em JSON: cada nota (título, tags) e cada link dela, para outra nota ou para um arquivo de código |
+
+O JSON é gerado por `python scripts/exportar_grafo_de_notas.py`, com as mesmas regras de
+exclusão do cofre. Rode de novo depois de criar, renomear ou religar notas; o teste
+`tests/test_docs.py::test_notes_graph_json_is_up_to_date` avisa se esquecer.
+
+### Grafo de conhecimento do código (Graphify)
+
+O grafo de notas liga documentação. Para o **código**, o repositório usa o
+[Graphify](https://github.com/Graphify-Labs/graphify): ele lê os `.py` pela árvore
+sintática (sem LLM, sem custo, sempre o mesmo resultado) e monta um grafo de módulos,
+funções e classes ligados por `imports`, `calls` e `uses`. A saída fica em
+`graphify-out/`, fora do cofre (está nos filtros de `.obsidian/app.json`): só
+`graph.json` e `GRAPH_REPORT.md` (resumo, nós centrais, comunidades) são versionados.
+
+```powershell
+pip install graphifyy                      # no .venv, fora das dependências do pacote
+graphify extract . --code-only             # do zero
+graphify cluster-only . --no-label         # refaz o GRAPH_REPORT.md sem chamar LLM
+graphify update .                          # depois de mudar o código
+graphify affected "graph_features"         # o que chama esta função (e quebra se ela mudar)
+graphify path "prepare" "graph_features"  # prepare -> build_features -> graph_features
+graphify explain "propagate_risk"
+```
+
+`python scripts/reproduzir_tudo.py --etapas notas graphify --extras` atualiza os dois
+grafos (notas e código) e abre a página do Graphify no navegador e este cofre no Obsidian
+(a URI `obsidian://` só funciona se o cofre já tiver sido aberto uma vez).
+
+O `.graphifyignore` tira do grafo o `docs/proposta-original.pdf` (arquivo de submissão),
+`data/`, `reports/` e os notebooks. O `graphify update .` também lê as notas em Markdown,
+mas só a estrutura (títulos e links), localmente e sem LLM. A leitura *semântica* dos
+docs (conceitos e relações extraídos do texto) exigiria mandar o texto para um LLM, e
+fica de fora de propósito: as notas já estão ligadas pelo grafo de notas. Se um dia
+quiser, rode `/graphify .` dentro do Claude Code, depois de conferir o `.graphifyignore`.
+
+A figura [`grafo_do_codigo.png`](../reports/figures/grafo_do_codigo.png) resume esse grafo
+por arquivo, e [`grafo_de_notas.png`](../reports/figures/grafo_de_notas.png) desenha o
+grafo de notas com as cores do Obsidian; as duas saem de
+`python scripts/ilustrar_grafos_de_conhecimento.py`.
+
+| Papel | Ferramenta |
+|-------|-----------|
+| escrever e ligar notas, ver o grafo de notas | Obsidian |
+| agente achar relações entre notas | `grafo-de-notas.json` |
+| agente achar relações no código | Graphify (`graphify-out/`) |
+
+Por que não as alternativas, por enquanto: **Microsoft GraphRAG** foi feito para muitos
+documentos sem estrutura e reindexar custa muitas chamadas de LLM; **LangGraph** orquestra
+agentes, não guarda conhecimento; **Memgraph** é para grafos em tempo real (caberia na
+[detecção em tempo real](futuro/ia-agentica-tempo-real.md), não na documentação);
+**Neo4j** exige servidor e só compensa com muito mais dados. Se um dia fizer sentido, o
+`graphify export neo4j` leva o mesmo grafo para lá.
+
+Para usar as notas pelo Claude Desktop ou claude.ai (sem acesso aos arquivos), um caminho
+opcional é um servidor MCP do Obsidian (plugin da comunidade *Local REST API* + um
+servidor MCP que fale com ele); no Claude Code não é necessário, porque ele já lê os
+arquivos.
+
 ## Rotina
 
 | Quando | O que fazer | Onde |
@@ -129,9 +194,9 @@ Plugins e aparência ficam só na sua máquina (o `.gitignore` versiona apenas `
 
 ## Regras
 
-- **Nenhum nome de pessoa, orientador ou curso** nas notas do repositório: a proposta é
-  submetida de forma anônima. Anotações pessoais com nomes ficam num cofre separado,
-  fora desta pasta.
+- **LGPD**: nenhum dado pessoal real de usuário do Pix nas notas, e nenhuma pessoa além
+  do autor e do orientador nomeada (ver [CLAUDE.md](../CLAUDE.md)). Anotações pessoais
+  ficam num cofre separado, fora desta pasta.
 - Commits pelo VS Code ou pelo terminal, como o resto do projeto. Plugins de git
   automático não são necessários.
 - Notebooks (`.ipynb`) não abrem no Obsidian: para citá-los, use um link comum para o

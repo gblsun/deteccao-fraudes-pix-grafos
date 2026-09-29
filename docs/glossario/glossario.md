@@ -44,6 +44,8 @@ ponta.
 - [Local Outlier Factor (LOF)](lof.md)
 - [Propagação de risco](propagacao-de-risco.md) — culpa por associação
 - [Random Forest](random-forest.md) — teto supervisionado
+- [FRAUDAR](fraudar.md) — blocos densos resistentes a camuflagem
+- [Redes neurais para grafos (GNN)](redes-neurais-para-grafos.md) — GCN, GraphSAGE e DOMINANT
 
 ## Pix e dados
 

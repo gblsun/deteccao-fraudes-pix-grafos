@@ -7,6 +7,13 @@ tags: [mapa]
 Todos os parâmetros dos experimentos ficam aqui, versionados junto com os resultados:
 com a mesma configuração e a mesma semente, o resultado é idêntico.
 
+A exceção é o `gerar_dataset.py`: ele ignora `simulacao.seed` e sorteia uma semente nova
+a cada execução, gravada em `data/synthetic/dataset_meta.json`. Para refazer um dataset,
+passe `--seed N` (o `reproduzir_tudo.py` usa `--seed 42`, o dataset dos resultados em
+`reports/`). O `rodar_experimento.py` copia essa semente para o `metricas_meta.json`
+(`seed_do_dataset`). O explorador (`app/`) e os scripts de avaliação continuam usando
+`simulacao.seed` ou as próprias sementes.
+
 | Arquivo | Usado por | O que define |
 |---------|-----------|--------------|
 | [`experimento.yaml`](experimento.yaml) | todos os scripts | `simulacao` (o gerador sintético), `atributos` (intermediação aproximada) e `modelos` (Isolation Forest e DBSCAN) |

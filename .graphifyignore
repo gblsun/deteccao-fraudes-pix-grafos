@@ -1,0 +1,14 @@
+# Arquivos que o Graphify não deve ler (o .gitignore já é respeitado).
+# O PDF original da proposta é o arquivo de submissão: fica fora do grafo.
+docs/proposta-original.pdf
+docs/anexos/
+# gerados ou grandes: não trazem conhecimento novo
+data/
+reports/
+*.ipynb
+docs/grafo-de-notas.json
+relatorio/abnt.csl
+# configuração de editores
+.obsidian/
+.vscode/
+.github/

@@ -13,6 +13,7 @@ Volta para o [índice da documentação](../mapa-da-pesquisa.md).
 
 | Data | Assunto principal | Decisões que saíram dali |
 |------|-------------------|--------------------------|
+| [2026-09-24](2026-09-24.md) | Andamento do projeto e documentação no Obsidian | Andamento aprovado; seguir com redes neurais para grafos aplicadas à fraude |
 <!-- uma linha por ata, com link para AAAA-MM-DD.md -->
 
 ## Como escrever uma ata que ajuda o grafo
@@ -29,5 +30,5 @@ liga a ata ao resto do cofre:
 - o que foi lido ou indicado: link para a nota da leitura em
   [`docs/leituras/`](../leituras/mapa-das-leituras.md).
 
-**Sem nomes de pessoas** nas atas do repositório: escreva "a orientação sugeriu...", não o
-nome. Anotações com nomes ficam num cofre pessoal, fora daqui.
+**LGPD** nas atas: além do autor e do orientador, não nomeie outras pessoas, e nada de
+dado pessoal real (ver [CLAUDE.md](../../CLAUDE.md)).

@@ -8,10 +8,12 @@
 > Obsidian (ver `docs/obsidian.md`), então cada pasta documentada tem uma nota-mapa com
 > nome próprio além do `README.md` que o GitHub mostra.
 
-Regra que vale para qualquer edição feita por um agente neste repositório: **nenhum nome
-de pessoa, orientador ou curso** em nada do conteúdo — a proposta é submetida de forma
-anônima. Citar autores externos em referências bibliográficas é normal; a regra é sobre a
-identidade de quem faz esta pesquisa.
+Autor: Gabriel Muchon Pavanelli. Orientador: Prof. Me. Kyung Moo Kim.
+
+Regra que vale para qualquer edição feita por um agente neste repositório: seguir a
+**LGPD** no contexto do Pix — **nenhum dado pessoal real de usuário do Pix** (nome,
+CPF, chave Pix, conta, identificador de transação) no conteúdo; os dados são sintéticos ou
+agregados e públicos. Detalhes em `CLAUDE.md`.
 
 ## Comece por aqui
 
@@ -22,6 +24,8 @@ identidade de quem faz esta pesquisa.
   outros caberiam (com uma ordem de prioridade sugerida).
 - [docs/resultados.md](docs/resultados.md): o que os experimentos mostraram, com números
   e ressalvas.
+- [docs/proximos-passos.md](docs/proximos-passos.md): o que ficou em aberto; comece por
+  aqui ao retomar o trabalho.
 
 ## Código e reprodução
 
@@ -50,6 +54,12 @@ identidade de quem faz esta pesquisa.
 
 - [docs/obsidian.md](docs/obsidian.md): por que o repositório é também um cofre do
   Obsidian, o padrão de nota-mapa + README, as tags e as cores do grafo.
+- [docs/grafo-de-notas.json](docs/grafo-de-notas.json): o grafo do Obsidian em JSON (cada
+  nota com título e tags, e cada link para outra nota ou arquivo de código), gerado por
+  `scripts/exportar_grafo_de_notas.py`. Use para achar relações sem abrir todas as notas.
+- [graphify-out/GRAPH_REPORT.md](graphify-out/GRAPH_REPORT.md): grafo de conhecimento do
+  código (Graphify: módulos, funções, chamadas e imports), com `graphify-out/graph.json`
+  para consultas (`graphify affected`, `path`, `explain`).
 - Cada pasta documentada segue o padrão `pasta/nome-descritivo.md` (o conteúdo real, e o
   rótulo que aparece no grafo de notas) + `pasta/README.md` (um ponteiro de três linhas,
   só para o GitHub mostrar algo ao abrir a pasta). Um agente que for ler a documentação de

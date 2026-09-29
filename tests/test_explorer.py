@@ -30,6 +30,18 @@ def test_community_layout_keeps_groups_apart(data):
     assert between > 2 * inside  # grupos ficam separados no desenho
 
 
+def test_ring_accounts_are_drawn_in_the_center(data):
+    accounts, _, graph = data
+    roles = accounts.set_index("account_id")["role"]
+    payload = explorer_payload(graph, roles=roles)
+    distance = {n["id"]: np.hypot(n["x"], n["y"]) for n in payload["nodes"]}
+    ring = [d for v, d in distance.items() if roles[v] in ("laranja", "intermediario", "coletor")]
+    others = [d for v, d in distance.items() if roles[v] not in ("laranja", "intermediario", "coletor")]
+    assert max(ring) < np.median(others)  # a quadrilha inteira fica mais perto do centro que a maioria
+    off = explorer_payload(graph, roles=roles, center_roles=())
+    assert off["nodes"] != payload["nodes"]  # center_roles=() volta ao layout só por comunidades
+
+
 def test_payload_and_page(data, tmp_path):
     accounts, tx, graph = data
     roles = accounts.set_index("account_id")["role"]
@@ -43,6 +55,7 @@ def test_payload_and_page(data, tmp_path):
 
     path = save_network_explorer(tmp_path / "rede.html", graph, transactions=tx, roles=roles, title="Rede <teste>")
     page = path.read_text(encoding="utf-8")
+    assert 'id="normal-alpha"' in page and 'id="edge-scale"' in page  # controles de opacidade e espessura
     assert "<title>Rede &lt;teste&gt;</title>" in page
     embedded = re.search(r"const DATA = (\{.*?\});\n", page, re.S).group(1)
     assert json.loads(embedded)["communities"] >= 2

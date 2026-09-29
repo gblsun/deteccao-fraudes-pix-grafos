@@ -38,5 +38,5 @@ ajustado ao modelo exigido pela instituição.
 - Figuras: `![Legenda](../../reports/figures/arquivo.png)`, com o caminho relativo ao
   capítulo. Assim elas também aparecem no GitHub e no Obsidian.
 - Os rascunhos existem para não começar da página em branco: o texto final é seu.
-- **Sem nomes** de autor, orientador ou curso no repositório: acrescente esses dados só no
-  arquivo final gerado, que fica fora do git (`relatorio/saida/`).
+- Autor e orientador podem constar no relatório; dados pessoais reais de usuários do Pix
+  não (LGPD, ver [CLAUDE.md](../CLAUDE.md)).

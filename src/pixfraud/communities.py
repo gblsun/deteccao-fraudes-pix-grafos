@@ -9,6 +9,8 @@ viram uma aresta só), porque aqui interessa *quem se relaciona com quem*.
 * ``core_numbers``: decomposição em k-núcleos;
 * ``densest_subgraph``: subgrafo mais denso pelo algoritmo guloso de Charikar,
   com a opção de pesos do FRAUDAR, que resistem a camuflagem;
+* ``fraudar_blocks`` e ``fraudar_scores``: blocos densos em sequência (FRAUDAR) e
+  um escore por conta a partir deles, para comparar com os detectores;
 * ``oddball_scores``: anomalias de egonet (OddBall).
 """
 
@@ -122,16 +124,65 @@ def densest_subgraph(graph: nx.Graph, weight: str | None = None, fraudar: bool =
     procuradas (comércios) valem pouco, e a camuflagem "pagar a padaria" não
     ajuda uma quadrilha a se esconder.
     """
-    if fraudar:
-        in_degree = dict(graph.in_degree()) if graph.is_directed() else dict(graph.degree())
-        weighted = nx.DiGraph() if graph.is_directed() else nx.Graph()
-        weighted.add_nodes_from(graph.nodes)
-        for u, v in graph.edges():
-            weighted.add_edge(u, v, fraudar=1.0 / np.log(in_degree[v] + 5))
-        simple = undirected_simple(weighted, "fraudar")
-    else:
-        simple = undirected_simple(graph, weight)
+    return _peel(_weighted_simple(graph, weight, fraudar))
 
+
+def fraudar_blocks(graph: nx.Graph, max_blocks: int = 10, min_size: int = 3) -> list[tuple[set, float]]:
+    """Blocos densos um depois do outro, como no FRAUDAR (Hooi et al., 2016).
+
+    Acha o subgrafo mais denso com os pesos do FRAUDAR, tira as contas dele e
+    procura de novo, até ``max_blocks`` blocos ou até o bloco ter menos de
+    ``min_size`` contas. Os pesos são calculados uma vez, no grafo inteiro. Cada
+    quadrilha tende a virar um bloco; o número real de quadrilhas não é
+    conhecido, então ``max_blocks`` é um limite, não uma resposta.
+    """
+    simple = _weighted_simple(graph, None, fraudar=True)
+    blocks = []
+    while len(blocks) < max_blocks and simple.number_of_edges():
+        block, density = _peel(simple)
+        if len(block) < min_size:
+            break
+        blocks.append((block, density))
+        simple.remove_nodes_from(block)
+    return blocks
+
+
+def fraudar_scores(graph: nx.Graph, max_blocks: int = 10, min_size: int = 3, max_share: float = 0.05) -> pd.Series:
+    """Escore por conta a partir dos blocos do FRAUDAR, para comparar com os detectores.
+
+    O FRAUDAR devolve conjuntos de contas, não um escore. Aqui, cada conta de um
+    bloco recebe a densidade do bloco e as contas fora de qualquer bloco recebem
+    0. Assim dá para calcular average precision e precision@k como nos outros
+    detectores.
+
+    ``max_share``: um bloco com mais que essa fração das contas não é suspeito, é
+    o próprio tecido da rede. No Pix sintético, os círculos de contatos são
+    densos, e o primeiro "bloco" costuma ser quase a rede legítima inteira; as
+    quadrilhas aparecem nos blocos seguintes, pequenos. Esses blocos grandes
+    continuam sendo retirados (para achar os próximos), mas não pontuam.
+    """
+    scores = pd.Series(0.0, index=list(graph.nodes), name="score")
+    limit = max_share * graph.number_of_nodes()
+    for block, density in fraudar_blocks(graph, max_blocks, min_size):
+        if len(block) <= limit:
+            scores[list(block)] = density
+    return scores
+
+
+def _weighted_simple(graph: nx.Graph, weight: str | None, fraudar: bool) -> nx.Graph:
+    """Grafo simples não direcionado com o peso ``weight`` ou com os pesos do FRAUDAR."""
+    if not fraudar:
+        return undirected_simple(graph, weight)
+    in_degree = dict(graph.in_degree()) if graph.is_directed() else dict(graph.degree())
+    weighted = nx.DiGraph() if graph.is_directed() else nx.Graph()
+    weighted.add_nodes_from(graph.nodes)
+    for u, v in graph.edges():
+        weighted.add_edge(u, v, fraudar=1.0 / np.log(in_degree[v] + 5))
+    return undirected_simple(weighted, "fraudar")
+
+
+def _peel(simple: nx.Graph) -> tuple[set, float]:
+    """Algoritmo guloso de Charikar num grafo simples com o peso em ``"weight"``."""
     degree = {v: sum(d["weight"] for d in simple[v].values()) for v in simple}
     total = sum(d["weight"] for *_, d in simple.edges(data=True))
     remaining = simple.number_of_nodes()

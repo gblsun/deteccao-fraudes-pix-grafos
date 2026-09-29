@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-09-22T14:01:31",
-  "commit": "3476204d30616ee3e72ba195bc847b0409b59d6b",
+  "gerado_em": "2026-09-28T17:03:28",
+  "commit": "a4a110052c9ee35b8bfbaccfaaacbc644a1acb38",
   "alteracoes_nao_commitadas": true,
-  "python": "3.14.6",
+  "python": "3.14.7",
   "pacotes": {
     "numpy": "2.5.3",
     "pandas": "3.0.6",
-    "networkx": "3.6.1",
+    "networkx": "3.7",
     "scikit-learn": "1.9.1",
     "scipy": "1.18.1"
   },
@@ -49,7 +49,11 @@
       "dbscan": {
         "eps": "auto",
         "min_samples": 10,
-        "eps_quantile": 0.95
+        "eps_quantile": 0.95,
+        "max_exact": 20000
+      },
+      "local_outlier_factor": {
+        "n_neighbors": 20
       }
     }
   },
@@ -81,5 +85,5 @@
     0.1,
     0.25
   ],
-  "duracao_s": 409
+  "duracao_s": 190
 }

@@ -27,7 +27,7 @@ instalado.
 | `test_graph_tools.py` | `graph` | agregação de Pix repetidos, CSV de exemplo, matriz de adjacência, trilha do dinheiro |
 | `test_features.py` | `features` | cada atributo calculado à mão num grafo pequeno |
 | `test_temporal.py` | `temporal` | caminhos que respeitam o tempo, espera máxima, tempo de permanência |
-| `test_communities.py` | `communities` | comunidades, k-núcleos, subgrafo denso plantado, OddBall acha a estrela |
+| `test_communities.py` | `communities` | comunidades, k-núcleos, subgrafo denso plantado, FRAUDAR acha as quadrilhas uma depois da outra e ignora o bloco que é a rede inteira, OddBall acha a estrela |
 | `test_flow.py` | `flow` | fluxo máximo = corte mínimo, contas a bloquear, propagação de risco |
 | `test_algorithms.py` | `algorithms` | caminho gargalo, ramificação máxima, VF2, HITS |
 | `test_patterns.py` | `patterns` | formato dos padrões, comissão por salto, injeção |
@@ -37,10 +37,13 @@ instalado.
 | `test_experiment.py` | `experiment` | uma rodada por semente; cenários válidos |
 | `test_external.py` | `external` | AMLworld e PaySim (com arquivos de exemplo embutidos), formas de pagamento, tipologias, janelas |
 | `test_online.py` | `online` | dinheiro recuperado calculado à mão, exposição, pontos de corte |
+| `test_bcb.py` | `bcb` | novas tentativas em 504 e falha de conexão, sem tentar de novo em erro definitivo (404); parâmetros da URL (sem rede) |
+| `test_gnn.py` | `gnn` | a GraphSAGE acha a quadrilha só pela estrutura (atributos são ruído); o DOMINANT pontua mais a quadrilha; recusa grafo grande demais (pulado sem torch) |
 | `test_explorer.py` | `explorer` | layout por comunidades e página HTML |
 | `test_pipeline.py` | tudo | o pipeline de ponta a ponta num dataset pequeno |
 | `test_scripts.py` | `scripts/` | os scripts de avaliação rodam e gravam o que prometem; progresso salvo é reaproveitado |
 | `test_app.py` | `app/` | o explorador Streamlit abre todas as abas sem erro |
+| `test_docs.py` | documentação | links relativos existem, toda nota tem tag, cada pasta tem nota-mapa, docstrings, `docs/grafo-de-notas.json` atualizado |
 
 ## Escrevendo um teste novo
 

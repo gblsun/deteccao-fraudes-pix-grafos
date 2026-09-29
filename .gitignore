@@ -48,3 +48,9 @@ relatorio/saida/
 # Progresso salvo das avaliações longas: recalculável, serve só para retomar
 reports/**/online_cortes/
 reports/**/*_janelas/
+
+# Graphify (ver docs/obsidian.md): só o grafo e o relatório interessam; o resto é cache
+# e a página HTML, que se regeneram com `graphify update .`
+graphify-out/*
+!graphify-out/graph.json
+!graphify-out/GRAPH_REPORT.md

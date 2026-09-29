@@ -149,6 +149,39 @@ até onde daria para chegar se eles existissem. Chega a AP 0,99 contra 0,53 do m
 supervisionado. A distância entre os dois é o custo de não ter rótulos, e é o que
 justifica a seção anterior.
 
+## 8. [FRAUDAR](glossario/fraudar.md) (não supervisionado, só estrutura)
+
+**Ideia.** Procura blocos densos um depois do outro (Hooi et al., 2016), com arestas que
+valem menos quando chegam a contas muito procuradas, para resistir a camuflagem. É o
+`communities.fraudar_blocks`; `communities.fraudar_scores` transforma os blocos num escore
+por conta (a densidade do bloco), ignorando blocos com mais de 5% das contas.
+
+**Configuração.** `--blocos 10` e `--fatia-maxima 0.05` em
+[`avaliar_fraudar.py`](../scripts/avaliar_fraudar.py). Sem rótulos e sem atributos.
+
+**Onde é melhor.** Sozinho, perde para o DBSCAN; combinado com ele, é a melhor opção não
+supervisionada enquanto a rede legítima não se parte em muitos círculos pequenos e densos
+(ver [resultados, seção 9](resultados.md)).
+
+## 9. [Redes neurais para grafos](glossario/redes-neurais-para-grafos.md) (GNN)
+
+**Ideia.** A conta ganha uma representação aprendida a partir dos próprios atributos e dos
+vizinhos, em duas camadas. Está em [`pixfraud.gnn`](../src/pixfraud/gnn.py), com PyTorch e
+sem PyTorch Geometric (dependência opcional: `pip install -e ".[gnn]"`):
+
+* `dominant_scores`: autoencoder de grafo DOMINANT (Ding et al., 2019), **não
+  supervisionado**; o escore é o erro de reconstrução dos atributos e das ligações;
+* `sage_supervised_scores`: GraphSAGE (Hamilton, Ying e Leskovec, 2017), **supervisionada**,
+  em validação cruzada de 5 partes, como teto ao lado do Random Forest.
+
+**Configuração.** Duas camadas de 64 unidades (DOMINANT: 64 e 32), Adam, 300 épocas no
+DOMINANT e 200 na GraphSAGE, fraudes com peso maior na perda. Nenhum ajuste fino ainda.
+
+**Onde é melhor.** A GraphSAGE com só os atributos tabulares chega perto do teto com todos
+os atributos feitos à mão (0,92 contra 0,99 no `realista`): a rede aprende a estrutura. O
+DOMINANT, sem rótulos, ainda fica abaixo do DBSCAN (ver [resultados, seção
+10](resultados.md)).
+
 ---
 
 ## Outros modelos que caberiam nesta pesquisa
@@ -157,8 +190,9 @@ Ordenados pelo que rende mais com o esforço que exigem. Todos entram pelo mesmo
 uma função em [`anomaly.py`](../src/pixfraud/anomaly.py) que devolve `Detection` e uma
 entrada em `DETECTORS`; as comparações e figuras funcionam sem mudança.
 
-> O [LOF](#4-local-outlier-factor--lof-não-supervisionado) já está implementado e avaliado
-> (seção 4); fica de fora desta lista de "caberia" porque já coube.
+> O [LOF](#4-local-outlier-factor--lof-não-supervisionado) (seção 4), o FRAUDAR (seção 8)
+> e as GNN (seção 9) já estão implementados e avaliados; aparecem na tabela só com o que
+> falta fazer com eles.
 
 | Modelo | O que traria de novo | Esforço | Cuidado |
 |---|---|---|---|
@@ -166,8 +200,8 @@ entrada em `DETECTORS`; as comparações e figuras funcionam sem mudança.
 | **One-Class SVM** | fronteira não linear em volta do "normal" | baixo | custo cresce rápido com o nº de contas |
 | **Autoencoder** | aprende a reconstruir contas normais; o erro de reconstrução vira o escore | médio (PyTorch) | precisa de mais dados e de ajuste; menos interpretável |
 | **node2vec + detector** | transforma a vizinhança de cada conta num vetor aprendido, em vez de atributos escolhidos à mão | médio | o vetor não é interpretável, o que conflita com o objetivo de explicar |
-| **GNN supervisionada (GraphSAGE, GAT, PNA)** | aprende os padrões de vizinhança direto do grafo; é o estado da arte em lavagem de dinheiro (Altman et al., 2023; Weber et al., 2019) | alto (PyTorch Geometric) | precisa de rótulos, GPU e cuidado com vazamento de informação |
-| **FRAUDAR / subgrafo mais denso** | acha blocos suspeitos resistentes a camuflagem; já existe em `communities.densest_subgraph`, só falta avaliar | baixo (código pronto) | devolve um conjunto de contas, não um escore por conta |
+| **GNN: GAT, PNA, poucos rótulos** | a GraphSAGE já foi avaliada (seção 9); faltam atenção entre vizinhos (GAT), agregadores múltiplos (PNA, estado da arte em lavagem; Altman et al., 2023) e o cenário real de poucos rótulos | médio (a base em `pixfraud.gnn` já existe) | vazamento de informação; o vetor aprendido não é interpretável |
+| **FRAUDAR com tempo** | o FRAUDAR já foi avaliado (seção 8); falta um peso que favoreça ligações feitas em poucas horas, como as das quadrilhas | baixo | o critério de "bloco grande demais" (5%) ainda é heurístico |
 | **Propagação de rótulos (label spreading)** | alternativa à propagação por PageRank, com rótulos positivos e negativos | baixo | precisa de exemplos negativos confiáveis |
 | **Modelos de séries temporais por conta** (por exemplo, detecção de rajadas) | trata a sequência de Pix como sinal no tempo, em vez de agregados | médio | mais complexo de avaliar junto com o grafo |
 | **Gradient boosting (XGBoost, LightGBM)** | teto supervisionado mais forte que o Random Forest | baixo | mesma limitação: depende de rótulos |
@@ -177,8 +211,6 @@ entrada em `DETECTORS`; as comparações e figuras funcionam sem mudança.
 1. **ECOD**: barato, entra como mais uma coluna nas comparações que já existem. O LOF já
    foi testado (seção 4) e não superou o Isolation Forest nem o DBSCAN; o ECOD, por ignorar
    a relação entre atributos, é um contraponto diferente, não uma repetição.
-2. **Avaliar o FRAUDAR** que já está implementado, medindo quantas contas da quadrilha
-   caem no subgrafo mais denso.
-3. **GNN**, como trabalho futuro do relatório: é o passo natural depois de mostrar que os
-   atributos de grafo ajudam, mas exige rótulos e muda o caráter da pesquisa, que hoje é
-   não supervisionada e interpretável.
+2. **GNN com poucos rótulos**: treinar a GraphSAGE só com as contestações do MED (10% a
+   25% das fraudes), para comparar com a culpa por associação da seção 6 no mesmo cenário.
+3. **FRAUDAR com tempo**: pesos que favoreçam ligações feitas em poucas horas.

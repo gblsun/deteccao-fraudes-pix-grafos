@@ -1,0 +1,4002 @@
+{
+ "descricao": "Grafo de notas do cofre do Obsidian (gerado por scripts/exportar_grafo_de_notas.py; não edite à mão).",
+ "nos": [
+  {
+   "caminho": "CLAUDE.md",
+   "titulo": "Instruções para agentes",
+   "tags": []
+  },
+  {
+   "caminho": "app/guia-do-explorador.md",
+   "titulo": "Explorador interativo",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "configs/parametros-dos-experimentos.md",
+   "titulo": "Configurações",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/cronograma.md",
+   "titulo": "Cronograma",
+   "tags": [
+    "pesquisa"
+   ]
+  },
+  {
+   "caminho": "docs/diario/2026-09-21.md",
+   "titulo": "Diário 2026-09-21",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
+   "caminho": "docs/diario/2026-09-22.md",
+   "titulo": "Diário 2026-09-22",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
+   "caminho": "docs/diario/2026-09-26.md",
+   "titulo": "Diário 2026-09-26",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
+   "caminho": "docs/diario/2026-09-28.md",
+   "titulo": "Diário 2026-09-28",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
+   "caminho": "docs/diario/diario-de-pesquisa.md",
+   "titulo": "Diário de pesquisa",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/futuro/deteccao-adversarial.md",
+   "titulo": "Detecção sob camuflagem adversarial",
+   "tags": [
+    "ideia"
+   ]
+  },
+  {
+   "caminho": "docs/futuro/explicabilidade-para-auditoria.md",
+   "titulo": "Explicabilidade para auditoria",
+   "tags": [
+    "ideia"
+   ]
+  },
+  {
+   "caminho": "docs/futuro/gnn-supervisionada.md",
+   "titulo": "GNN supervisionada como próximo passo",
+   "tags": [
+    "ideia"
+   ]
+  },
+  {
+   "caminho": "docs/futuro/grafos-heterogeneos-e-custo-operacional.md",
+   "titulo": "Grafos heterogêneos e custo operacional",
+   "tags": [
+    "ideia"
+   ]
+  },
+  {
+   "caminho": "docs/futuro/ia-agentica-tempo-real.md",
+   "titulo": "IA agêntica para reconhecimento de fraude em tempo real",
+   "tags": [
+    "ideia"
+   ]
+  },
+  {
+   "caminho": "docs/futuro/ideias-futuras.md",
+   "titulo": "Ideias futuras",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/average-precision.md",
+   "titulo": "Average precision (AP)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/bootstrap.md",
+   "titulo": "Bootstrap",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/caminho-temporal.md",
+   "titulo": "Caminho temporal",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/classes-raras.md",
+   "titulo": "Classes raras (desbalanceamento)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/coeficiente-de-agrupamento.md",
+   "titulo": "Coeficiente de agrupamento (clustering)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/coeficiente-de-participacao.md",
+   "titulo": "Coeficiente de participação",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/comunidades-e-modularidade.md",
+   "titulo": "Comunidades e modularidade (Louvain)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/conta-laranja.md",
+   "titulo": "Conta laranja (conta de passagem)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/correcao-de-holm.md",
+   "titulo": "Correção de Holm",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/dbscan-e-k-distance.md",
+   "titulo": "DBSCAN e k-distance",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/delta-de-cliff.md",
+   "titulo": "Delta de Cliff ($\\delta$)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/egonet-e-oddball.md",
+   "titulo": "Egonet e OddBall",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/fluxo-maximo-e-corte-minimo.md",
+   "titulo": "Fluxo máximo e corte mínimo",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/fraudar.md",
+   "titulo": "FRAUDAR",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/glossario.md",
+   "titulo": "Glossário",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/grafo-direcionado-ponderado.md",
+   "titulo": "Grafo direcionado ponderado",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/grau.md",
+   "titulo": "Grau (in_degree, out_degree)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/intermediacao.md",
+   "titulo": "Intermediação (betweenness centrality)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/intervalo-de-confianca.md",
+   "titulo": "Intervalo de confiança (IC 95%)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/isolation-forest.md",
+   "titulo": "Isolation Forest",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/k-nucleo.md",
+   "titulo": "K-núcleo (core number)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/lof.md",
+   "titulo": "Local Outlier Factor (LOF)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/mann-whitney.md",
+   "titulo": "Teste de Mann-Whitney",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/med.md",
+   "titulo": "MED (Mecanismo Especial de Devolução)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/pagerank.md",
+   "titulo": "PageRank (ponderado pelo valor)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/pass-through.md",
+   "titulo": "Pass-through (dinheiro que atravessa a conta)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/precision-at-k.md",
+   "titulo": "Precision@k",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/propagacao-de-risco.md",
+   "titulo": "Propagação de risco (culpa por associação)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/random-forest.md",
+   "titulo": "Random Forest (como teto supervisionado)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/redes-neurais-para-grafos.md",
+   "titulo": "Redes neurais para grafos (GNN)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/roc-auc.md",
+   "titulo": "ROC-AUC",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/tempo-de-permanencia.md",
+   "titulo": "Tempo de permanência (dwell time)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "titulo": "Teste de Wilcoxon pareado",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/validacao-cruzada.md",
+   "titulo": "Validação cruzada estratificada",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/akoglu2015graph.md",
+   "titulo": "akoglu2015graph",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/altman2023realistic.md",
+   "titulo": "altman2023realistic",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/bcb2024pix.md",
+   "titulo": "bcb2024pix",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/bcb2024relatorio.md",
+   "titulo": "bcb2024relatorio",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/bcb2026dadosabertos.md",
+   "titulo": "bcb2026dadosabertos",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/bishop2006pattern.md",
+   "titulo": "bishop2006pattern",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/brandes2001faster.md",
+   "titulo": "brandes2001faster",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/dellagarza2023aml.md",
+   "titulo": "dellagarza2023aml",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/diestel2017graph.md",
+   "titulo": "diestel2017graph",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/dou2020caregnn.md",
+   "titulo": "dou2020caregnn",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/easley2010networks.md",
+   "titulo": "easley2010networks",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/ester1996dbscan.md",
+   "titulo": "ester1996dbscan",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/guerra2025gnnfraude.md",
+   "titulo": "guerra2025gnnfraude",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/hagberg2008networkx.md",
+   "titulo": "hagberg2008networkx",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/james2021isl.md",
+   "titulo": "james2021isl",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/liu2008isolation.md",
+   "titulo": "liu2008isolation",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/lopezrojas2016paysim.md",
+   "titulo": "lopezrojas2016paysim",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/mapa-das-leituras.md",
+   "titulo": "Mapa das leituras",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/motie2024gnnreview.md",
+   "titulo": "motie2024gnnreview",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/pedregosa2011sklearn.md",
+   "titulo": "pedregosa2011sklearn",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/weber2019aml.md",
+   "titulo": "weber2019aml",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/leituras/witten2011datamining.md",
+   "titulo": "witten2011datamining",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/mapa-da-pesquisa.md",
+   "titulo": "Documentação da pesquisa",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/modelos.md",
+   "titulo": "Modelos usados na pesquisa (e outros que caberiam)",
+   "tags": [
+    "metodo"
+   ]
+  },
+  {
+   "caminho": "docs/modelos/diario.md",
+   "titulo": "Diário {{date}}",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
+   "caminho": "docs/modelos/fichamento.md",
+   "titulo": "{{title}}",
+   "tags": [
+    "leitura"
+   ]
+  },
+  {
+   "caminho": "docs/modelos/reuniao.md",
+   "titulo": "Reunião {{date}}",
+   "tags": [
+    "ata"
+   ]
+  },
+  {
+   "caminho": "docs/obsidian.md",
+   "titulo": "Notas da pesquisa no Obsidian",
+   "tags": [
+    "meta"
+   ]
+  },
+  {
+   "caminho": "docs/proposta.md",
+   "titulo": "Detecção de Fraudes em Transações PIX utilizando Teoria dos Grafos e Machine Learning",
+   "tags": [
+    "pesquisa"
+   ]
+  },
+  {
+   "caminho": "docs/proximos-passos.md",
+   "titulo": "Próximos passos",
+   "tags": [
+    "pesquisa"
+   ]
+  },
+  {
+   "caminho": "docs/rede-pix.md",
+   "titulo": "A rede Pix dentro do cofre",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/resultados.md",
+   "titulo": "Resultados",
+   "tags": [
+    "resultado"
+   ]
+  },
+  {
+   "caminho": "docs/reunioes/2026-09-24.md",
+   "titulo": "Reunião 2026-09-24",
+   "tags": [
+    "ata"
+   ]
+  },
+  {
+   "caminho": "docs/reunioes/atas-de-reuniao.md",
+   "titulo": "Reuniões de orientação",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/revisao-bibliografica.md",
+   "titulo": "Revisão bibliográfica",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "estudos/cola-networkx.md",
+   "titulo": "Cola: teoria dos grafos × NetworkX",
+   "tags": []
+  },
+  {
+   "caminho": "estudos/trilha-de-estudos.md",
+   "titulo": "Estudos: teoria dos grafos aplicada a fraudes no Pix",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "notebooks/mapa-dos-notebooks.md",
+   "titulo": "Notebooks da pesquisa",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "relatorio/capitulos/00_resumo.md",
+   "titulo": "Resumo {.unnumbered}",
+   "tags": [
+    "relatorio"
+   ]
+  },
+  {
+   "caminho": "relatorio/capitulos/01_introducao.md",
+   "titulo": "Introdução",
+   "tags": [
+    "relatorio"
+   ]
+  },
+  {
+   "caminho": "relatorio/capitulos/02_fundamentacao.md",
+   "titulo": "Fundamentação teórica",
+   "tags": [
+    "relatorio"
+   ]
+  },
+  {
+   "caminho": "relatorio/capitulos/03_metodologia.md",
+   "titulo": "Metodologia",
+   "tags": [
+    "relatorio"
+   ]
+  },
+  {
+   "caminho": "relatorio/capitulos/04_resultados.md",
+   "titulo": "Resultados",
+   "tags": [
+    "relatorio"
+   ]
+  },
+  {
+   "caminho": "relatorio/capitulos/05_conclusao.md",
+   "titulo": "Conclusão",
+   "tags": [
+    "relatorio"
+   ]
+  },
+  {
+   "caminho": "relatorio/mapa-do-relatorio.md",
+   "titulo": "Relatório final",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "reports/mapa-dos-resultados.md",
+   "titulo": "Resultados gerados",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "scripts/mapa-dos-scripts.md",
+   "titulo": "Scripts",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "tests/mapa-dos-testes.md",
+   "titulo": "Testes",
+   "tags": [
+    "mapa"
+   ]
+  }
+ ],
+ "arestas": [
+  {
+   "de": "CLAUDE.md",
+   "para": "docs/grafo-de-notas.json",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "CLAUDE.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "CLAUDE.md",
+   "para": "docs/obsidian.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "CLAUDE.md",
+   "para": "llms.txt",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "CLAUDE.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "app/guia-do-explorador.md",
+   "para": "app/explorador.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "app/guia-do-explorador.md",
+   "para": "src/pixfraud/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "configs/parametros-dos-experimentos.md",
+   "para": "configs/cenarios.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "configs/parametros-dos-experimentos.md",
+   "para": "configs/experimento.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "configs/parametros-dos-experimentos.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "configs/parametros-dos-experimentos.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/cronograma.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/cronograma.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/cronograma.md",
+   "para": "docs/proposta-original.pdf",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/cronograma.md",
+   "para": "docs/proposta.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-22.md",
+   "para": "configs/cenarios.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-22.md",
+   "para": "docs/diario/2026-09-26.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-22.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-22.md",
+   "para": "docs/obsidian.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-22.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-22.md",
+   "para": "reports/mapa-dos-resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/diario/2026-09-28.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/glossario/fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/glossario/redes-neurais-para-grafos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-09-26.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-28.md",
+   "para": "docs/diario/2026-09-26.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-28.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-09-28.md",
+   "para": "scripts/avaliar_gnn_rotulos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/diario/2026-09-21.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/diario/2026-09-22.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/diario/2026-09-26.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/diario/2026-09-28.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/modelos/diario.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-adversarial.md",
+   "para": "configs/parametros-dos-experimentos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-adversarial.md",
+   "para": "docs/futuro/gnn-supervisionada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-adversarial.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-adversarial.md",
+   "para": "docs/leituras/dou2020caregnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-adversarial.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-adversarial.md",
+   "para": "src/pixfraud/simulation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/futuro/explicabilidade-para-auditoria.md",
+   "para": "docs/futuro/ia-agentica-tempo-real.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/explicabilidade-para-auditoria.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/explicabilidade-para-auditoria.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/explicabilidade-para-auditoria.md",
+   "para": "reports/mapa-dos-resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/explicabilidade-para-auditoria.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/explicabilidade-para-auditoria.md",
+   "para": "src/pixfraud/online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/futuro/gnn-supervisionada.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/gnn-supervisionada.md",
+   "para": "docs/leituras/guerra2025gnnfraude.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/gnn-supervisionada.md",
+   "para": "docs/leituras/motie2024gnnreview.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/gnn-supervisionada.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/gnn-supervisionada.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/grafos-heterogeneos-e-custo-operacional.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/grafos-heterogeneos-e-custo-operacional.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/grafos-heterogeneos-e-custo-operacional.md",
+   "para": "src/pixfraud/graph.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/futuro/ia-agentica-tempo-real.md",
+   "para": "docs/futuro/explicabilidade-para-auditoria.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ia-agentica-tempo-real.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ia-agentica-tempo-real.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ia-agentica-tempo-real.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ia-agentica-tempo-real.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ia-agentica-tempo-real.md",
+   "para": "reports/mapa-dos-resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ia-agentica-tempo-real.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ia-agentica-tempo-real.md",
+   "para": "src/pixfraud/online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/futuro/ideias-futuras.md",
+   "para": "docs/futuro/deteccao-adversarial.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ideias-futuras.md",
+   "para": "docs/futuro/explicabilidade-para-auditoria.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ideias-futuras.md",
+   "para": "docs/futuro/gnn-supervisionada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ideias-futuras.md",
+   "para": "docs/futuro/grafos-heterogeneos-e-custo-operacional.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ideias-futuras.md",
+   "para": "docs/futuro/ia-agentica-tempo-real.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ideias-futuras.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ideias-futuras.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/average-precision.md",
+   "para": "docs/glossario/classes-raras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/average-precision.md",
+   "para": "docs/glossario/precision-at-k.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/average-precision.md",
+   "para": "docs/glossario/roc-auc.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/average-precision.md",
+   "para": "reports/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/average-precision.md",
+   "para": "src/pixfraud/evaluation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/bootstrap.md",
+   "para": "docs/glossario/intervalo-de-confianca.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/bootstrap.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/caminho-temporal.md",
+   "para": "docs/glossario/grafo-direcionado-ponderado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/caminho-temporal.md",
+   "para": "docs/glossario/tempo-de-permanencia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/caminho-temporal.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/caminho-temporal.md",
+   "para": "src/pixfraud/temporal.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/classes-raras.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/classes-raras.md",
+   "para": "docs/glossario/precision-at-k.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/classes-raras.md",
+   "para": "docs/glossario/roc-auc.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/classes-raras.md",
+   "para": "notebooks/01_analise_exploratoria.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/coeficiente-de-agrupamento.md",
+   "para": "docs/glossario/egonet-e-oddball.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/coeficiente-de-agrupamento.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/coeficiente-de-participacao.md",
+   "para": "docs/glossario/comunidades-e-modularidade.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/coeficiente-de-participacao.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/comunidades-e-modularidade.md",
+   "para": "app/guia-do-explorador.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/comunidades-e-modularidade.md",
+   "para": "docs/glossario/coeficiente-de-participacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/comunidades-e-modularidade.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/conta-laranja.md",
+   "para": "docs/glossario/egonet-e-oddball.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/conta-laranja.md",
+   "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/conta-laranja.md",
+   "para": "docs/glossario/pass-through.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/conta-laranja.md",
+   "para": "docs/glossario/tempo-de-permanencia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/conta-laranja.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/conta-laranja.md",
+   "para": "notebooks/02_perfis_de_fraude.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/correcao-de-holm.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/dbscan-e-k-distance.md",
+   "para": "configs/parametros-dos-experimentos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/dbscan-e-k-distance.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/delta-de-cliff.md",
+   "para": "docs/glossario/mann-whitney.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/delta-de-cliff.md",
+   "para": "docs/glossario/tempo-de-permanencia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/delta-de-cliff.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/delta-de-cliff.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/egonet-e-oddball.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/fluxo-maximo-e-corte-minimo.md",
+   "para": "app/guia-do-explorador.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fluxo-maximo-e-corte-minimo.md",
+   "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "docs/glossario/comunidades-e-modularidade.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "docs/glossario/egonet-e-oddball.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "docs/glossario/k-nucleo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/fraudar.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/bootstrap.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/caminho-temporal.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/classes-raras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/coeficiente-de-agrupamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/coeficiente-de-participacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/comunidades-e-modularidade.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/conta-laranja.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/dbscan-e-k-distance.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/delta-de-cliff.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/egonet-e-oddball.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/fluxo-maximo-e-corte-minimo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/grafo-direcionado-ponderado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/grau.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/intermediacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/intervalo-de-confianca.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/isolation-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/k-nucleo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/lof.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/mann-whitney.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/pagerank.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/pass-through.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/precision-at-k.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/propagacao-de-risco.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/redes-neurais-para-grafos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/roc-auc.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/tempo-de-permanencia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/grafo-direcionado-ponderado.md",
+   "para": "docs/glossario/caminho-temporal.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/grafo-direcionado-ponderado.md",
+   "para": "docs/glossario/grau.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/grafo-direcionado-ponderado.md",
+   "para": "src/pixfraud/graph.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/grau.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/intermediacao.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/intervalo-de-confianca.md",
+   "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/intervalo-de-confianca.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/isolation-forest.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/isolation-forest.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/k-nucleo.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/k-nucleo.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/lof.md",
+   "para": "docs/glossario/dbscan-e-k-distance.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/lof.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/mann-whitney.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/mann-whitney.md",
+   "para": "docs/glossario/delta-de-cliff.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/mann-whitney.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/med.md",
+   "para": "docs/glossario/conta-laranja.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/med.md",
+   "para": "docs/glossario/propagacao-de-risco.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/med.md",
+   "para": "docs/glossario/tempo-de-permanencia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/med.md",
+   "para": "src/pixfraud/online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/pagerank.md",
+   "para": "docs/glossario/propagacao-de-risco.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/pagerank.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/pagerank.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/pass-through.md",
+   "para": "docs/glossario/conta-laranja.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/pass-through.md",
+   "para": "docs/glossario/delta-de-cliff.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/pass-through.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/precision-at-k.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/precision-at-k.md",
+   "para": "src/pixfraud/evaluation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/propagacao-de-risco.md",
+   "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/propagacao-de-risco.md",
+   "para": "docs/glossario/pagerank.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/propagacao-de-risco.md",
+   "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/random-forest.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/random-forest.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/dbscan-e-k-distance.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/grau.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/intermediacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/pagerank.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/redes-neurais-para-grafos.md",
+   "para": "src/pixfraud/gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/roc-auc.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/roc-auc.md",
+   "para": "docs/glossario/classes-raras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/tempo-de-permanencia.md",
+   "para": "docs/glossario/conta-laranja.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/tempo-de-permanencia.md",
+   "para": "src/pixfraud/temporal.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/validacao-cruzada.md",
+   "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/validacao-cruzada.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/akoglu2015graph.md",
+   "para": "docs/leituras/easley2010networks.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/akoglu2015graph.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/akoglu2015graph.md",
+   "para": "docs/leituras/weber2019aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/akoglu2015graph.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/akoglu2015graph.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/akoglu2015graph.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/akoglu2015graph.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/akoglu2015graph.md",
+   "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/altman2023realistic.md",
+   "para": "docs/leituras/lopezrojas2016paysim.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/altman2023realistic.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/altman2023realistic.md",
+   "para": "docs/leituras/weber2019aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/altman2023realistic.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/altman2023realistic.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/altman2023realistic.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/altman2023realistic.md",
+   "para": "src/pixfraud/external.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bcb2024pix.md",
+   "para": "docs/leituras/bcb2024relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024pix.md",
+   "para": "docs/leituras/bcb2026dadosabertos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024pix.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024pix.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024pix.md",
+   "para": "docs/proposta.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024pix.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bcb2024pix.md",
+   "para": "src/pixfraud/bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bcb2024relatorio.md",
+   "para": "docs/leituras/bcb2024pix.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024relatorio.md",
+   "para": "docs/leituras/bcb2026dadosabertos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024relatorio.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024relatorio.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2024relatorio.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bcb2024relatorio.md",
+   "para": "notebooks/01_analise_exploratoria.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bcb2026dadosabertos.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bcb2026dadosabertos.md",
+   "para": "docs/leituras/bcb2024pix.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2026dadosabertos.md",
+   "para": "docs/leituras/bcb2024relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2026dadosabertos.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2026dadosabertos.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bcb2026dadosabertos.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bcb2026dadosabertos.md",
+   "para": "notebooks/01_analise_exploratoria.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bcb2026dadosabertos.md",
+   "para": "src/pixfraud/bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bishop2006pattern.md",
+   "para": "docs/leituras/james2021isl.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bishop2006pattern.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bishop2006pattern.md",
+   "para": "docs/leituras/witten2011datamining.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bishop2006pattern.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/bishop2006pattern.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/bishop2006pattern.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/brandes2001faster.md",
+   "para": "docs/leituras/diestel2017graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/brandes2001faster.md",
+   "para": "docs/leituras/hagberg2008networkx.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/brandes2001faster.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/brandes2001faster.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/brandes2001faster.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/brandes2001faster.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/dellagarza2023aml.md",
+   "para": "docs/leituras/guerra2025gnnfraude.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dellagarza2023aml.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dellagarza2023aml.md",
+   "para": "docs/leituras/motie2024gnnreview.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dellagarza2023aml.md",
+   "para": "docs/leituras/weber2019aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dellagarza2023aml.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dellagarza2023aml.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/diestel2017graph.md",
+   "para": "docs/leituras/brandes2001faster.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/diestel2017graph.md",
+   "para": "docs/leituras/easley2010networks.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/diestel2017graph.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/diestel2017graph.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/diestel2017graph.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/diestel2017graph.md",
+   "para": "estudos/01_fundamentos.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/diestel2017graph.md",
+   "para": "src/pixfraud/graph.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/dou2020caregnn.md",
+   "para": "docs/futuro/deteccao-adversarial.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dou2020caregnn.md",
+   "para": "docs/leituras/akoglu2015graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dou2020caregnn.md",
+   "para": "docs/leituras/guerra2025gnnfraude.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dou2020caregnn.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dou2020caregnn.md",
+   "para": "docs/leituras/motie2024gnnreview.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dou2020caregnn.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/dou2020caregnn.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/easley2010networks.md",
+   "para": "docs/leituras/akoglu2015graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/easley2010networks.md",
+   "para": "docs/leituras/diestel2017graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/easley2010networks.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/easley2010networks.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/easley2010networks.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/easley2010networks.md",
+   "para": "estudos/03_metricas_de_centralidade.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/easley2010networks.md",
+   "para": "estudos/05_modelos_de_redes.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/ester1996dbscan.md",
+   "para": "docs/leituras/liu2008isolation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/ester1996dbscan.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/ester1996dbscan.md",
+   "para": "docs/leituras/pedregosa2011sklearn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/ester1996dbscan.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/ester1996dbscan.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/ester1996dbscan.md",
+   "para": "notebooks/01_analise_exploratoria.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/ester1996dbscan.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/guerra2025gnnfraude.md",
+   "para": "docs/futuro/gnn-supervisionada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/guerra2025gnnfraude.md",
+   "para": "docs/leituras/dellagarza2023aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/guerra2025gnnfraude.md",
+   "para": "docs/leituras/dou2020caregnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/guerra2025gnnfraude.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/guerra2025gnnfraude.md",
+   "para": "docs/leituras/motie2024gnnreview.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/guerra2025gnnfraude.md",
+   "para": "docs/leituras/weber2019aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/guerra2025gnnfraude.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/guerra2025gnnfraude.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/hagberg2008networkx.md",
+   "para": "docs/leituras/brandes2001faster.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/hagberg2008networkx.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/hagberg2008networkx.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/hagberg2008networkx.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/hagberg2008networkx.md",
+   "para": "src/pixfraud/algorithms.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/hagberg2008networkx.md",
+   "para": "src/pixfraud/graph.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/james2021isl.md",
+   "para": "docs/leituras/bishop2006pattern.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/james2021isl.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/james2021isl.md",
+   "para": "docs/leituras/witten2011datamining.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/james2021isl.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/james2021isl.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/james2021isl.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/liu2008isolation.md",
+   "para": "docs/leituras/ester1996dbscan.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/liu2008isolation.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/liu2008isolation.md",
+   "para": "docs/leituras/pedregosa2011sklearn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/liu2008isolation.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/liu2008isolation.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/liu2008isolation.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/lopezrojas2016paysim.md",
+   "para": "docs/leituras/altman2023realistic.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/lopezrojas2016paysim.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/lopezrojas2016paysim.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/lopezrojas2016paysim.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/lopezrojas2016paysim.md",
+   "para": "src/pixfraud/external.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/lopezrojas2016paysim.md",
+   "para": "src/pixfraud/simulation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/futuro/deteccao-adversarial.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/futuro/gnn-supervisionada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/akoglu2015graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/altman2023realistic.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/bcb2024pix.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/bcb2024relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/bcb2026dadosabertos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/bishop2006pattern.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/brandes2001faster.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/dellagarza2023aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/diestel2017graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/dou2020caregnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/easley2010networks.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/ester1996dbscan.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/guerra2025gnnfraude.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/hagberg2008networkx.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/james2021isl.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/liu2008isolation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/lopezrojas2016paysim.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/motie2024gnnreview.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/pedregosa2011sklearn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/weber2019aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/leituras/witten2011datamining.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/obsidian.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/proposta.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "docs/revisao-bibliografica.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "estudos/01_fundamentos.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "estudos/03_metricas_de_centralidade.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "estudos/05_modelos_de_redes.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "notebooks/01_analise_exploratoria.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/algorithms.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/evaluation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/external.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/graph.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/mapa-das-leituras.md",
+   "para": "src/pixfraud/simulation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/motie2024gnnreview.md",
+   "para": "docs/futuro/gnn-supervisionada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/motie2024gnnreview.md",
+   "para": "docs/leituras/akoglu2015graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/motie2024gnnreview.md",
+   "para": "docs/leituras/dellagarza2023aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/motie2024gnnreview.md",
+   "para": "docs/leituras/dou2020caregnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/motie2024gnnreview.md",
+   "para": "docs/leituras/guerra2025gnnfraude.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/motie2024gnnreview.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/motie2024gnnreview.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/motie2024gnnreview.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/pedregosa2011sklearn.md",
+   "para": "docs/leituras/ester1996dbscan.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/pedregosa2011sklearn.md",
+   "para": "docs/leituras/liu2008isolation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/pedregosa2011sklearn.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/pedregosa2011sklearn.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/pedregosa2011sklearn.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/pedregosa2011sklearn.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/pedregosa2011sklearn.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/weber2019aml.md",
+   "para": "docs/leituras/akoglu2015graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/weber2019aml.md",
+   "para": "docs/leituras/altman2023realistic.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/weber2019aml.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/weber2019aml.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/weber2019aml.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/weber2019aml.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/witten2011datamining.md",
+   "para": "docs/leituras/bishop2006pattern.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/witten2011datamining.md",
+   "para": "docs/leituras/james2021isl.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/witten2011datamining.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/witten2011datamining.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/witten2011datamining.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/leituras/witten2011datamining.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/leituras/witten2011datamining.md",
+   "para": "src/pixfraud/evaluation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "CLAUDE.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "app/guia-do-explorador.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "configs/parametros-dos-experimentos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/cronograma.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/diario/diario-de-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/glossario/glossario.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/modelos/diario.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/modelos/reuniao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/obsidian.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/proposta-original.pdf",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/proposta.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/proximos-passos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/rede-pix.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/reunioes/atas-de-reuniao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/revisao-bibliografica.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "estudos/trilha-de-estudos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "notebooks/mapa-dos-notebooks.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "reports/mapa-dos-resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "src/pixfraud/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
+   "para": "tests/mapa-dos-testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "configs/experimento.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/coeficiente-de-participacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/comunidades-e-modularidade.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/dbscan-e-k-distance.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/egonet-e-oddball.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/isolation-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/lof.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/pagerank.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/propagacao-de-risco.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/redes-neurais-para-grafos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos.md",
+   "para": "src/pixfraud/gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos/fichamento.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/modelos/fichamento.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/modelos/fichamento.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "CLAUDE.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "docs/futuro/ia-agentica-tempo-real.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "docs/glossario/glossario.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "docs/grafo-de-notas.json",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "docs/revisao-bibliografica.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "llms.txt",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "reports/figures/grafo_de_notas.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/obsidian.md",
+   "para": "reports/figures/grafo_do_codigo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proposta.md",
+   "para": "docs/cronograma.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proposta.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proposta.md",
+   "para": "docs/proposta-original.pdf",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proposta.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/cronograma.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/diario/diario-de-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "estudos/trilha-de-estudos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "reports/estudos/rede_completa.html",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "reports/estudos/trilha_coletor.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "reports/figures/grafo_de_calor_dbscan_completo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "reports/figures/heatmap_risco_dbscan_completo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "reports/mapa-dos-resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "scripts/criar_grafo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "scripts/rodar_experimento.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "scripts/visualizar_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "configs/cenarios.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "configs/experimento.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/coeficiente-de-participacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/dbscan-e-k-distance.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/delta-de-cliff.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/egonet-e-oddball.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/isolation-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/k-nucleo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/lof.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/pagerank.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/precision-at-k.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/propagacao-de-risco.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/redes-neurais-para-grafos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/roc-auc.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/tempo-de-permanencia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "notebooks/01_analise_exploratoria.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "notebooks/02_perfis_de_fraude.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/figures/atributos_ablacao.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/figures/cenarios_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/figures/cenarios_efeitos.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/figures/online_deteccao.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/results/cenarios_comparacoes.csv",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/results/cenarios_efeitos.csv",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "reports/results/robustez_resumo.csv",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_atributos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_deteccao_online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_externo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_gnn_rotulos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "scripts/avaliar_propagacao.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/resultados.md",
+   "para": "src/pixfraud/gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/reunioes/2026-09-24.md",
+   "para": "docs/reunioes/atas-de-reuniao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "CLAUDE.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "configs/parametros-dos-experimentos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/cronograma.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/modelos/reuniao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/obsidian.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/akoglu2015graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/altman2023realistic.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/bcb2024pix.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/bcb2024relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/bcb2026dadosabertos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/bishop2006pattern.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/brandes2001faster.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/dellagarza2023aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/diestel2017graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/dou2020caregnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/easley2010networks.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/ester1996dbscan.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/guerra2025gnnfraude.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/hagberg2008networkx.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/james2021isl.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/liu2008isolation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/lopezrojas2016paysim.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/motie2024gnnreview.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/pedregosa2011sklearn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/weber2019aml.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/leituras/witten2011datamining.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/modelos/fichamento.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/obsidian.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/proposta.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "estudos/01_fundamentos.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "estudos/03_metricas_de_centralidade.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "estudos/05_modelos_de_redes.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "notebooks/01_analise_exploratoria.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/algorithms.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/evaluation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/external.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/graph.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/revisao-bibliografica.md",
+   "para": "src/pixfraud/simulation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "docs/revisao-bibliografica.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "estudos/01_fundamentos.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "estudos/02_construindo_grafos.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "estudos/03_metricas_de_centralidade.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "estudos/04_padroes_de_fraude.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "estudos/05_modelos_de_redes.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "estudos/cola-networkx.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "estudos/trilha-de-estudos.md",
+   "para": "estudos/gabarito.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "notebooks/mapa-dos-notebooks.md",
+   "para": "estudos/trilha-de-estudos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "notebooks/mapa-dos-notebooks.md",
+   "para": "notebooks/01_analise_exploratoria.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "notebooks/mapa-dos-notebooks.md",
+   "para": "notebooks/02_perfis_de_fraude.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "relatorio/capitulos/00_resumo.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/01_introducao.md",
+   "para": "docs/proposta.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/01_introducao.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/02_fundamentacao.md",
+   "para": "docs/leituras",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "relatorio/capitulos/02_fundamentacao.md",
+   "para": "estudos/trilha-de-estudos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/02_fundamentacao.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/03_metodologia.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/03_metodologia.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/04_resultados.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/04_resultados.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/04_resultados.md",
+   "para": "reports/figures/cenarios_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "relatorio/capitulos/04_resultados.md",
+   "para": "reports/figures/online_deteccao.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "relatorio/capitulos/05_conclusao.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/capitulos/05_conclusao.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "CLAUDE.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "relatorio/abnt.csl",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "relatorio/capitulos/00_resumo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "relatorio/capitulos/01_introducao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "relatorio/capitulos/02_fundamentacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "relatorio/capitulos/03_metodologia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "relatorio/capitulos/04_resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "relatorio/capitulos/05_conclusao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "relatorio/mapa-do-relatorio.md",
+   "para": "relatorio/metadados.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "docs/rede-pix.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/amlworld/figures/amlworld_pix_tipologias.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/estudos/rede_completa.html",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/estudos/trilha_coletor.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/atributos_ablacao.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/atributos_teto.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/cenarios_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/cenarios_efeitos.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/fraudar_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/gnn_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/grafo_de_calor_dbscan_completo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/heatmap_risco_dbscan_completo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/online_deteccao.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/padroes_de_fraude.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/propagacao_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/quadrilha.gif",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/rede_exemplo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/robustez_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "docs/obsidian.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "reports/mapa-dos-resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_atributos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_cenarios.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_deteccao_online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_externo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_gnn_rotulos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_propagacao.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/avaliar_robustez.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/baixar_dados_bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/criar_grafo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/exportar_grafo_de_notas.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/gerar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/gerar_ilustracoes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/ilustrar_grafos_de_conhecimento.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/importar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/reproduzir_tudo.ps1",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/reproduzir_tudo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/rodar_experimento.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/visualizar_rede.py",
+   "tipo": "arquivo"
+  }
+ ]
+}

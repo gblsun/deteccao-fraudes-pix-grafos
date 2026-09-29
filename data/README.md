@@ -5,7 +5,7 @@ qualquer momento pelos scripts, a partir da configuração e da semente.
 
 | Pasta        | Conteúdo                                               | Como gerar                                      |
 |--------------|--------------------------------------------------------|-------------------------------------------------|
-| `synthetic/` | Dataset sintético (`accounts.csv`, `transactions.csv`) | `python scripts/gerar_dataset.py`               |
+| `synthetic/` | Dataset sintético (`accounts.csv`, `transactions.csv`, `dataset_meta.json` com a semente) | `python scripts/gerar_dataset.py` (semente sorteada; `--seed N` reproduz) |
 | `processed/` | Atributos por conta (`features.csv`)                   | `python scripts/rodar_experimento.py`           |
 | `bcb/`       | Estatísticas públicas do PIX (Banco Central)           | `python scripts/baixar_dados_bcb.py <recurso> <AAAAMM>` |
 | `external/`  | Datasets públicos convertidos para o formato do projeto | `python scripts/importar_dataset.py <fonte> <arquivo>` |
@@ -89,6 +89,28 @@ transações individuais, então elas não formam um grafo). Recursos disponíve
 
 Sem filtro, `transacoes` tem mais de 50 MB. Use `--filtro "AnoMes eq 202506"` para baixar
 um único mês.
+
+### Problema conhecido: 504 ao baixar `transacoes`
+
+`python scripts/baixar_dados_bcb.py transacoes 202506 --filtro "AnoMes eq 202506"` pode
+falhar com `HTTP Error 504: Gateway Time-out` (visto em 26/09/2026). O `fraudes` baixa
+normalmente, então não é conexão nem código.
+
+- **Causa:** o gateway da API de dados abertos do BCB (olinda.bcb.gov.br) desiste antes de
+  o servidor montar a resposta. O recurso `EstatisticasTransacoesPix` é grande, e mesmo com
+  `--filtro` o servidor às vezes não termina a tempo. O timeout do nosso lado (300 s em
+  `src/pixfraud/bcb.py`) não chega a ser atingido.
+- **Contorno:** o script já tenta de novo sozinho (`--tentativas`, padrão 3, com espera
+  crescente a partir de `--espera` segundos). Se ainda falhar, tente mais tarde ou filtre
+  mais no `--filtro` (conferir antes os nomes dos campos do recurso). Em 26/09/2026 falhou
+  mesmo com 3 tentativas e com `--top 100`, então o gargalo é o servidor montar o filtro.
+  Nova tentativa no mesmo dia, perto do meio-dia, também deu 504.
+- **Impacto:** nenhum resultado em `reports/` depende desse download. Ele serve só para
+  calibrar o gerador sintético, que por enquanto **não está calibrado** com esses dados.
+
+- [x] Tornar o download robusto: novas tentativas com espera entre elas no `fetch` e as
+  opções `--top`, `--tentativas` e `--espera` no script (a API não aceita `$skip`).
+- [ ] Calibrar o gerador com as estatísticas de transações do BCB quando o download funcionar.
 
 ## Datasets públicos externos
 

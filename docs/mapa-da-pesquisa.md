@@ -13,6 +13,7 @@ do projeto e o passo a passo para rodar estão no [README principal](../README.m
 |-----------|----------------|
 | [Proposta](proposta.md) ([PDF original](proposta-original.pdf)) | objetivos, justificativa e metodologia planejada |
 | [Cronograma](cronograma.md) | etapas de 12 meses e o que cada uma entrega no repositório |
+| [Próximos passos](proximos-passos.md) | o que ficou em aberto, para retomar na próxima sessão |
 | [Resultados](resultados.md) | o que os experimentos mostraram, com números, figuras e ressalvas |
 | [Modelos](modelos.md) | o que cada modelo faz, como está configurado e que outros caberiam |
 | [Revisão bibliográfica](revisao-bibliografica.md) | índice das leituras e sugestões; referências em [`referencias.bib`](referencias.bib) |
@@ -45,5 +46,5 @@ não o grafo das notas) sem sair do cofre: [rede-pix.md](rede-pix.md).
 | [`relatorio/`](../relatorio/mapa-do-relatorio.md) | esqueleto do relatório final em Markdown, gerado em DOCX/PDF pelo Pandoc |
 | [`tests/`](../tests/mapa-dos-testes.md) | o que cada teste verifica |
 
-Regra para tudo o que fica no repositório: **nenhum nome de pessoa, orientador ou
-curso** (a proposta é submetida de forma anônima).
+Regra para tudo o que fica no repositório: seguir a **LGPD** no contexto do Pix, sem
+nenhum dado pessoal real de usuário do Pix (ver [CLAUDE.md](../CLAUDE.md)).

@@ -12,6 +12,8 @@ API OData: https://olinda.bcb.gov.br/olinda/servico/Pix_DadosAbertos/versao/v1/o
 from __future__ import annotations
 
 import json
+import time
+from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlencode
 from urllib.request import urlopen
 
@@ -35,6 +37,8 @@ def fetch(
     filter: str | None = None,
     top: int | None = None,
     timeout: float = 300,
+    retries: int = 3,
+    backoff: float = 30,
 ) -> pd.DataFrame:
     """Baixa um recurso da API em uma única requisição.
 
@@ -45,6 +49,11 @@ def fetch(
     ``"NATUREZA eq 'P2P'"``) para limitar o volume. A API não aceita
     ``$skip``, por isso não há paginação; ``top`` limita o nº de linhas.
     Sem filtro, ``transacoes`` passa de 50 MB.
+
+    Erros passageiros do servidor (502, 503, 504) e falhas de conexão são tentados
+    de novo até ``retries`` vezes no total, esperando ``backoff`` segundos antes da
+    2ª tentativa e o dobro a cada nova. O 504 é comum em ``transacoes``: o gateway
+    do BCB desiste antes de o servidor montar a resposta (ver data/README.md).
     """
     name, param = RESOURCES[resource]
     query = {f"@{param}": f"'{database}'", "$format": "json"}
@@ -53,5 +62,15 @@ def fetch(
     if top is not None:
         query["$top"] = top
     query_string = urlencode(query, safe="$@'", quote_via=quote)
-    with urlopen(f"{BASE_URL}/{name}({param}=@{param})?{query_string}", timeout=timeout) as response:
-        return pd.DataFrame(json.load(response)["value"])
+    url = f"{BASE_URL}/{name}({param}=@{param})?{query_string}"
+    for attempt in range(1, retries + 1):
+        try:
+            with urlopen(url, timeout=timeout) as response:
+                return pd.DataFrame(json.load(response)["value"])
+        except (HTTPError, URLError, TimeoutError) as error:
+            transient = not isinstance(error, HTTPError) or error.code in (502, 503, 504)
+            if not transient or attempt == retries:
+                raise
+            wait = backoff * 2 ** (attempt - 1)
+            print(f"tentativa {attempt} de {retries} falhou ({error}); nova tentativa em {wait:.0f} s")
+            time.sleep(wait)

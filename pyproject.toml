@@ -24,6 +24,7 @@ notebooks = ["jupyterlab>=4", "ipykernel"]
 app = ["streamlit>=1.30"]
 docs = ["pdoc>=14"]
 relatorio = ["pypandoc_binary>=1.13"]
+gnn = ["torch>=2.4"]  # redes neurais para grafos (pixfraud.gnn); a versão só para CPU basta
 
 [tool.setuptools.packages.find]
 where = ["src"]

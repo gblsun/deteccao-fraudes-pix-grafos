@@ -4,8 +4,8 @@ tags: [ata]
 
 # Reunião {{date}}
 
-Salve como `docs/reunioes/AAAA-MM-DD.md`. Não escreva nomes de pessoas: o repositório
-acompanha a submissão anônima da proposta.
+Salve como `docs/reunioes/AAAA-MM-DD.md`. Além do autor e do orientador, não nomeie
+outras pessoas (LGPD, ver `CLAUDE.md`).
 
 ## Desde a última reunião
 
