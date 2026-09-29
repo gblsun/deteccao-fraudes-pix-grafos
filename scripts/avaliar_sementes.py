@@ -9,7 +9,10 @@ com 100, 500 ou 1000 sementes. O script roda o experimento de
   para cada ``n`` de ``--marcos`` (10, 100, 500, 1000);
 * quanto a média de **10 sementes sorteadas** varia em torno da média com
   todas as sementes (faixa de 95% em ``--sorteios`` sorteios sem reposição);
-* com que frequência 10 sementes elegem a mesma melhor chave que todas.
+* com que frequência 10 sementes elegem a mesma melhor chave que todas;
+* para cada comparação pareada de ``experiment.COMPARISONS`` (ex.: completo -
+  tabular), a diferença média, o desvio das diferenças e quantas sementes um
+  teste pareado precisa para detectar essa diferença com poder de 80%.
 
 Cada semente é gravada assim que termina, então dá para interromper e rodar
 de novo: as sementes que já estão no CSV são puladas.
@@ -18,6 +21,7 @@ Saídas em reports/results/:
     sementes_execucoes.csv     uma linha por (semente, atributos, modelo)
     sementes_convergencia.csv  média, desvio e IC 95% da AP para cada marco
     sementes_sorteios.csv      variação da média de 10 sementes sorteadas
+    sementes_pareadas.csv      sementes necessárias para cada comparação pareada
     sementes_meta.json         como o resultado foi gerado
 e a figura reports/figures/sementes_convergencia.png.
 
@@ -39,8 +43,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+from scipy import stats  # noqa: E402
 
 from pixfraud.experiment import (  # noqa: E402
+    COMPARISONS,
     load_experiment_config,
     load_scenarios,
     run_seeds,
@@ -101,6 +107,8 @@ def main() -> None:
     suffix = _suffix(args.cenario)
     convergence.to_csv(results / f"sementes_convergencia{suffix}.csv", index=False)
     draws.to_csv(results / f"sementes_sorteios{suffix}.csv", index=False)
+    paired = _paired_needs(runs)
+    paired.to_csv(results / f"sementes_pareadas{suffix}.csv", index=False)
     save_metadata(results / f"sementes_meta{suffix}.json", config, cenario=args.cenario,
                   sementes=n_total, marcos=marks, sorteios=args.sorteios,
                   tamanho_sorteio=size, mesma_melhor_chave=same_best,
@@ -114,6 +122,43 @@ def main() -> None:
     print(f"\nmédia de {size} sementes sorteadas × média com todas:")
     print(draws.round(4).to_string(index=False))
     print(f"\n{size} sementes elegem a mesma melhor chave que todas em {same_best:.0%} dos sorteios")
+    print("\ncomparações pareadas: sementes para detectar a diferença (poder de 80%, alfa 5%):")
+    print(paired.round(4).to_string(index=False))
+
+
+def _paired_needs(runs: pd.DataFrame, power: float = 0.8, alpha: float = 0.05) -> pd.DataFrame:
+    """Diferença pareada média de cada comparação e o nº de sementes para detectá-la.
+
+    Menor $n$ com $\\sqrt n \\, |\\bar d| / s \\geq t_{1-\\alpha/2,\\,n-1} + t_{poder,\\,n-1}$
+    (poder do teste t pareado), em que $\\bar d$ e $s$ são a média e o desvio das
+    diferenças por semente, estimados com todas as sementes. O mínimo é 6: com
+    menos, o Wilcoxon exato bilateral (usado em ``stats.compare_runs``) não
+    chega a p < 0,05. ``a_vence_em`` é a fração das sementes em que o primeiro
+    conjunto tem AP maior.
+    """
+    wide = runs.pivot_table(index="semente", columns=KEY, values=METRIC)
+    rows = []
+    for a, b in COMPARISONS:
+        for model in sorted(runs["modelo"].unique()):
+            diff = wide[(a, model)] - wide[(b, model)]
+            mean, sd = diff.mean(), diff.std()
+            rows.append({
+                "comparacao": f"{a} - {b}", "modelo": model,
+                "diferenca_media": mean, "desvio_das_diferencas": sd,
+                "a_vence_em": float((diff > 0).mean()),
+                "sementes_necessarias": _seeds_for_power(abs(mean) / sd, power, alpha),
+            })
+    return pd.DataFrame(rows)
+
+
+def _seeds_for_power(effect: float, power: float, alpha: float, minimum: int = 6, maximum: int = 100_000):
+    """Menor nº de sementes para um teste t pareado detectar o efeito padronizado ``effect``."""
+    if not np.isfinite(effect) or effect == 0:
+        return np.nan
+    for n in range(minimum, maximum + 1):
+        if np.sqrt(n) * effect >= stats.t.ppf(1 - alpha / 2, n - 1) + stats.t.ppf(power, n - 1):
+            return n
+    return np.nan
 
 
 def _suffix(scenario: str) -> str:
