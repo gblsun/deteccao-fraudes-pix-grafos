@@ -68,7 +68,7 @@ def main() -> None:
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
     parser.add_argument("--cenarios", nargs="+", default=["sem_atalhos", "realista"])
-    parser.add_argument("--sementes", type=int, default=3)
+    parser.add_argument("--sementes", type=int, default=5)
     parser.add_argument("--conjuntos", nargs="+", default=["tabular", "grafo", "temporal", "completo"],
                         choices=list(FEATURE_SETS))
     parser.add_argument("--frequencia", default="6h", help="intervalo entre os pontos de corte")

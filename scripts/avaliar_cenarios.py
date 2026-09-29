@@ -14,7 +14,7 @@ Saídas em reports/results/:
 e as figuras reports/figures/cenarios_average_precision.png e cenarios_efeitos.png.
 
 Uso:
-    python scripts/avaliar_cenarios.py --sementes 10
+    python scripts/avaliar_cenarios.py --sementes 20 --processos 3
     python scripts/avaliar_cenarios.py --cenarios base realista --sementes 3
     python scripts/avaliar_cenarios.py --cenarios calibrado --modelos isolation_forest dbscan ecod
     python scripts/avaliar_cenarios.py --so-figuras    # redesenha as figuras sem rodar de novo
@@ -59,8 +59,9 @@ def main() -> None:
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
     parser.add_argument("--cenarios", nargs="+", help="cenários a rodar (padrão: todos, na ordem do arquivo)")
-    parser.add_argument("--sementes", type=int, default=10, help="nº de repetições por cenário (sementes 1, 2, ...)")
+    parser.add_argument("--sementes", type=int, default=20, help="nº de repetições por cenário (sementes 1, 2, ...)")
     parser.add_argument("--modelos", nargs="+", choices=sorted(DETECTORS), help="detectores (padrão: todos)")
+    parser.add_argument("--processos", type=int, default=1, help="sementes rodando ao mesmo tempo (memória!)")
     parser.add_argument("--saida", default="reports")
     parser.add_argument("--so-figuras", action="store_true",
                         help="não roda nada: redesenha as figuras a partir dos CSVs já salvos em --saida")
@@ -84,7 +85,7 @@ def main() -> None:
         if unknown:
             parser.error(f"cenários desconhecidos: {', '.join(unknown)} (existem: {', '.join(scenarios)})")
         runs, summary, comparisons, effects = _evaluate(config, base, {n: scenarios[n] for n in names},
-                                                        args.sementes, args.modelos)
+                                                        args.sementes, args.modelos, args.processos)
         results.mkdir(parents=True, exist_ok=True)
         runs.to_csv(results / "cenarios_execucoes.csv", index=False)
         summary.to_csv(results / "cenarios_resumo.csv")
@@ -111,12 +112,14 @@ def main() -> None:
     print(key[columns].round(4).to_string(index=False))
 
 
-def _evaluate(config: dict, base, scenarios: dict[str, dict], n_seeds: int, models: list[str] | None = None):
+def _evaluate(config: dict, base, scenarios: dict[str, dict], n_seeds: int, models: list[str] | None = None,
+              processes: int = 1):
     """Roda cada cenário com ``n_seeds`` sementes; devolve execuções, resumo, comparações e efeitos."""
     runs, effects = [], []
     for name, overrides in scenarios.items():
         simulation = with_overrides(base, overrides)
-        for seed, prepared, metrics in run_seeds(simulation, config, range(1, n_seeds + 1), models=models):
+        for seed, prepared, metrics in run_seeds(simulation, config, range(1, n_seeds + 1), models=models,
+                                                 processes=processes):
             n_fraud = int(prepared.labels.sum())
             runs.append(metrics.assign(cenario=name, fraudes=n_fraud, contas=len(prepared.labels)))
             delta = compare_groups(prepared.features, prepared.labels)["delta de Cliff"]

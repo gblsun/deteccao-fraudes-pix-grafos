@@ -84,6 +84,23 @@ def test_compare_runs_and_summary_by_scenario():
     assert summary.loc["facil"].index[0] == ("grafo", "m")  # ordenado pela média dentro do cenário
 
 
+def test_compare_runs_between_models():
+    rng = np.random.default_rng(4)
+    rows = []
+    for seed in range(1, 11):
+        base = rng.uniform(0.3, 0.5)
+        for modelo, value in [("dbscan", base), ("ecod", base - 0.15), ("autoencoder", base + rng.normal(0, 0.02))]:
+            rows.append({"semente": seed, "atributos": "completo", "modelo": modelo, "ap": value})
+    runs = pd.DataFrame(rows)
+    pairs = [("ecod", "dbscan"), ("autoencoder", "dbscan"), ("graphsage", "dbscan")]  # graphsage não rodou
+    table = compare_runs(runs, pairs, ["ap"], between="modelo").set_index("comparação")
+    assert list(table.index) == ["ecod - dbscan", "autoencoder - dbscan"]  # o par ausente é pulado
+    assert (table["atributos"] == "completo").all()
+    assert table.loc["ecod - dbscan", "diferença média"] == pytest.approx(-0.15)
+    assert table.loc["ecod - dbscan", "a vence em"] == 0
+    assert table.loc["autoencoder - dbscan", "p Wilcoxon (Holm)"] > 0.05
+
+
 def test_null_model_detects_excess_reciprocity():
     graph = nx.gnm_random_graph(60, 120, seed=2, directed=True)
     graph.add_edges_from([(v, u) for u, v in list(graph.edges())[:60]])  # muitas relações de ida e volta

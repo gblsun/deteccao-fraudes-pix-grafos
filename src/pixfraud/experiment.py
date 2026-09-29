@@ -14,6 +14,7 @@ import json
 import platform
 import subprocess
 from collections.abc import Iterable, Iterator
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, replace
 from datetime import datetime
 from pathlib import Path
@@ -109,19 +110,33 @@ def run_seeds(
     seeds: Iterable[int],
     feature_sets: dict[str, list[str]] = FEATURE_SETS,
     models: list[str] | None = None,
+    processes: int = 1,
 ) -> Iterator[tuple[int, Prepared, pd.DataFrame]]:
-    """Repete o experimento com várias sementes, uma de cada vez.
+    """Repete o experimento com várias sementes.
 
     Cada semente gera um dataset sintético diferente e muda a semente dos
     detectores (``seeded_models``). Produz ``(semente, preparado, métricas)``,
-    com a coluna ``semente`` já incluída nas métricas.
+    com a coluna ``semente`` já incluída nas métricas, sempre na ordem das
+    sementes. Com ``processes`` > 1, as sementes rodam em paralelo: o
+    resultado é o mesmo, mais rápido, e a memória cresce com o nº de processos.
     """
-    for seed in seeds:
-        accounts, transactions = generate_dataset(replace(simulation, seed=seed))
-        prepared = prepare(accounts, transactions, config)
-        metrics, _ = run_detectors(prepared.features, prepared.labels, seeded_models(config["modelos"], seed),
-                                   feature_sets, models)
-        yield seed, prepared, metrics.assign(semente=seed)
+    if processes <= 1:
+        for seed in seeds:
+            yield _run_one_seed(simulation, config, seed, feature_sets, models)
+        return
+    # Cada semente é independente: roda em processos separados, na ordem das sementes.
+    with ProcessPoolExecutor(max_workers=processes) as pool:
+        futures = [pool.submit(_run_one_seed, simulation, config, seed, feature_sets, models) for seed in seeds]
+        for future in futures:
+            yield future.result()
+
+
+def _run_one_seed(simulation, config, seed, feature_sets, models):
+    accounts, transactions = generate_dataset(replace(simulation, seed=seed))
+    prepared = prepare(accounts, transactions, config)
+    metrics, _ = run_detectors(prepared.features, prepared.labels, seeded_models(config["modelos"], seed),
+                               feature_sets, models)
+    return seed, prepared, metrics.assign(semente=seed)
 
 
 def load_scenarios(path: str | Path) -> dict[str, dict]:

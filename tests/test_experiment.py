@@ -48,6 +48,13 @@ def test_seeded_models_reach_every_random_detector():
     assert "seed" not in CONFIG["modelos"]["isolation_forest"]  # a original não muda
 
 
+def test_run_seeds_in_parallel_gives_the_same_results():
+    sequential = [m for _, _, m in run_seeds(TINY, CONFIG, [1, 2], models=["dbscan", "ecod"])]
+    parallel = [m for _, _, m in run_seeds(TINY, CONFIG, [1, 2], models=["dbscan", "ecod"], processes=2)]
+    for a, b in zip(sequential, parallel):
+        pd.testing.assert_frame_equal(a, b)
+
+
 def test_run_seeds_can_run_only_some_detectors():
     (_, _, metrics), = run_seeds(TINY, CONFIG, [1], models=["ecod", "dbscan"])
     assert set(metrics["modelo"]) == {"ecod", "dbscan"}

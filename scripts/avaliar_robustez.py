@@ -14,7 +14,7 @@ Saídas em reports/results/:
 e a figura reports/figures/robustez_<métrica>.png.
 
 Uso:
-    python scripts/avaliar_robustez.py --sementes 10
+    python scripts/avaliar_robustez.py --sementes 20 --processos 3
     python scripts/avaliar_robustez.py --modelos isolation_forest ecod   # só alguns detectores
 """
 
@@ -46,8 +46,9 @@ from pixfraud.visualization import model_color  # noqa: E402
 def main() -> None:
     parser = argparse.ArgumentParser(description="Repete o experimento com várias sementes.")
     parser.add_argument("--config", default="configs/experimento.yaml")
-    parser.add_argument("--sementes", type=int, default=10, help="nº de repetições (sementes 1, 2, ...)")
+    parser.add_argument("--sementes", type=int, default=20, help="nº de repetições (sementes 1, 2, ...)")
     parser.add_argument("--modelos", nargs="+", choices=sorted(DETECTORS), help="detectores (padrão: todos)")
+    parser.add_argument("--processos", type=int, default=1, help="sementes rodando ao mesmo tempo (memória!)")
     parser.add_argument("--saida", default="reports")
     args = parser.parse_args()
     began = time.time()
@@ -55,7 +56,8 @@ def main() -> None:
     config = load_experiment_config(args.config)
     base = load_config(args.config)
     runs = []
-    for seed, _, metrics in run_seeds(base, config, range(1, args.sementes + 1), models=args.modelos):
+    for seed, _, metrics in run_seeds(base, config, range(1, args.sementes + 1), models=args.modelos,
+                                     processes=args.processos):
         runs.append(metrics)
         print(f"semente {seed}/{args.sementes} concluída")
     runs = pd.concat(runs, ignore_index=True)

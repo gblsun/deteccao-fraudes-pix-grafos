@@ -57,7 +57,10 @@ MODEL_COLORS = {
     "fraudar": "#7a5cc7",
     "node2vec_if": "#b279a2",
     "propagacao": "#f58518",
+    "propagacao_relativa": "#f58518",
     "label_spreading": "#ffbf79",
+    "combinado": "#c4661f",
+    "label_spreading_combinado": "#e8a33d",
     "random_forest": "#52514e",
     "gradient_boosting": "#8a8a8a",
     "graphsage": "#0b0b0b",
@@ -76,6 +79,8 @@ MODEL_LABELS = {
     "propagacao": "PageRank personalizado",
     "propagacao_relativa": "PageRank relativo",
     "label_spreading": "Label spreading",
+    "combinado": "PageRank + DBSCAN",
+    "label_spreading_combinado": "Label spreading + DBSCAN",
     "random_forest": "Random Forest",
     "gradient_boosting": "Gradient boosting",
     "graphsage": "GraphSAGE",
@@ -569,3 +574,101 @@ def plot_value_matrix(
     for spine in ax.spines.values():
         spine.set_visible(False)
     return mesh
+
+
+def plot_model_intervals(
+    summary: pd.DataFrame,
+    ax: plt.Axes,
+    baseline: float | None = None,
+    groups: dict[str, str] | None = None,
+    xlabel: str = "average precision (média e IC 95%)",
+    xlim: tuple[float, float] = (0.0, 1.0),
+    group_labels: bool = True,
+) -> None:
+    """Um modelo por linha: média e IC 95%, na cor fixa do modelo, de cima para baixo.
+
+    ``summary`` tem os índices = modelos (na ordem desejada) e as colunas
+    ``mean``, ``ic_inferior`` e ``ic_superior`` (a saída de
+    ``stats.summarize_runs``). ``baseline`` desenha a linha "ao acaso" (a taxa de
+    fraude: uma ordenação aleatória tem AP igual a ela). ``groups`` (modelo ->
+    família) separa as famílias com faixas de fundo alternadas e o nome da
+    família à direita. É o formato padrão dos resultados de modelos.
+    """
+    models = list(summary.index)
+    y = np.arange(len(models))[::-1]
+    if groups:
+        families = [groups.get(m, "") for m in models]
+        start = 0
+        for i in range(1, len(models) + 1):
+            if i == len(models) or families[i] != families[start]:
+                top, bottom = y[start] + 0.5, y[i - 1] - 0.5
+                if len(dict.fromkeys(families[:start])) % 2 == 0:
+                    ax.axhspan(bottom, top, color="#f0efec", zorder=0)
+                if group_labels:
+                    ax.text(1.01, (top + bottom) / 2, families[start], transform=ax.get_yaxis_transform(),
+                            va="center", ha="left", fontsize=8, color=INK_SECONDARY)
+                start = i
+    for yi, model in zip(y, models):
+        row = summary.loc[model]
+        # o IC t pode passar de [0, 1] com poucas sementes; a AP não passa
+        low = row["mean"] - max(row["ic_inferior"], xlim[0])
+        high = min(row["ic_superior"], xlim[1]) - row["mean"]
+        xerr = None if pd.isna(low) else [[max(low, 0)], [max(high, 0)]]
+        ax.errorbar(row["mean"], yi, xerr=xerr, fmt="o", ms=5, capsize=2.5, color=model_color(model), zorder=3)
+        ax.text(row["mean"], yi + 0.28, format_number(row["mean"]), ha="center", va="bottom", fontsize=7,
+                color=INK_SECONDARY)
+    if baseline is not None:
+        ax.axvline(baseline, color=INK_SECONDARY, linestyle="--", linewidth=0.9, zorder=1)
+        ax.text(baseline, y.max() + 0.55, " ao acaso", fontsize=7, color=INK_SECONDARY, va="bottom")
+    ax.set_yticks(y, [model_label(m) for m in models], fontsize=8)
+    ax.set_ylim(-0.6, len(models) - 0.4)
+    ax.set_xlim(*xlim)
+    ax.set_xlabel(xlabel, fontsize=8, color=INK_SECONDARY)
+    ax.grid(axis="x", alpha=0.3)
+    ax.tick_params(colors=INK_SECONDARY, labelsize=8)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+
+
+def plot_differences(
+    comparisons: pd.DataFrame,
+    ax: plt.Axes,
+    xlabel: str = "diferença de AP (A − B), IC 95%",
+    alpha: float = 0.05,
+) -> None:
+    """Gráfico de diferenças: uma comparação "A − B" por linha, com IC 95% e o placar.
+
+    ``comparisons`` é a saída de ``stats.compare_runs`` (uma métrica). Verde:
+    A melhor; vermelho: B melhor; cinza: sem diferença clara. Só ganha cor a
+    diferença com p de Wilcoxon corrigido por Holm abaixo de ``alpha`` (com
+    poucas sementes, nada ganha cor, e isso é o certo). À direita, "vence em X
+    de N" e o p. É o formato padrão dos comparativos em todos os estudos.
+    """
+    table = comparisons.reset_index(drop=True)
+    y = np.arange(len(table))[::-1]
+    for yi, (_, row) in zip(y, table.iterrows()):
+        p_holm = row.get("p Wilcoxon (Holm)", np.nan)
+        if pd.isna(p_holm) or p_holm >= alpha:
+            color = "#9aa7a4"
+        else:
+            color = "#2e8540" if row["diferença média"] > 0 else "#a82f2f"
+        ax.errorbar(row["diferença média"], yi,
+                    xerr=[[row["diferença média"] - row["ic_inferior"]], [row["ic_superior"] - row["diferença média"]]],
+                    fmt="o", ms=5, capsize=2.5, color=color, zorder=3)
+        p = row.get("p Wilcoxon (Holm)", np.nan)
+        placar = f"vence em {int(row['a vence em'])} de {int(row['n'])}"
+        if not pd.isna(p):
+            placar += f" · p = {format_number(p, 3)}"
+        ax.text(1.01, yi, placar, transform=ax.get_yaxis_transform(), va="center", fontsize=7, color=INK_SECONDARY)
+    labels = []
+    for text in table["comparação"]:
+        a, b = text.split(" - ")
+        labels.append(f"{model_label(a)} − {model_label(b)}")
+    ax.axvline(0, color=INK, linewidth=0.8)
+    ax.set_yticks(y, labels, fontsize=8)
+    ax.set_ylim(-0.6, len(table) - 0.4)
+    ax.set_xlabel(xlabel, fontsize=8, color=INK_SECONDARY)
+    ax.grid(axis="x", alpha=0.3)
+    ax.tick_params(colors=INK_SECONDARY, labelsize=8)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)

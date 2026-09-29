@@ -72,7 +72,7 @@ def main() -> None:
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
     parser.add_argument("--cenarios", nargs="+", default=["sem_atalhos", "realista"])
-    parser.add_argument("--sementes", type=int, default=5)
+    parser.add_argument("--sementes", type=int, default=10)
     parser.add_argument("--conjunto", default="completo", choices=list(FEATURE_SETS),
                         help="conjunto de atributos da ablação")
     parser.add_argument("--modelos", nargs="+", choices=sorted(DETECTORS), help="detectores (padrão: todos)")

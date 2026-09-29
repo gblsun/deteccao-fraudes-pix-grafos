@@ -76,7 +76,7 @@ def main() -> None:
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
     parser.add_argument("--cenarios", nargs="+", default=["sem_atalhos", "realista"])
-    parser.add_argument("--sementes", type=int, default=10)
+    parser.add_argument("--sementes", type=int, default=20)
     parser.add_argument("--fracoes", nargs="+", type=float, default=[0.1, 0.25],
                         help="frações das contas fraudulentas tratadas como já conhecidas")
     parser.add_argument("--conhecidas", choices=["fracao", CONTESTED], default="fracao",

@@ -157,6 +157,25 @@ def test_avaliar_propagacao(tmp_path):
     assert set(contested["conhecidas"]) == {"contestacao"}
 
 
+def test_avaliar_modelos(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("avaliar_modelos.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "base", "dificil", "--sementes", "2", "--processos", "2",
+         "--saida", str(tmp_path))
+    runs = pd.read_csv(tmp_path / "results" / "modelos_execucoes.csv")
+    assert {*DETECTORS, "fraudar", "node2vec_if", "label_spreading", "random_forest"} <= set(runs["modelo"])
+    # todos os modelos avaliados nas mesmas contas, em cada semente
+    assert runs.groupby(["cenario", "semente"])["contas_avaliadas"].nunique().eq(1).all()
+    assert runs["average_precision"].between(0, 1).all()
+    comparisons = pd.read_csv(tmp_path / "results" / "modelos_comparacoes.csv")
+    assert "ecod - dbscan" in set(comparisons["comparação"])
+    _check_metadata(tmp_path / "results" / "modelos_meta.json", cenarios={"base", "dificil"})
+    for figure in ("modelos_average_precision.png", "modelos_comparacoes.png"):
+        assert (tmp_path / "figures" / figure).stat().st_size > 0
+    _run("avaliar_modelos.py", "--so-figuras", "--saida", str(tmp_path))  # redesenha só a partir dos CSVs
+
+
 def test_gerar_relatorio(tmp_path):
     pytest.importorskip("pypandoc")
     out = tmp_path / "relatorio.html"
