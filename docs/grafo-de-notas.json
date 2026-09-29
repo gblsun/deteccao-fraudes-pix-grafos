@@ -546,6 +546,13 @@
    ]
   },
   {
+   "caminho": "docs/proximos-passos.md",
+   "titulo": "Próximos passos",
+   "tags": [
+    "pesquisa"
+   ]
+  },
+  {
    "caminho": "docs/rede-pix.md",
    "titulo": "A rede Pix dentro do cofre",
    "tags": [
@@ -2748,6 +2755,11 @@
   },
   {
    "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/proximos-passos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
    "para": "docs/rede-pix.md",
    "tipo": "nota"
   },
@@ -2989,6 +3001,61 @@
   {
    "de": "docs/proposta.md",
    "para": "docs/referencias.bib",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/cronograma.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/diario/diario-de-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "estudos/trilha-de-estudos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "scripts/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/proximos-passos.md",
+   "para": "src/pixfraud/flow.py",
    "tipo": "arquivo"
   },
   {

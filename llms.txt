@@ -24,6 +24,8 @@ agregados e públicos. Detalhes em `CLAUDE.md`.
   outros caberiam (com uma ordem de prioridade sugerida).
 - [docs/resultados.md](docs/resultados.md): o que os experimentos mostraram, com números
   e ressalvas.
+- [docs/proximos-passos.md](docs/proximos-passos.md): o que ficou em aberto; comece por
+  aqui ao retomar o trabalho.
 
 ## Código e reprodução
 
