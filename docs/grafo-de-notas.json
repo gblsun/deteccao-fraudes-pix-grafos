@@ -581,6 +581,13 @@
    ]
   },
   {
+   "caminho": "docs/reunioes/2026-10-01.md",
+   "titulo": "Reunião 2026-10-01",
+   "tags": [
+    "ata"
+   ]
+  },
+  {
    "caminho": "docs/reunioes/atas-de-reuniao.md",
    "titulo": "Reuniões de orientação",
    "tags": [
@@ -3466,6 +3473,36 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/reunioes/2026-10-01.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01.md",
+   "para": "docs/reunioes/atas-de-reuniao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01.md",
+   "para": "estudos/06_tipo_de_rede.ipynb",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01.md",
+   "para": "reports/estudos/rede_completa.html",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/reunioes/atas-de-reuniao.md",
    "para": "CLAUDE.md",
    "tipo": "nota"
@@ -3508,6 +3545,11 @@
   {
    "de": "docs/reunioes/atas-de-reuniao.md",
    "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/atas-de-reuniao.md",
+   "para": "docs/reunioes/2026-10-01.md",
    "tipo": "nota"
   },
   {

@@ -14,6 +14,7 @@ Volta para o [índice da documentação](../mapa-da-pesquisa.md).
 | Data | Assunto principal | Decisões que saíram dali |
 |------|-------------------|--------------------------|
 | [2026-09-24](2026-09-24.md) | Andamento do projeto e documentação no Obsidian | Andamento aprovado; seguir com redes neurais para grafos aplicadas à fraude |
+| [2026-10-01](2026-10-01.md) | Rede Pix sintética e falsos positivos com percentil de risco 100% | Confirmar os modelos de predição com urgência; testar KNN, K-Means e PCA |
 <!-- uma linha por ata, com link para AAAA-MM-DD.md -->
 
 ## Como escrever uma ata que ajuda o grafo
