@@ -22,11 +22,11 @@ do projeto e o passo a passo para rodar estão no [README principal](../README.m
 
 ## Anotações
 
-| Pasta | Conteúdo | Modelo |
-|-------|----------|--------|
+| Pasta                                        | Conteúdo                                                                                                                         | Modelo                              |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
 | [`leituras/`](leituras/mapa-das-leituras.md) | um fichamento por leitura, com a chave do `.bib` como nome; o [mapa das leituras](leituras/mapa-das-leituras.md) agrupa por tema | [fichamento](modelos/fichamento.md) |
-| [`diario/`](diario/diario-de-pesquisa.md) | diário de pesquisa, uma nota por dia: o que rodou, o que foi decidido e por quê | [diário](modelos/diario.md) |
-| [`reunioes/`](reunioes/atas-de-reuniao.md) | atas das reuniões de orientação | [reunião](modelos/reuniao.md) |
+| [`diario/`](diario/diario-de-pesquisa.md)    | diário de pesquisa, uma nota por dia: o que rodou, o que foi decidido e por quê                                                  | [diário](modelos/diario.md)         |
+| [`reunioes/`](reunioes/atas-de-reuniao.md)   | atas das reuniões de orientação                                                                                                  | [reunião](modelos/reuniao.md)       |
 
 Como usar tudo isso no Obsidian: [obsidian.md](obsidian.md). Para ver a **rede Pix** (e
 não o grafo das notas) sem sair do cofre: [rede-pix.md](rede-pix.md).
