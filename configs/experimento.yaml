@@ -47,6 +47,9 @@ simulacao:
   laundering_typologies: [cadeia]  # cadeia, espalha_junta, ciclo, bipartido (sorteada por quadrilha)
   p_contested: 0.0             # fração dos golpes contestados (coluna contestado_em)
   contest_delay_h: 48          # atraso mediano da contestação, em horas
+  # true: sorteia a estrutura a cada semente (nº de quadrilhas, laranjas, vítimas, comércios...);
+  # os valores acima viram médias. Cenário `aleatorio` em configs/cenarios.yaml.
+  estrutura_aleatoria: false
 
 atributos:
   betweenness_k: 500       # vértices de origem amostrados na intermediação (null = exato)
@@ -86,3 +89,14 @@ modelos:
     max_iter: 300          # para antes, quando o erro de validação deixa de cair
     contamination: 0.05
     seed: 42
+  knn:                     # reunião de 01/10
+    n_neighbors: 10        # escore: distância média às 10 contas mais parecidas
+    contamination: 0.05
+  kmeans:
+    n_clusters: 8
+    min_cluster_fraction: 0.01  # grupos menores que 1% das contas não contam como "normais"
+    contamination: 0.05
+    seed: 42
+  pca:
+    variance: 0.9          # componentes que explicam 90% da variação; o escore é o que sobra
+    contamination: 0.05

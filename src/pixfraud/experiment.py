@@ -25,6 +25,9 @@ import pandas as pd
 import yaml
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.model_selection import KFold, StratifiedKFold, cross_val_predict
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import FunctionTransformer, StandardScaler
 
 from pixfraud.anomaly import DETECTORS, Detection
 from pixfraud.evaluation import evaluate
@@ -44,7 +47,7 @@ COMPARISONS = [
 ]
 REPEATED_METRICS = ["average_precision", "precision_at_k", "roc_auc", "f1"]
 # Tetos supervisionados de ``supervised_scores`` (a GNN fica em ``pixfraud.gnn``, opcional).
-SUPERVISED_MODELS = ("random_forest", "gradient_boosting")
+SUPERVISED_MODELS = ("random_forest", "gradient_boosting", "knn_supervisionado")
 
 
 @dataclass
@@ -190,8 +193,10 @@ def supervised_scores(
     cruzada estratificada, cada conta recebe o escore de um modelo treinado
     sem ela. Numa situação real esses rótulos não existiriam (ou seriam
     poucos), então a distância até este teto mostra quanto se perde por não
-    tê-los. ``model``: ``random_forest`` ou ``gradient_boosting`` (árvores em
-    sequência, cada uma corrigindo o erro das anteriores, no estilo LightGBM).
+    tê-los. ``model``: ``random_forest``, ``gradient_boosting`` (árvores em
+    sequência, cada uma corrigindo o erro das anteriores, no estilo LightGBM) ou
+    ``knn_supervisionado`` (a fração de fraudes entre as contas mais parecidas,
+    com os atributos na mesma escala dos detectores: log1p e padronização).
     """
     y = labels.reindex(features.index).astype(bool).to_numpy()
     if model == "random_forest":
@@ -201,6 +206,10 @@ def supervised_scores(
         # folhas pequenas: com ~15 fraudes no dataset, o padrão (20 contas por folha) não isola nenhuma
         model = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.05, min_samples_leaf=5,
                                                class_weight="balanced", random_state=seed)
+    elif model == "knn_supervisionado":
+        # vizinhas pesadas pela distância; a escala vem do mesmo log1p dos detectores
+        model = make_pipeline(FunctionTransformer(np.log1p), StandardScaler(),
+                              KNeighborsClassifier(n_neighbors=10, weights="distance"))
     else:
         raise ValueError(f"modelo supervisionado desconhecido: {model} (use um de {SUPERVISED_MODELS})")
     splitter = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)

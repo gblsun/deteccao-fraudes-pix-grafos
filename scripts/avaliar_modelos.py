@@ -6,7 +6,8 @@ Para cada cenário e semente, gera o dataset e avalia quatro famílias de modelo
 * **não supervisionados** (``pixfraud.anomaly.DETECTORS``), no conjunto de
   atributos ``--conjunto`` (padrão: ``completo``);
 * **estrutura do grafo** (``pixfraud.graph_models.GRAPH_DETECTORS``): FRAUDAR e
-  node2vec, que não usam a tabela de atributos;
+  node2vec, que não usam a tabela de atributos, e, com o extra ``gnn``, o
+  DOMINANT (GNN não supervisionada, que usa o grafo e os atributos);
 * **semi-supervisionados**: parte das fraudes já é conhecida e 25% das contas
   legítimas também. No cenário com a coluna ``contestado_em``, as fraudes
   conhecidas são as contestadas até o fim do período, como no MED; nos demais,
@@ -68,7 +69,7 @@ from pixfraud.visualization import INK, SURFACE, plot_differences, plot_model_in
 
 FAMILIES = {
     "não supervisionado": list(DETECTORS),
-    "estrutura do grafo": list(GRAPH_DETECTORS),
+    "estrutura do grafo": [*GRAPH_DETECTORS, "dominant"],
     "semi-supervisionado": ["propagacao_relativa", "label_spreading", "combinado", "label_spreading_combinado"],
     "teto supervisionado": [*SUPERVISED_MODELS, "graphsage"],
 }
@@ -76,12 +77,13 @@ FAMILY_OF = {model: family for family, models in FAMILIES.items() for model in m
 ORDER = [model for models in FAMILIES.values() for model in models]
 REFERENCE = "dbscan"
 COMPARISONS = [
-    *[(m, REFERENCE) for m in [*DETECTORS, *GRAPH_DETECTORS] if m != REFERENCE],
+    *[(m, REFERENCE) for m in [*DETECTORS, *GRAPH_DETECTORS, "dominant"] if m != REFERENCE],
     ("label_spreading", "propagacao_relativa"),
     ("combinado", REFERENCE),
     ("label_spreading_combinado", "combinado"),
     ("random_forest", REFERENCE),
     ("gradient_boosting", "random_forest"),
+    ("knn_supervisionado", "random_forest"),
     ("graphsage", "random_forest"),
 ]
 METRICS = ["average_precision", "precision_at_k", "roc_auc"]
@@ -97,7 +99,8 @@ def main() -> None:
     parser.add_argument("--conjunto", default="completo", choices=list(FEATURE_SETS),
                         help="atributos dos modelos que usam a tabela de atributos")
     parser.add_argument("--processos", type=int, default=1, help="sementes rodando ao mesmo tempo (memória!)")
-    parser.add_argument("--sem-gnn", action="store_true", help="não roda a GraphSAGE mesmo se estiver instalada")
+    parser.add_argument("--sem-gnn", action="store_true",
+                        help="não roda as GNN (GraphSAGE e DOMINANT) mesmo se estiverem instaladas")
     parser.add_argument("--saida", default="reports")
     parser.add_argument("--so-figuras", action="store_true", help="só redesenha as figuras a partir dos CSVs")
     args = parser.parse_args()
@@ -119,7 +122,7 @@ def main() -> None:
             parser.error(f"cenários desconhecidos: {', '.join(unknown)}")
         use_gnn = gnn.available() and not args.sem_gnn
         if not use_gnn and not args.sem_gnn:
-            print("aviso: sem o extra 'gnn' (PyTorch Geometric), a GraphSAGE fica de fora", flush=True)
+            print("aviso: sem o extra 'gnn' (PyTorch Geometric), GraphSAGE e DOMINANT ficam de fora", flush=True)
         jobs = [(with_overrides(base, scenarios[n]), n, seed, config, args.conjunto, use_gnn)
                 for n in names for seed in range(1, args.sementes + 1)]
         rows = []
@@ -190,6 +193,7 @@ def _evaluate(simulation, name, seed, config, conjunto, use_gnn) -> list[dict]:
     for model in SUPERVISED_MODELS:
         scores[model] = supervised_scores(prepared.features[columns], labels, seed=seed, model=model)
     if use_gnn:
+        scores["dominant"] = gnn.dominant_scores(prepared.graph, prepared.features[columns], seed=seed)
         scores["graphsage"] = gnn.graphsage_scores(prepared.graph, prepared.features[columns], labels, seed=seed)
 
     common = {"cenario": name, "semente": seed, "atributos": "vitrine", "taxa_fraude": float(evaluated.mean()),

@@ -49,7 +49,9 @@ from pixfraud.communities import undirected_simple
 try:
     import torch
     from torch import nn
-except ImportError:  # pragma: no cover - depende do ambiente
+# OSError: o torch está instalado, mas o Windows bloqueou uma DLL dele (Controle Inteligente
+# de Aplicativos); para os scripts, é o mesmo que não ter o extra "gnn"
+except (ImportError, OSError):  # pragma: no cover - depende do ambiente
     torch = nn = None
 
 
@@ -261,10 +263,11 @@ def _fit_sage(X, mean, y_np: np.ndarray, train: np.ndarray, hidden: int, epochs:
 
 def available() -> bool:
     """O PyTorch e o PyTorch Geometric estão instalados?"""
+    if torch is None:
+        return False
     try:
-        import torch  # noqa: F401
         import torch_geometric  # noqa: F401
-    except ImportError:
+    except (ImportError, OSError):
         return False
     return True
 

@@ -54,8 +54,12 @@ MODEL_COLORS = {
     "ecod": "#b8860b",
     "one_class_svm": "#54a24b",
     "autoencoder": "#88c77f",
+    "knn": "#0f4c81",
+    "kmeans": "#17becf",
+    "pca": "#2f6b2a",
     "fraudar": "#7a5cc7",
     "node2vec_if": "#b279a2",
+    "dominant": "#d4a6e8",
     "propagacao": "#f58518",
     "propagacao_relativa": "#f58518",
     "label_spreading": "#ffbf79",
@@ -63,6 +67,7 @@ MODEL_COLORS = {
     "label_spreading_combinado": "#e8a33d",
     "random_forest": "#52514e",
     "gradient_boosting": "#8a8a8a",
+    "knn_supervisionado": "#b5b5b5",
     "graphsage": "#0b0b0b",
 }
 
@@ -74,8 +79,12 @@ MODEL_LABELS = {
     "ecod": "ECOD",
     "one_class_svm": "One-Class SVM",
     "autoencoder": "Autoencoder",
+    "knn": "KNN (distância)",
+    "kmeans": "K-Means",
+    "pca": "PCA",
     "fraudar": "FRAUDAR",
     "node2vec_if": "node2vec + IF",
+    "dominant": "DOMINANT (GNN)",
     "propagacao": "PageRank personalizado",
     "propagacao_relativa": "PageRank relativo",
     "label_spreading": "Label spreading",
@@ -83,6 +92,7 @@ MODEL_LABELS = {
     "label_spreading_combinado": "Label spreading + DBSCAN",
     "random_forest": "Random Forest",
     "gradient_boosting": "Gradient boosting",
+    "knn_supervisionado": "KNN supervisionado",
     "graphsage": "GraphSAGE",
 }
 

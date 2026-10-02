@@ -14,7 +14,11 @@ rótulo binário. O que muda é a ideia de "anômalo":
 * ``one_class_svm``: a conta fica fora da fronteira que envolve a maior parte
   dos dados;
 * ``autoencoder``: uma rede que aprendeu a reconstruir as contas típicas erra
-  muito ao reconstruir esta.
+  muito ao reconstruir esta;
+* ``knn``: a conta está longe, em média, das suas k contas mais parecidas;
+* ``kmeans``: a conta está longe do centro do grupo (K-Means) mais próximo;
+* ``pca``: a conta não é bem descrita pelas poucas direções (componentes
+  principais) que resumem a maior parte da variação das contas.
 """
 
 from __future__ import annotations
@@ -25,7 +29,8 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 from scipy.stats import rankdata, skew
-from sklearn.cluster import DBSCAN
+from sklearn.cluster import DBSCAN, KMeans
+from sklearn.decomposition import PCA
 from sklearn.ensemble import IsolationForest
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.kernel_approximation import Nystroem
@@ -218,6 +223,72 @@ def autoencoder(
     return _detection(scores, _top_fraction(scores, contamination), features.index)
 
 
+def knn(features: pd.DataFrame, n_neighbors: int = 10, contamination: float = 0.05) -> Detection:
+    """KNN: distância média da conta às suas ``n_neighbors`` vizinhas mais próximas.
+
+    É a versão não supervisionada do KNN (Ramaswamy et al., 2000; Angiulli e
+    Pizzuti, 2002): ninguém diz o que é fraude, e a conta é anômala quando até as
+    contas mais parecidas com ela estão longe. O DBSCAN usa só a distância à
+    k-ésima vizinha (o raio do núcleo); a média de todas as k é menos sensível a
+    uma única vizinha coincidente. O rótulo binário marca a fração
+    ``contamination`` de maior escore. A versão supervisionada (que vota com os
+    rótulos das vizinhas) fica em ``experiment.supervised_scores``.
+    """
+    X = prepare_matrix(features)
+    k = min(n_neighbors, len(X) - 1)
+    distances, _ = NearestNeighbors(n_neighbors=k + 1).fit(X).kneighbors(X)
+    scores = distances[:, 1:].mean(axis=1)  # a coluna 0 é a própria conta
+    return _detection(scores, _top_fraction(scores, contamination), features.index)
+
+
+def kmeans(
+    features: pd.DataFrame,
+    n_clusters: int = 8,
+    min_cluster_fraction: float = 0.01,
+    contamination: float = 0.05,
+    seed: int = 42,
+) -> Detection:
+    """K-Means: distância da conta ao centro do grupo grande mais próximo.
+
+    O K-Means divide as contas em ``n_clusters`` grupos; uma conta típica fica
+    perto do centro do seu grupo. Um cuidado: contas anômalas parecidas entre si
+    (as laranjas de uma quadrilha, por exemplo) podem formar um grupo próprio e
+    ficar perto do centro dele. Por isso, grupos com menos de
+    ``min_cluster_fraction`` das contas não contam como "normais": a distância é
+    medida até o centro de um grupo grande (a ideia do CBLOF, He et al., 2003).
+    """
+    X = prepare_matrix(features)
+    k = max(1, min(n_clusters, len(X)))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", ConvergenceWarning)  # contas repetidas: menos grupos distintos que k
+        model = KMeans(n_clusters=k, n_init=10, random_state=seed).fit(X)
+    sizes = np.bincount(model.labels_, minlength=k)
+    large = sizes >= max(min_cluster_fraction * len(X), 1)
+    centers = model.cluster_centers_[large] if large.any() else model.cluster_centers_
+    distances = np.linalg.norm(X[:, None, :] - centers[None, :, :], axis=2)
+    scores = distances.min(axis=1)
+    return _detection(scores, _top_fraction(scores, contamination), features.index)
+
+
+def pca(features: pd.DataFrame, variance: float = 0.9, contamination: float = 0.05) -> Detection:
+    """PCA: erro de reconstrução com os componentes principais que explicam ``variance`` da variação.
+
+    As contas típicas são bem resumidas por poucas direções (combinações de
+    atributos que variam juntos, como grau de entrada e volume recebido). O
+    escore é o quanto da conta fica de fora desse resumo: o erro médio ao
+    reconstruí-la só com esses componentes. É o "autoencoder linear", sem
+    treino iterativo nem semente (Shyu et al., 2003).
+    """
+    X = prepare_matrix(features)
+    n_features = X.shape[1]
+    model = PCA(n_components=variance, svd_solver="full").fit(X) if n_features > 1 else None
+    if model is None or model.n_components_ >= n_features:  # ao menos uma direção fica de fora
+        model = PCA(n_components=max(n_features - 1, 1), svd_solver="full").fit(X)
+    reconstruction = model.inverse_transform(model.transform(X))
+    scores = ((X - reconstruction) ** 2).mean(axis=1)
+    return _detection(scores, _top_fraction(scores, contamination), features.index)
+
+
 def _top_fraction(scores: np.ndarray, fraction: float) -> np.ndarray:
     """Rótulo binário dos detectores que só dão escore: a fração ``fraction`` de maior escore."""
     return scores > np.quantile(scores, 1.0 - fraction)
@@ -237,4 +308,7 @@ DETECTORS = {
     "ecod": ecod,
     "one_class_svm": one_class_svm,
     "autoencoder": autoencoder,
+    "knn": knn,
+    "kmeans": kmeans,
+    "pca": pca,
 }

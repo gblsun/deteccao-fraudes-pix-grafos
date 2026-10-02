@@ -28,6 +28,12 @@ fraudulentas recém-abertas, pessoas sempre ativas, só a fraude repassa
 dinheiro). Os parâmetros de realismo desligam esses atalhos e **não gastam
 nenhum sorteio quando estão desligados**: com os valores padrão, a mesma
 semente produz exatamente o mesmo dataset de antes de eles existirem.
+
+Com ``estrutura_aleatoria``, as contagens também são sorteadas a cada semente
+(``draw_structure``): nº de quadrilhas, laranjas, vítimas e intermediários de
+cada uma, como cada coletora tira o dinheiro, nº de comércios e quanto eles
+pagam de salários e fornecedores. ``audit_roles`` confere, conta por conta, que
+o papel gravado em ``accounts`` corresponde ao que a conta fez nas transações.
 """
 
 from __future__ import annotations
@@ -44,6 +50,9 @@ FRAUD_HOURS = ("uniforme", "comercial")
 CALENDARS = ("uniforme", "semanal")
 LAUNDERING_TYPOLOGIES = ("cadeia", "espalha_junta", "ciclo", "bipartido")
 SCAM_SCENARIOS = ("falso_suporte", "clonagem_whatsapp")
+# Repasses dentro da quadrilha (laranja -> ... -> coletora) e a saída do dinheiro dela.
+LAUNDERING_SCENARIOS = ("repasse_laranja", "lavagem_em_cadeia", "ciclo", "espalha_junta", "bipartido")
+EXIT_SCENARIOS = ("saque", "saida_coletor")
 # Pix legítimos; todo o resto (golpes, repasses da quadrilha, saques) é fraude.
 LEGIT_SCENARIOS = ("normal", "salario", "fornecedor", "vaquinha", "repasse_salario")
 COLUMNS = ["t", "sender", "receiver", "amount", "scenario"]
@@ -108,6 +117,8 @@ class SimulationConfig:
     laundering_typologies: tuple[str, ...] = ("cadeia",)  # sorteadas por quadrilha
     p_contested: float = 0.0             # fração dos golpes contestados (coluna contestado_em)
     contest_delay_h: float = 48.0        # atraso mediano da contestação
+    # estrutura sorteada por semente (ver draw_structure); desligada, não gasta sorteio nenhum
+    estrutura_aleatoria: bool = False
 
     def __post_init__(self):
         if self.fraud_hours not in FRAUD_HOURS:
@@ -144,12 +155,98 @@ def with_overrides(cfg: SimulationConfig, overrides: dict) -> SimulationConfig:
     return replace(cfg, **overrides)
 
 
+# Faixas do sorteio de ``estrutura_aleatoria``. Os números são ilustrativos, mas
+# seguem o que se sabe do problema: quadrilhas de tamanho muito desigual (poucas
+# grandes, muitas pequenas, daí a binomial negativa), 3% a 7% das contas sendo
+# empresas e empresas que pagam folha e fornecedores (o BCB registra Pix de
+# empresa para pessoa e de empresa para empresa), em vez de só receber.
+MERCHANT_SHARE = (0.03, 0.07)
+EMPLOYEES_PER_MERCHANT = (2.0, 6.0)
+SUPPLIER_TX_PER_WEEK = (0.5, 2.0)
+DISPERSION = 1.5           # binomial negativa: quanto menor, mais desiguais as quadrilhas
+COLLECTOR_EXITS = {"acumula": 0.3, "saque": 0.4, "espalha": 0.3}  # o que a coletora faz com o dinheiro
+COLLECTOR_PAYOUTS = (5, 30)  # nº médio de Pix de saída quando a coletora espalha o dinheiro
+
+
+def draw_structure(cfg: SimulationConfig) -> tuple[SimulationConfig, list[SimulationConfig]]:
+    """A configuração geral e a de cada quadrilha.
+
+    Sem ``estrutura_aleatoria``, é a própria ``cfg`` repetida ``n_rings`` vezes
+    (nenhum sorteio, o dataset não muda). Com ela, um gerador próprio
+    (``default_rng([seed, 1])``, separado do que gera as transações) sorteia:
+
+    * nº de quadrilhas: ``1 + Poisson(n_rings - 1)``, então ``n_rings`` vira a média;
+    * por quadrilha: laranjas (``1 +`` binomial negativa com média
+      ``mules_per_ring - 1``), vítimas (binomial negativa com média
+      ``victims_per_ring``), intermediários (Poisson com média ``chain_length``,
+      de 1 a 6), a fração de laranjas recrutadas entre pessoas com histórico
+      (Beta(2, 3), média 40%) e o que a coletora faz (``COLLECTOR_EXITS``);
+    * comércios: ``MERCHANT_SHARE`` das pessoas, que pagam salários e
+      fornecedores (se a ``cfg`` não fixou esses valores), em vez de só receber.
+
+    O papel de cada conta já é sorteado em ``generate_dataset`` (os ids são
+    embaralhados); aqui muda o tamanho de cada papel.
+    """
+    if not cfg.estrutura_aleatoria:
+        return cfg, [cfg] * cfg.n_rings
+    rng = np.random.default_rng([cfg.seed, 1])
+    n_rings = 1 + int(rng.poisson(max(cfg.n_rings - 1, 0)))
+    base = replace(
+        cfg,
+        n_rings=n_rings,
+        n_merchants=max(2, round(cfg.n_people * rng.uniform(*MERCHANT_SHARE))),
+        employees_per_merchant=cfg.employees_per_merchant or float(rng.uniform(*EMPLOYEES_PER_MERCHANT)),
+        supplier_tx_per_week=cfg.supplier_tx_per_week or float(rng.uniform(*SUPPLIER_TX_PER_WEEK)),
+    )
+    # as tipologias além da cadeia precisam de pelo menos 2 intermediários
+    min_chain = 1 if cfg.laundering_typologies == ("cadeia",) else 2
+    rings = []
+    for _ in range(n_rings):
+        exit_ = rng.choice(list(COLLECTOR_EXITS), p=list(COLLECTOR_EXITS.values()))
+        mules = 1 + _negative_binomial(rng, max(cfg.mules_per_ring - 1, 0.5))
+        rings.append(replace(
+            base,
+            mules_per_ring=mules,
+            # toda laranja recebe ao menos um golpe (ver _fraud_ring)
+            victims_per_ring=max(mules, _negative_binomial(rng, cfg.victims_per_ring)),
+            chain_length=int(np.clip(rng.poisson(cfg.chain_length), min_chain, 6)),
+            p_recruited_mule=float(rng.beta(2, 3)),
+            collector_cashout=bool(exit_ == "saque"),
+            collector_payouts=float(rng.integers(*COLLECTOR_PAYOUTS)) if exit_ == "espalha" else 0.0,
+        ))
+    return base, rings
+
+
+def structure_summary(cfg: SimulationConfig) -> dict:
+    """O que ``draw_structure`` sorteou, para gravar junto com o dataset (``dataset_meta.json``)."""
+    base, rings = draw_structure(cfg)
+    return {
+        "estrutura_aleatoria": cfg.estrutura_aleatoria,
+        "n_comercios": base.n_merchants,
+        "funcionarios_por_comercio": round(base.employees_per_merchant, 2),
+        "fornecedores_por_semana": round(base.supplier_tx_per_week, 2),
+        "quadrilhas": [{"laranjas": r.mules_per_ring, "vitimas": r.victims_per_ring, "cadeia": r.chain_length,
+                        "laranjas_recrutadas": round(r.p_recruited_mule, 2),
+                        "coletora": "saque" if r.collector_cashout else "espalha" if r.collector_payouts else "acumula"}
+                       for r in rings],
+    }
+
+
+def _negative_binomial(rng, mean: float, dispersion: float = DISPERSION) -> int:
+    """Contagem com média ``mean`` e cauda longa (variância ``mean + mean²/dispersion``)."""
+    return int(rng.negative_binomial(dispersion, dispersion / (dispersion + mean)))
+
+
+def _chain_slots(cfg: SimulationConfig) -> int:
+    return cfg.chain_length if cfg.laundering_typologies == ("cadeia",) else max(cfg.chain_length, 2)
+
+
 def generate_dataset(cfg: SimulationConfig) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Gera as tabelas ``accounts`` (uma linha por conta) e ``transactions``."""
+    cfg, rings = draw_structure(cfg)
     rng = np.random.default_rng(cfg.seed)
 
-    chain_slots = cfg.chain_length if cfg.laundering_typologies == ("cadeia",) else max(cfg.chain_length, 2)
-    n_fraud_max = cfg.n_rings * (cfg.mules_per_ring + chain_slots + 1)
+    n_fraud_max = sum(r.mules_per_ring + _chain_slots(r) + 1 for r in rings)
     n_total = cfg.n_people + cfg.n_merchants + n_fraud_max
     # Identificadores embaralhados para que o id não revele o papel da conta.
     ids = np.array([f"C{i:06d}" for i in rng.permutation(n_total)])
@@ -163,13 +260,14 @@ def generate_dataset(cfg: SimulationConfig) -> tuple[pd.DataFrame, pd.DataFrame]
     roles: dict[str, str] = {}
     victims: set[str] = set()
     recruited: set[str] = set()  # pessoas (com histórico) que viraram laranjas
-    for _ in range(cfg.n_rings):
-        ring_tx, ring_roles, ring_victims = _fraud_ring(rng, cfg, people, merchants, community, fraud_pool,
-                                                        recruited, day_p)
+    for ring_cfg in rings:
+        ring_tx, ring_roles, ring_victims = _fraud_ring(rng, ring_cfg, people, merchants, community, fraud_pool,
+                                                        recruited, day_p,
+                                                        victims if cfg.estrutura_aleatoria else frozenset())
         parts.append(ring_tx)
-        if cfg.collector_payouts > 0:
+        if ring_cfg.collector_payouts > 0:
             collector = next(a for a, r in ring_roles.items() if r == "coletor")
-            parts.append(_collector_payouts(rng, cfg, ring_tx, collector, people, merchants))
+            parts.append(_collector_payouts(rng, ring_cfg, ring_tx, collector, people, merchants))
         roles |= ring_roles
         victims |= ring_victims
     created = np.array([a for a in roles if a not in recruited], dtype=people.dtype)
@@ -189,6 +287,63 @@ def generate_dataset(cfg: SimulationConfig) -> tuple[pd.DataFrame, pd.DataFrame]
     if cfg.p_contested > 0:
         tx = _contestations(rng, cfg, tx)
     return accounts, tx
+
+
+def audit_roles(accounts: pd.DataFrame, transactions: pd.DataFrame) -> pd.DataFrame:
+    """Contas cujo comportamento nas transações não bate com o papel gravado em ``accounts``.
+
+    Devolve uma linha por violação (``account_id``, ``role``, ``regra``); vazia
+    quando todo papel confere. As regras dizem o que cada papel **faz**:
+
+    * ``comercio``: é PJ; só paga salário ou fornecedor; não aplica nem repassa golpe;
+    * ``laranja``: recebe golpe de vítimas e repassa para a quadrilha;
+    * ``intermediario``: recebe repasse da quadrilha e repassa adiante, sem
+      receber golpe direto de vítima;
+    * ``coletor``: recebe repasse da quadrilha, nunca golpe direto, e só ele
+      tira o dinheiro (saque ou saída para pessoas e comércios);
+    * vítima (``is_victim``): fez ao menos um Pix de golpe, e não é fraudadora;
+    * ``normal``: não enviou golpe nem repassou dinheiro de quadrilha.
+
+    Os repasses de quadrilha só podem ir de uma conta fraudulenta para outra, e
+    todo golpe sai de uma vítima e chega a uma laranja. Receber dinheiro que
+    saiu da coletora (saque ou ``saida_coletor``) não é violação: o comércio ou
+    a pessoa do outro lado não sabe de onde ele veio.
+    """
+    tx = transactions
+    role = accounts.set_index("account_id")["role"]
+    kind = accounts.set_index("account_id")["account_type"]
+    victim = accounts.set_index("account_id")["is_victim"].astype(bool)
+    scam, laundering = tx["scenario"].isin(SCAM_SCENARIOS), tx["scenario"].isin(LAUNDERING_SCENARIOS)
+    exits = tx["scenario"].isin(EXIT_SCENARIOS)
+    legit_out = tx["scenario"].isin(("salario", "fornecedor"))
+
+    def accounts_with(mask, column):
+        return set(tx.loc[mask, column])
+
+    sent_scam, got_scam = accounts_with(scam, "sender"), accounts_with(scam, "receiver")
+    sent_laundering, got_laundering = accounts_with(laundering, "sender"), accounts_with(laundering, "receiver")
+    sent_exit = accounts_with(exits, "sender")
+    merchant_sent_other = accounts_with(~legit_out, "sender")
+    fraud_roles = set(FRAUD_ROLES)
+
+    rules = {
+        "comércio é PJ": lambda a, r: r != "comercio" or kind[a] == "PJ",
+        "comércio só paga salário ou fornecedor": lambda a, r: r != "comercio" or a not in merchant_sent_other,
+        "laranja recebe golpe": lambda a, r: r != "laranja" or a in got_scam,
+        "laranja repassa": lambda a, r: r != "laranja" or a in sent_laundering,
+        "intermediário recebe e repassa": lambda a, r: r != "intermediario" or (
+            a in got_laundering and a in sent_laundering),
+        "coletora recebe repasse": lambda a, r: r != "coletor" or a in got_laundering,
+        "só laranja recebe golpe": lambda a, r: a not in got_scam or r == "laranja",
+        "só vítima aplica golpe": lambda a, r: a not in sent_scam or bool(victim[a]),
+        "só a coletora tira o dinheiro": lambda a, r: a not in sent_exit or r == "coletor",
+        "repasse só entre fraudadoras": lambda a, r: (a not in sent_laundering and a not in got_laundering)
+        or r in fraud_roles,
+        "vítima não é fraudadora": lambda a, r: not victim[a] or r not in fraud_roles,
+        "vítima pagou golpe": lambda a, r: not victim[a] or a in sent_scam,
+    }
+    rows = [(a, r, name) for a, r in role.items() for name, ok in rules.items() if not ok(a, r)]
+    return pd.DataFrame(rows, columns=["account_id", "role", "regra"])
 
 
 def save_dataset(accounts: pd.DataFrame, transactions: pd.DataFrame, out_dir: str | Path) -> None:
@@ -304,14 +459,14 @@ def _normal_transactions(rng, cfg, people, merchants, community, day_p=None) -> 
     })
 
 
-def _fraud_ring(rng, cfg, people, merchants, community, fraud_pool, recruited, day_p=None):
+def _fraud_ring(rng, cfg, people, merchants, community, fraud_pool, recruited, day_p=None, avoid=frozenset()):
     """Simula uma quadrilha: vítimas -> contas laranja -> [intermediários] -> coletora [-> saque].
 
     ``recruited`` guarda as pessoas que já viraram laranjas (em qualquer
     quadrilha), para que não sejam recrutadas de novo nem escolhidas como vítimas.
     """
     if cfg.p_recruited_mule > 0:
-        mules = [_recruit(rng, people, recruited) if rng.random() < cfg.p_recruited_mule else next(fraud_pool)
+        mules = [_recruit(rng, people, recruited, avoid) if rng.random() < cfg.p_recruited_mule else next(fraud_pool)
                  for _ in range(cfg.mules_per_ring)]
     else:
         mules = [next(fraud_pool) for _ in range(cfg.mules_per_ring)]
@@ -332,8 +487,13 @@ def _fraud_ring(rng, cfg, people, merchants, community, fraud_pool, recruited, d
         ring_start = rng.choice(window.size, p=window / window.sum()) * 86400.0
     else:
         ring_start = rng.integers(0, max(cfg.n_days - 2, 1)) * 86400.0
-    for _ in range(cfg.victims_per_ring):
-        mule = mules[rng.integers(len(mules))]
+    for i in range(cfg.victims_per_ring):
+        # Com a estrutura sorteada, as primeiras vítimas passam por laranjas diferentes, para
+        # nenhuma laranja ficar sem golpe (no sorteio simples, ~5% das quadrilhas base têm uma).
+        if cfg.estrutura_aleatoria and i < len(mules):
+            mule = mules[i]
+        else:
+            mule = mules[rng.integers(len(mules))]
         if rng.random() < 0.5:
             scenario = "falso_suporte"
             payer = _pick_person(rng, people, recruited)
@@ -359,9 +519,14 @@ def _fraud_ring(rng, cfg, people, merchants, community, fraud_pool, recruited, d
     return pd.DataFrame(rows, columns=COLUMNS), roles, victims
 
 
-def _recruit(rng, people, recruited: set) -> str:
-    """Uma pessoa que ainda não é laranja: a conta cedida ou alugada para a quadrilha."""
-    person = _pick_person(rng, people, recruited)
+def _recruit(rng, people, recruited: set, avoid=frozenset()) -> str:
+    """Uma pessoa que ainda não é laranja: a conta cedida ou alugada para a quadrilha.
+
+    ``avoid``: pessoas que também não podem ser recrutadas. Com a estrutura
+    sorteada, são as vítimas das quadrilhas anteriores (na estrutura fixa, uma
+    vítima pode raramente virar laranja de outra quadrilha; ver ``audit_roles``).
+    """
+    person = _pick_person(rng, people, recruited | avoid if avoid else recruited)
     recruited.add(person)
     return person
 

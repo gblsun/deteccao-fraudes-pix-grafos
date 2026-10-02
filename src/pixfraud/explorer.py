@@ -124,6 +124,7 @@ def explorer_payload(
         edge_fraud = {tuple(p) for p in fraud_pairs.itertuples(index=False)}
 
     percentile = risk.rank(pct=True) if risk is not None else None
+    position = risk.rank(ascending=False, method="min") if risk is not None else None
     node_rows = []
     for i, v in enumerate(nodes):
         degree = graph.in_degree(v) + graph.out_degree(v)
@@ -133,7 +134,8 @@ def explorer_payload(
             "y": round(float(xy[i, 1]), 2),
             "s": round(1.0 + 0.75 * math.log2(1 + degree), 2),
             "r": str(roles.get(v, "?")) if roles is not None else "?",
-            "k": round(float(percentile[v]), 3) if percentile is not None and v in percentile.index else None,
+            "k": round(float(percentile[v]), 4) if percentile is not None and v in percentile.index else None,
+            "p": int(position[v]) if position is not None and v in position.index else None,
             "c": int(communities.get(v, -1)),
             "i": graph.in_degree(v),
             "o": graph.out_degree(v),
@@ -726,13 +728,16 @@ _TEMPLATE = r"""<meta charset="utf-8">
     const color = ROLE_COLORS[n.r] || ROLE_COLORS["?"];
     box.innerHTML =
       '<div><h2>Conta selecionada</h2><div class="account">' + n.id + '</div>' +
-      '<span class="pill" style="background:' + color + '">' + (ROLE_NAMES[n.r] || n.r) + "</span></div>" +
+      '<span class="pill" style="background:' + color + '">' + (ROLE_NAMES[n.r] || n.r) + "</span>" +
+      '<div class="hint">papel real, do gerador (não é previsão do modelo)</div></div>' +
       "<dl>" +
       "<dt>recebeu de</dt><dd>" + n.i + " contas</dd>" +
       "<dt>pagou a</dt><dd>" + n.o + " contas</dd>" +
       "<dt>recebeu</dt><dd>" + money(n.ai) + "</dd>" +
       "<dt>enviou</dt><dd>" + money(n.ao) + "</dd>" +
-      (n.k !== null ? "<dt>percentil de risco</dt><dd>" + (n.k * 100).toFixed(0) + "%</dd>" : "") +
+      // uma casa decimal: com 2 mil contas, as 10 primeiras arredondariam todas para "100%"
+      (n.k !== null ? "<dt>percentil de risco</dt><dd>" + (n.k * 100).toFixed(1).replace(".", ",") + "%</dd>" : "") +
+      (n.p !== null && n.p !== undefined ? "<dt>posição no risco</dt><dd>" + n.p + "ª de " + nodes.length.toLocaleString("pt-BR") + "</dd>" : "") +
       "<dt>grupo (Louvain)</dt><dd>" + n.c + "</dd>" +
       (DATA.days.length ? "<dt>primeiro Pix</dt><dd>" + DATA.days[n.d] + "</dd>" : "") +
       "</dl>" +

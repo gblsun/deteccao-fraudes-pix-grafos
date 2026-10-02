@@ -11,6 +11,7 @@ import pandas as pd
 import pytest
 
 from pixfraud.anomaly import DETECTORS
+from pixfraud.experiment import SUPERVISED_MODELS
 from pixfraud.simulation import SimulationConfig, generate_dataset, save_dataset
 
 pytestmark = pytest.mark.lento  # cada teste roda um script inteiro
@@ -34,6 +35,13 @@ def _run(script: str, *args: str) -> str:
     done = subprocess.run([sys.executable, str(ROOT / "scripts" / script), *args], check=True, capture_output=True,
                           env=env)
     return done.stdout.decode("utf-8")
+
+
+def _require_torch() -> None:
+    from pixfraud import gnn
+
+    if gnn.torch is None:  # sem o extra "gnn", ou com a DLL do torch bloqueada pelo Windows
+        pytest.skip("torch indisponível")
 
 
 def _check_metadata(path, cenarios=None) -> dict:
@@ -172,7 +180,7 @@ def test_avaliar_atributos(tmp_path):
     ablation = pd.read_csv(tmp_path / "results" / "atributos_ablacao.csv")
     assert len(ablation) == 2 * len(DETECTORS) * 6  # sementes × detectores × atributos do conjunto "grafo"
     ceiling = pd.read_csv(tmp_path / "results" / "atributos_teto.csv")
-    expected = {*DETECTORS, "random_forest", "gradient_boosting"}
+    expected = {*DETECTORS, *SUPERVISED_MODELS}
     assert expected <= set(ceiling["modelo"]) and set(ceiling["modelo"]) - expected <= {"graphsage"}
     assert ceiling["average_precision"].between(0, 1).all()
     _check_metadata(tmp_path / "results" / "atributos_meta.json", cenarios={"dificil"})
@@ -240,7 +248,7 @@ def test_avaliar_fraudar(tmp_path):
 
 
 def test_avaliar_gnn(tmp_path):
-    pytest.importorskip("torch")
+    _require_torch()
     (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
     (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
     _run("avaliar_gnn.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
@@ -256,7 +264,7 @@ def test_avaliar_gnn(tmp_path):
 
 
 def test_avaliar_gnn_rotulos(tmp_path):
-    pytest.importorskip("torch")
+    _require_torch()
     (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
     (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
     _run("avaliar_gnn_rotulos.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
@@ -277,3 +285,49 @@ def test_gerar_relatorio(tmp_path):
     _run("gerar_relatorio.py", "--formato", "html", "--saida", str(out))
     html = out.read_text(encoding="utf-8")
     assert "Referências" in html and "???" not in html  # "???" = chave de citação que não existe no .bib
+
+
+def test_investigar_falsos_positivos(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    out = _run("investigar_falsos_positivos.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+               str(tmp_path / "cenarios.yaml"), "--cenarios", "base", "dificil", "--sementes", "2", "--top", "5",
+               "--dados", str(tmp_path / "nada"), "--saida", str(tmp_path))
+    assert "comércios" in out
+    roles = pd.read_csv(tmp_path / "results" / "falsos_positivos_papeis.csv")
+    assert set(roles["modelo"]) == set(DETECTORS) and set(roles["cenario"]) == {"base", "dificil"}
+    assert (roles["falsos_positivos"] == roles[["comercio", "vitima", "normal"]].sum(axis=1)).all()
+    every_role = ["laranja", "intermediario", "coletor", "comercio", "vitima", "normal"]
+    assert (roles[every_role].sum(axis=1) == roles["k"]).all()
+    top = pd.read_csv(tmp_path / "results" / "falsos_positivos_top.csv")
+    assert top.groupby(["cenario", "modelo"]).size().eq(5).all()
+    assert (tmp_path / "figures" / "falsos_positivos_comercio.png").stat().st_size > 0
+    _check_metadata(tmp_path / "results" / "falsos_positivos_meta.json", cenarios={"base", "dificil"})
+
+
+def test_auditar_papeis(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS + "sorteado: {estrutura_aleatoria: true}\n", encoding="utf-8")
+    save_dataset(*generate_dataset(SimulationConfig(n_people=150, n_merchants=8, n_days=4, n_rings=2)),
+                 tmp_path / "dados")
+    _run("auditar_papeis.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--sementes", "2", "--dados", str(tmp_path / "dados"),
+         "--saida", str(tmp_path))
+    summary = pd.read_csv(tmp_path / "results" / "auditoria_resumo.csv")
+    assert len(summary) == 1 + 3 * 2  # o dataset gravado e 2 sementes de cada cenário
+    random = summary[summary["cenario"] == "sorteado"]
+    assert random["violacoes"].eq(0).all() and random["quadrilhas"].ge(1).all()
+    profiles = pd.read_csv(tmp_path / "results" / "auditoria_perfis.csv", index_col=0)
+    assert profiles.loc["comercio", "pagou_a"].min() == 0  # no base, o comércio só recebe
+    _check_metadata(tmp_path / "results" / "auditoria_meta.json", cenarios={"base", "dificil", "sorteado"})
+
+
+def test_gerar_dataset_com_estrutura_aleatoria(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    out = _run("gerar_dataset.py", "--config", str(tmp_path / "config.yaml"), "--saida", str(tmp_path),
+               "--seed", "3", "--aleatorio")
+    assert "estrutura sorteada" in out
+    meta = json.loads((tmp_path / "dataset_meta.json").read_text(encoding="utf-8"))
+    assert meta["estrutura"]["estrutura_aleatoria"] and meta["estrutura"]["quadrilhas"]
+    accounts = pd.read_csv(tmp_path / "accounts.csv")
+    assert (accounts["role"] == "coletor").sum() == len(meta["estrutura"]["quadrilhas"])

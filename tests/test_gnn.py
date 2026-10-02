@@ -5,7 +5,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-pytest.importorskip("torch")
+from pixfraud import gnn  # noqa: E402
+
+if gnn.torch is None:  # sem o extra "gnn", ou com a DLL do torch bloqueada pelo Windows
+    pytest.skip("torch indisponível", allow_module_level=True)
 
 from pixfraud.gnn import dominant_scores, sage_known_fraud_scores, sage_supervised_scores  # noqa: E402
 

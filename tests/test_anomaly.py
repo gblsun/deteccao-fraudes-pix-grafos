@@ -10,8 +10,11 @@ from pixfraud.anomaly import (
     dbscan,
     ecod,
     isolation_forest,
+    kmeans,
+    knn,
     local_outlier_factor,
     one_class_svm,
+    pca,
     prepare_matrix,
 )
 from pixfraud.evaluation import evaluate
@@ -27,7 +30,7 @@ def blob_with_outlier():
     return features
 
 
-@pytest.mark.parametrize("detector", [isolation_forest, dbscan, ecod, one_class_svm, autoencoder])
+@pytest.mark.parametrize("detector", [isolation_forest, dbscan, ecod, one_class_svm, autoencoder, knn, kmeans])
 def test_detector_flags_outlier(detector, blob_with_outlier):
     detection = detector(blob_with_outlier)
     assert detection.scores.idxmax() == "outlier"
@@ -77,6 +80,39 @@ def test_autoencoder_is_reproducible_with_the_seed(blob_with_outlier):
     first = autoencoder(blob_with_outlier, seed=3).scores
     assert first.equals(autoencoder(blob_with_outlier, seed=3).scores)
     assert not first.equals(autoencoder(blob_with_outlier, seed=4).scores)
+
+
+def test_knn_averages_all_neighbors_unlike_dbscan():
+    # um par de contas iguais e isoladas: para o DBSCAN com k = 2, a vizinha coincidente
+    # não ajuda (a 2ª vizinha está longe); para a média do KNN, metade da distância some
+    rng = np.random.default_rng(2)
+    features = pd.DataFrame(rng.lognormal(0, 0.3, (200, 2)), columns=["a", "b"])
+    features.loc[200] = features.loc[201] = [30.0, 30.0]
+    scores = knn(features, n_neighbors=2).scores
+    assert scores[200] == pytest.approx(scores[201])
+    assert scores[200] < 2 * dbscan(features, min_samples=3).scores[200]
+
+
+def test_kmeans_ignores_tiny_clusters_of_anomalies():
+    # 6 contas anômalas iguais formariam um grupo próprio, e ficariam a distância 0 do centro dele
+    rng = np.random.default_rng(3)
+    features = pd.DataFrame(rng.lognormal(0, 0.3, (300, 2)), columns=["a", "b"])
+    for i in range(300, 306):
+        features.loc[i] = [40.0, 0.01]
+    scores = kmeans(features, n_clusters=4, min_cluster_fraction=0.05).scores
+    assert scores.iloc[300:].min() > scores.iloc[:300].max()
+    assert kmeans(features, seed=1).scores.equals(kmeans(features, seed=1).scores)
+
+
+def test_pca_flags_accounts_that_break_the_correlation():
+    # a e b andam juntos; a conta com a alto e b baixo foge da direção principal
+    rng = np.random.default_rng(4)
+    base = rng.lognormal(0, 0.5, 400)
+    features = pd.DataFrame({"a": base, "b": base * rng.lognormal(0, 0.05, 400), "c": rng.lognormal(0, 0.05, 400)})
+    features.loc[400] = [features["a"].max(), features["b"].min(), 1.0]
+    detection = pca(features, variance=0.6)
+    assert detection.scores.idxmax() == 400
+    assert detection.is_anomaly[400]
 
 
 def test_evaluate_perfect_ranking(blob_with_outlier):
