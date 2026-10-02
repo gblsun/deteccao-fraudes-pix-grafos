@@ -1,6 +1,5 @@
 """Testes de fumaça dos scripts de avaliação, num dataset minúsculo."""
 
-import importlib.util
 import json
 import os
 import subprocess
@@ -100,11 +99,13 @@ def test_gerar_dataset_sorteia_semente_e_reproduz_com_seed(tmp_path):
 def test_reproduzir_tudo_lista_as_etapas_em_ordem():
     etapas = [linha.split()[0] for linha in _run("reproduzir_tudo.py", "--listar").splitlines()
               if linha.split() and linha.split()[0] in {"dataset", "experimento", "robustez", "cenarios", "online",
-                                                         "atributos", "propagacao", "fraudar", "gnn",
-                                                         "gnn_rotulos"}]
+                                                         "atributos", "propagacao", "fraudar", "auditoria",
+                                                         "falsos_positivos", "gnn", "gnn_rotulos"}]
     esperadas = ["dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao", "fraudar",
-                 "gnn", "gnn_rotulos"]
-    assert etapas == [e for e in esperadas if not e.startswith("gnn") or importlib.util.find_spec("torch")]
+                 "auditoria", "falsos_positivos", "gnn", "gnn_rotulos"]
+    from pixfraud import gnn
+
+    assert etapas == [e for e in esperadas if not e.startswith("gnn") or gnn.available()]
     rapido = _run("reproduzir_tudo.py", "--rapido", "--listar", "--etapas", "experimento")
     assert "--saida reports_teste" in rapido and "robustez" not in rapido
 

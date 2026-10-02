@@ -110,6 +110,7 @@ resultados, lembre-se de que, com a configuração padrão:
 | a coletora só acumula | a coletora é um "sumidouro" fácil de achar | `collector_cashout: true` |
 | toda quadrilha lava em cadeia ou repassa direto | uma única forma de lavagem | `laundering_typologies` |
 | todo dia tem o mesmo movimento | sem ritmo de semana nem de começo de mês | `calendar: semanal` |
+| o **tamanho** de tudo é fixo: toda quadrilha tem 4 laranjas e 15 vítimas, sempre há 6 quadrilhas e 100 comércios | o detector vê sempre a mesma estrutura | `estrutura_aleatoria: true` (cenário `aleatorio`, abaixo) |
 
 A taxa de fraude foi inflada de propósito, para haver exemplos suficientes. Os cenários
 de [`configs/cenarios.yaml`](../configs/cenarios.yaml) combinam esses parâmetros, do mais
@@ -120,6 +121,45 @@ Com todos os parâmetros de realismo desligados (o padrão), o gerador produz **
 o mesmo dataset de antes de eles existirem. Um teste confere isso com uma impressão
 digital do dataset. Por isso os resultados antigos continuam reproduzíveis. O cenário
 **`calibrado`** liga tudo e usa os números do BCB; é o cenário principal da pesquisa.
+
+### Estrutura sorteada (`estrutura_aleatoria`, cenário `aleatorio`)
+
+Pedido da [reunião de 01/10](../docs/reunioes/2026-10-01.md). Com `estrutura_aleatoria: true`, a
+cada semente o gerador sorteia, antes de criar as contas (`simulation.draw_structure`):
+
+| O quê | Como | Por quê |
+|-------|------|---------|
+| nº de quadrilhas | `1 + Poisson(n_rings - 1)` | `n_rings` vira a média |
+| laranjas por quadrilha | `1 +` binomial negativa, média `mules_per_ring - 1` | quadrilhas muito desiguais: muitas pequenas, poucas grandes |
+| vítimas por quadrilha | binomial negativa, média `victims_per_ring` (pelo menos uma por laranja) | idem |
+| intermediários | Poisson com média `chain_length`, de 1 a 6 (2 a 6 se houver tipologias além da cadeia) | |
+| laranjas recrutadas | fração Beta(2, 3), média 40%, por quadrilha | parte das laranjas é conta antiga cedida ou alugada |
+| o que a coletora faz | acumula (30%), saca para uma corretora (40%) ou espalha em 5 a 29 Pix (30%) | cada quadrilha tira o dinheiro de um jeito |
+| nº de comércios | 3% a 7% das pessoas | |
+| folha e fornecedores | 2 a 6 funcionários e 0,5 a 2 pagamentos por semana, em média, por comércio | o comércio também paga, em vez de só receber |
+
+Os papéis de cada conta já eram sorteados (os ids são embaralhados); agora o tamanho de cada
+papel também é. O sorteio usa um gerador próprio (`default_rng([seed, 1])`), então o resto do
+dataset continua determinado pela semente. `gerar_dataset.py --aleatorio` grava o que foi
+sorteado em `dataset_meta.json` (`estrutura`). Desligado (o padrão), nada muda: o teste da
+impressão digital continua passando.
+
+### O papel de cada conta confere? (`audit_roles`)
+
+`simulation.audit_roles` confere, conta por conta, se o papel bate com o que a conta fez. O
+comércio é PJ e só paga salário e fornecedor; a laranja recebe golpe e repassa; a coletora
+recebe repasses e é a única que tira o dinheiro; a vítima pagou um golpe e não é fraudadora.
+`python scripts/auditar_papeis.py` roda isso em todos os cenários (20 sementes cada). O
+resultado está em [`docs/resultados.md`](../docs/resultados.md). Com a estrutura fixa, há
+duas falhas raras do gerador, mantidas para os resultados antigos não mudarem:
+
+* **laranja sem golpe:** cada vítima sorteia a laranja da quadrilha, então ~1,7% das laranjas
+  nunca recebe golpe. Ela continua com o rótulo de fraude, mas só faz Pix de camuflagem;
+* **vítima recrutada:** com `p_recruited_mule`, uma pessoa que foi vítima de uma quadrilha pode
+  ser recrutada como laranja de outra (2 casos nos 40 datasets com laranjas recrutadas).
+
+Com `estrutura_aleatoria`, as duas são evitadas: cada laranja recebe ao menos um golpe, e
+vítimas não são recrutadas.
 
 O que continua simplificado, mesmo no `calibrado`:
 

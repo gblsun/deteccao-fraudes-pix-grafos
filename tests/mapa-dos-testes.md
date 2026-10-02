@@ -23,7 +23,7 @@ instalado.
 
 | Arquivo | Módulo | Principais verificações |
 |---------|--------|-------------------------|
-| `test_simulation.py` | `simulation` | mesma semente = mesmo dataset; papéis e rótulos; parâmetros de realismo (horário, idade, inativos, relógio de atividade) |
+| `test_simulation.py` | `simulation` | mesma semente = mesmo dataset; papéis e rótulos; parâmetros de realismo (horário, idade, inativos, relógio de atividade); auditoria de papéis em todos os cenários; estrutura aleatória (varia com a semente, não muda nada quando desligada) |
 | `test_graph_tools.py` | `graph` | agregação de Pix repetidos, CSV de exemplo, matriz de adjacência, trilha do dinheiro |
 | `test_features.py` | `features` | cada atributo calculado à mão num grafo pequeno |
 | `test_temporal.py` | `temporal` | caminhos que respeitam o tempo, espera máxima, tempo de permanência |
@@ -32,7 +32,7 @@ instalado.
 | `test_algorithms.py` | `algorithms` | caminho gargalo, ramificação máxima, VF2, HITS, cosseno = ângulo entre vetores |
 | `test_network.py` | `network` | expoente da lei de potência recuperado, BA × ER, componente gigante fraca e forte, passeios que terminam na coletora (ou passam por ela, com `collector_payouts`) |
 | `test_patterns.py` | `patterns` | formato dos padrões, comissão por salto, injeção |
-| `test_anomaly.py` | `anomaly`, `evaluation` | o detector acha o ponto isolado; métricas num ranking perfeito |
+| `test_anomaly.py` | `anomaly`, `evaluation` | o detector acha o ponto isolado; KNN usa todas as vizinhas, K-Means ignora grupos pequenos de anômalas, PCA pega quem quebra a correlação; métricas num ranking perfeito |
 | `test_evaluation.py` | `evaluation`, `visualization` | recall por grupo; matriz de resultados |
 | `test_stats.py` | `stats` | delta de Cliff, Holm, bootstrap, testes pareados, modelo nulo |
 | `test_experiment.py` | `experiment` | uma rodada por semente; cenários válidos |

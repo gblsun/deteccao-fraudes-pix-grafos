@@ -42,6 +42,9 @@ ponta.
 - [Isolation Forest](isolation-forest.md)
 - [DBSCAN e k-distance](dbscan-e-k-distance.md)
 - [Local Outlier Factor (LOF)](lof.md)
+- [KNN (k vizinhos mais próximos)](knn.md) — distância às vizinhas, ou voto delas
+- [K-Means](k-means.md) — distância ao centro do grupo
+- [PCA](pca.md) — erro de reconstrução
 - [Propagação de risco](propagacao-de-risco.md) — culpa por associação
 - [Random Forest](random-forest.md) — teto supervisionado
 - [FRAUDAR](fraudar.md) — blocos densos resistentes a camuflagem
