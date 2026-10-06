@@ -33,6 +33,7 @@ com exemplos de uso.
 | [`gerar_ilustracoes.py`](gerar_ilustracoes.py) | figuras explicativas do README: padrões, GIF da quadrilha e recorte da rede | configuração | `reports/figures/padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | ~1 min |
 | [`criar_grafo.py`](criar_grafo.py) | grafos avulsos: padrões, CSVs quaisquer, trilha do dinheiro, fluxo | CSV ou padrão | o arquivo de `--saida` | segundos |
 | [`exportar_grafo_de_notas.py`](exportar_grafo_de_notas.py) | grafo de notas do Obsidian em JSON, para agentes de IA (ver [obsidian.md](../docs/obsidian.md)) | notas `.md` do cofre | `docs/grafo-de-notas.json` | segundos |
+| [`buscar.py`](buscar.py) | busca única no código (Graphify) e no texto de todas as notas, sem acentos nem LLM; para agentes de IA (ver [obsidian.md](../docs/obsidian.md)) | `graphify-out/graph.json`, notas `.md`, `docs/grafo-de-notas.json` | só imprime | ~1 s |
 | [`ilustrar_grafos_de_conhecimento.py`](ilustrar_grafos_de_conhecimento.py) | figuras do README: grafo de notas (cores do Obsidian) e mapa do código (Graphify) | `docs/grafo-de-notas.json`, `graphify-out/graph.json` | `reports/figures/grafo_de_notas.png`, `grafo_do_codigo.png` | segundos |
 
 `avaliar_robustez.py`, `avaliar_cenarios.py`, `avaliar_propagacao.py` e `avaliar_modelos.py`
