@@ -694,6 +694,11 @@
  "arestas": [
   {
    "de": "CLAUDE.md",
+   "para": ".claude/settings.json",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "CLAUDE.md",
    "para": "docs/grafo-de-notas.json",
    "tipo": "arquivo"
   },
@@ -4150,6 +4155,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/baixar_dados_bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/buscar.py",
    "tipo": "arquivo"
   },
   {

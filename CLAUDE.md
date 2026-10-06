@@ -32,11 +32,20 @@ nº 105/2001), que protege os dados de transações Pix.
   este resultado?"), consulte [docs/grafo-de-notas.json](docs/grafo-de-notas.json): cada
   nota com título e tags, e cada link dela para outra nota ou para um arquivo de código.
   É o grafo do Obsidian em JSON; leia as notas encontradas depois.
+- **Comece qualquer busca por** `python scripts/buscar.py termo [--so codigo|notas]`: uma
+  consulta só no código (Graphify) e no texto de todas as notas, sem acentos, com número
+  da linha e os .py citados nas notas (~300-600 tokens). Use grep só se ela não achar.
 - Para perguntas sobre o **código** (quem chama esta função, o que quebra se eu mudar
-  aquilo, como um script chega num módulo), use o grafo do Graphify antes de fazer grep:
-  leia `graphify-out/GRAPH_REPORT.md` e consulte com `.venv\Scripts\graphify affected "graph_features"`,
-  `graphify path "A" "B"`, `graphify explain "X"` ou `graphify query "..."`. Depois de mudar
-  o código, `graphify update .` (local, sem LLM). Detalhes em [docs/obsidian.md](docs/obsidian.md).
+  aquilo, como um script chega num módulo), use o grafo do Graphify antes de fazer grep,
+  do mais barato para o mais caro: `.venv\Scripts\graphify affected "graph_features"`,
+  `graphify path "A" "B"` e `graphify explain "X"` (~250-400 tokens cada); depois
+  `graphify query "..." --budget 800`. Do `graphify-out/GRAPH_REPORT.md`, leia só o topo
+  (até `## Communities`, ~900 tokens); o resto é a lista de comunidades. Nunca abra o
+  `graph.json` (~430 mil tokens). Depois de mudar o código, `graphify update .` (local,
+  sem LLM). Detalhes em [docs/obsidian.md](docs/obsidian.md).
+- Arquivos grandes que não se leem inteiros: `reports/results/*.csv` (use `head` ou pandas),
+  notebooks (`*.ipynb`) e `reports/estudos/rede_completa.html`. O
+  [.claude/settings.json](.claude/settings.json) bloqueia a leitura dos piores.
 - Ao ler a documentação de uma pasta, abra a **nota-mapa** (`scripts/mapa-dos-scripts.md`,
   `docs/glossario/glossario.md`...), não o `README.md`, que é só um ponteiro para o GitHub.
 

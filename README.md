@@ -321,13 +321,21 @@ função, ou seja, o que precisa ser revisto junto.
 prepare() --calls--> build_features() --calls--> graph_features()
 ```
 
+**Busca única:** `python scripts/buscar.py "propagação de risco"` procura no código e no
+texto de todas as notas de uma vez, sem acentos, e lista os `.py` citados nas notas
+achadas (ver [docs/obsidian.md](docs/obsidian.md)).
+
 Outros comandos: `graphify explain "propagate_risk"` (vizinhos de uma função),
 `graphify god-nodes` (as peças centrais) e `graphify query "..."` (busca por tema).
 
 **Economiza tokens?** Numa medição neste repositório (tokens estimados como bytes ÷ 4), a
-pergunta "o que quebra se eu mudar `graph_features`?" custou ~120 tokens pelo grafo,
-contra ~3.350 com grep e leitura dos arquivos. A visão geral pelo `GRAPH_REPORT.md` custou
-~2.900 tokens, contra ~41.000 lendo `src/pixfraud/` inteiro. Numa sessão inteira o ganho
+pergunta "o que quebra se eu mudar `graph_features`?" custou ~240 tokens pelo grafo,
+contra ~3.350 com grep e leitura dos arquivos. A visão geral pelo topo do `GRAPH_REPORT.md`
+(resumo, nós centrais e conexões, até `## Communities`) custa ~900 tokens, contra ~41.000
+lendo `src/pixfraud/` inteiro. O `.graphifyignore` deixa de fora as notas que não falam do
+código (leituras, diário, atas, ideias, modelos de nota e relatório), que já estão no grafo
+de notas: o grafo caiu de 1.617 para 1.267 nós e de 111 para 84 comunidades, e o relatório
+ficou 23% menor. Numa sessão inteira o ganho
 é menor, de uns 20 a 40%, porque para editar uma função o agente ainda precisa ler o
 arquivo. O grafo ajuda a descobrir **onde** mexer e **o que** quebra.
 

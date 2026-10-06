@@ -12,3 +12,13 @@ relatorio/abnt.csl
 .obsidian/
 .vscode/
 .github/
+# notas que não falam do código: já estão no grafo de notas (docs/grafo-de-notas.json).
+# Os fichamentos repetem os mesmos títulos de seção e viravam uma comunidade cada um.
+docs/leituras/
+docs/diario/
+docs/reunioes/
+docs/futuro/
+docs/modelos/
+relatorio/
+debug.log
+*.csv
