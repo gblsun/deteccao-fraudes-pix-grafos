@@ -89,14 +89,28 @@ modelos:
     max_iter: 300          # para antes, quando o erro de validação deixa de cair
     contamination: 0.05
     seed: 42
-  knn:                     # reunião de 01/10
-    n_neighbors: 10        # escore: distância média às 10 contas mais parecidas
+  knn:
+    n_neighbors: 10        # escore: distância média aos 10 vizinhos mais próximos
     contamination: 0.05
   kmeans:
-    n_clusters: 8
-    min_cluster_fraction: 0.01  # grupos menores que 1% das contas não contam como "normais"
+    n_clusters: 8          # grupos de perfis de conta
+    large_fraction: 0.9    # os maiores grupos, somando 90% das contas, servem de referência
     contamination: 0.05
     seed: 42
   pca:
-    variance: 0.9          # componentes que explicam 90% da variação; o escore é o que sobra
+    components: all        # all, major (90% da variância) ou minor (as demais)
+    weighted: true         # divide cada projeção pela variância da componente
     contamination: 0.05
+  # Supervisionados (tetos, com validação cruzada); a semente vem de cada estudo.
+  random_forest:
+    n_estimators: 300
+    max_depth: null          # sem limite de profundidade
+    min_samples_leaf: 1
+    max_features: sqrt       # atributos sorteados a cada corte
+  gradient_boosting:
+    max_iter: 300
+    learning_rate: 0.05
+    min_samples_leaf: 5      # folhas pequenas: com poucas fraudes, 20 (o padrão) não isola nenhuma
+    max_leaf_nodes: 31
+# Os hiperparâmetros acima são os escolhidos à mão. scripts/otimizar_hiperparametros.py
+# procura os melhores em redes de validação e grava configs/experimento_otimizado.yaml.

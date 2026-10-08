@@ -20,21 +20,15 @@ from datetime import datetime
 from pathlib import Path
 
 import networkx as nx
-import numpy as np
 import pandas as pd
 import yaml
-from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
-from sklearn.model_selection import KFold, StratifiedKFold, cross_val_predict
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import FunctionTransformer, StandardScaler
 
-from pixfraud.anomaly import DETECTORS, Detection
 from pixfraud.evaluation import evaluate
 from pixfraud.features import FEATURE_SETS, build_features
 from pixfraud.flow import label_spreading, propagate_risk
 from pixfraud.graph import build_graph
-from pixfraud.graph_models import GRAPH_DETECTORS
+from pixfraud.models import DETECTORS, GRAPH_DETECTORS, SUPERVISED, Detection
+from pixfraud.models.supervised import random_forest_known_fraud_scores
 from pixfraud.simulation import SimulationConfig, generate_dataset, with_overrides
 
 # Pares (a, b) de conjuntos de atributos comparados nos estudos com várias
@@ -47,8 +41,8 @@ COMPARISONS = [
     ("completo", "tabular"),
 ]
 REPEATED_METRICS = ["average_precision", "precision_at_k", "roc_auc", "f1"]
-# Tetos supervisionados de ``supervised_scores`` (a GNN fica em ``pixfraud.gnn``, opcional).
-SUPERVISED_MODELS = ("random_forest", "gradient_boosting", "knn_supervisionado")
+# Tetos supervisionados de ``supervised_scores`` (as GNN ficam em ``pixfraud.models.supervised``, opcionais).
+SUPERVISED_MODELS = tuple(SUPERVISED)
 
 
 @dataclass
@@ -187,6 +181,7 @@ def supervised_scores(
     seed: int = 42,
     folds: int = 5,
     model: str = "random_forest",
+    **params,
 ) -> pd.Series:
     """Probabilidade de fraude de cada conta dada por um modelo que **viu os rótulos**.
 
@@ -194,50 +189,22 @@ def supervised_scores(
     cruzada estratificada, cada conta recebe o escore de um modelo treinado
     sem ela. Numa situação real esses rótulos não existiriam (ou seriam
     poucos), então a distância até este teto mostra quanto se perde por não
-    tê-los. ``model``: ``random_forest``, ``gradient_boosting`` (árvores em
-    sequência, cada uma corrigindo o erro das anteriores, no estilo LightGBM) ou
-    ``knn_supervisionado`` (a fração de fraudes entre as contas mais parecidas,
-    com os atributos na mesma escala dos detectores: log1p e padronização).
+    tê-los. ``model``: um nome de ``pixfraud.models.SUPERVISED``
+    (``random_forest`` ou ``gradient_boosting``); ``params`` são os
+    hiperparâmetros dele (a seção ``modelos`` da configuração).
     """
-    y = labels.reindex(features.index).astype(bool).to_numpy()
-    if model == "random_forest":
-        model = RandomForestClassifier(n_estimators=300, class_weight="balanced_subsample", random_state=seed,
-                                       n_jobs=-1)
-    elif model == "gradient_boosting":
-        # folhas pequenas: com ~15 fraudes no dataset, o padrão (20 contas por folha) não isola nenhuma
-        model = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.05, min_samples_leaf=5,
-                                               class_weight="balanced", random_state=seed)
-    elif model == "knn_supervisionado":
-        # vizinhas pesadas pela distância; a escala vem do mesmo log1p dos detectores
-        model = make_pipeline(FunctionTransformer(np.log1p), StandardScaler(),
-                              KNeighborsClassifier(n_neighbors=10, weights="distance"))
-    else:
+    if model not in SUPERVISED:
         raise ValueError(f"modelo supervisionado desconhecido: {model} (use um de {SUPERVISED_MODELS})")
-    splitter = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)
-    proba = cross_val_predict(model, features.to_numpy(dtype=float), y, cv=splitter, method="predict_proba")[:, 1]
-    return pd.Series(proba, index=features.index, name="score")
+    return SUPERVISED[model](features, labels, seed=seed, folds=folds, **params)
 
 
-def known_fraud_scores(features: pd.DataFrame, known: list, seed: int = 42, folds: int = 5) -> pd.Series:
+def known_fraud_scores(features: pd.DataFrame, known: list, seed: int = 42, folds: int = 5, **params) -> pd.Series:
     """Random Forest treinado só com as fraudes **já conhecidas**; o resto conta como "não fraude".
 
     É o par tabular de ``pixfraud.gnn.sage_known_fraud_scores``, com a mesma
-    divisão: as contas não rotuladas são separadas em ``folds`` dobras, e cada
-    uma recebe a previsão de um modelo treinado com as fraudes conhecidas e as
-    outras dobras. As contas de ``known`` recebem 1.0; avalie só nas demais.
+    divisão (ver ``models.supervised.random_forest.random_forest_known_fraud_scores``).
     """
-    X = features.to_numpy(dtype=float)
-    y = features.index.isin(known)
-    positives, unlabeled = np.flatnonzero(y), np.flatnonzero(~y)
-    proba = np.ones(len(features))
-    splitter = KFold(n_splits=folds, shuffle=True, random_state=seed)
-    for rest, held_out in splitter.split(unlabeled):
-        train = np.concatenate([positives, unlabeled[rest]])
-        model = RandomForestClassifier(n_estimators=300, class_weight="balanced_subsample", random_state=seed,
-                                       n_jobs=-1)
-        model.fit(X[train], y[train])
-        proba[unlabeled[held_out]] = model.predict_proba(X[unlabeled[held_out]])[:, 1]
-    return pd.Series(proba, index=features.index, name="score")
+    return random_forest_known_fraud_scores(features, known, seed=seed, folds=folds, **params)
 
 
 # Todos os modelos da vitrine (``scripts/avaliar_modelos.py`` e o explorador da rede),

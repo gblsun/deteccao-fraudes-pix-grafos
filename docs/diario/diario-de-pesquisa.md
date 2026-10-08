@@ -24,6 +24,7 @@ assim. É o registro que nenhum resultado salvo em `reports/` guarda.
 | [2026-09-26](2026-09-26.md) | regra da LGPD, dataset com semente sorteada, pipeline em um comando com tempo por etapa, FRAUDAR avaliado e primeira GNN (DOMINANT e GraphSAGE) |
 | [2026-09-28](2026-09-28.md) | GraphSAGE com poucos rótulos: a vantagem da GNN não sobrevive, e a propagação de risco segue melhor |
 | [2026-09-29](2026-09-29.md) | anotações da reunião de 24/09: 1000 sementes, tipo de rede, cosseno, passeios aleatórios e coletora ativa |
+| [2026-10-08](2026-10-08.md) | kNN, k-means e PCA; modelos em pastas por tipo e família; todos os modelos nos cenários realistas; otimização de hiperparâmetros (validação × teste); explorador com escolha de semente; testes de hipótese |
 
 Cada nota diária deve apontar para o que ela menciona: a seção de
 [resultados](../resultados.md), o script que rodou em [`scripts/`](../../scripts/mapa-dos-scripts.md)

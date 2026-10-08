@@ -24,9 +24,9 @@ from collections import defaultdict, deque
 
 import pandas as pd
 
-from pixfraud.anomaly import DETECTORS
 from pixfraud.experiment import prepare
 from pixfraud.features import FEATURE_SETS
+from pixfraud.models import DETECTORS
 
 
 def exposure_times(transactions: pd.DataFrame, fraud_accounts) -> pd.Series:

@@ -173,8 +173,22 @@ def _evaluate(simulation, name, seed, config, conjunto, use_gnn) -> list[dict]:
     known_legit = list(rng.choice(legit, size=round(KNOWN_FRACTION * len(legit)), replace=False))
     evaluated = labels.drop(known + known_legit)
 
-    scores = all_model_scores(prepared, models, FEATURE_SETS[conjunto], known, known_legit, seed=seed,
-                              use_gnn=use_gnn, reference=REFERENCE, rank_index=evaluated.index)
+    columns = FEATURE_SETS[conjunto]
+    scores = {m: detect(prepared.features[columns], **models.get(m, {})).scores for m, detect in DETECTORS.items()}
+    scores |= {m: detect(prepared.graph, **models.get(m, {})).scores for m, detect in GRAPH_DETECTORS.items()}
+    scores["propagacao_relativa"] = propagate_risk(prepared.graph, known, relative=True)
+    scores["label_spreading"] = label_spreading(prepared.graph, known, known_legit)
+
+    def percentile(model):
+        return scores[model].reindex(evaluated.index).rank(pct=True)
+
+    scores["combinado"] = (percentile("propagacao_relativa") + percentile(REFERENCE)) / 2
+    scores["label_spreading_combinado"] = (percentile("label_spreading") + percentile(REFERENCE)) / 2
+    for model in SUPERVISED_MODELS:
+        scores[model] = supervised_scores(prepared.features[columns], labels, seed=seed, model=model,
+                                          **models.get(model, {}))
+    if use_gnn:
+        scores["graphsage"] = gnn.graphsage_scores(prepared.graph, prepared.features[columns], labels, seed=seed)
 
     common = {"cenario": name, "semente": seed, "atributos": "vitrine", "taxa_fraude": float(evaluated.mean()),
               "fraudes_avaliadas": int(evaluated.sum()), "contas_avaliadas": len(evaluated),

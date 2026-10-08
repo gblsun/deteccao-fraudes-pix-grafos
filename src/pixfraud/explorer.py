@@ -1,7 +1,8 @@
 """Explorador interativo da rede inteira: uma página HTML com sigma.js (WebGL).
 
 Mostra todas as contas e Pix de uma vez, com ferramentas dinâmicas: busca de
-conta, filtro por papel, cor por papel / risco / comunidade, clique para ver a
+conta, filtro por papel, cor por papel / risco (de um ou vários modelos, com
+seletor) / comunidade, clique para ver a
 vizinhança e os detalhes de uma conta, e uma linha do tempo que mostra a rede
 crescendo dia a dia (com botão de "tocar"). Com o risco de vários modelos, cada
 um ganha uma aba: a cor, o ranking e os detalhes da conta seguem a aba escolhida.
@@ -104,22 +105,31 @@ def explorer_payload(
     positions: dict | None = None,
     seed: int = 42,
     center_roles: Iterable[str] = CENTER_ROLES,
-    models: dict[str, dict] | None = None,
-    initial_model: str | None = None,
+    risk_groups: dict[str, str] | None = None,
+    labels: pd.Series | None = None,
+    initial_model: int = 0,
 ) -> dict:
     """Dados compactos (listas de números) que a página do explorador consome.
+
+    ``labels`` (o gabarito: ``True`` para conta fraudulenta) liga o modo de cor
+    "Acertos" e a caixa de desempenho (AP e precision@k do modelo escolhido).
+    ``initial_model`` é a posição, em ``risk``, do modelo que a página abre selecionado.
 
     As contas com papel em ``center_roles`` (as da quadrilha) ficam no centro do
     desenho (ver ``community_layout``); passe ``()`` para desligar.
 
-    ``risk`` é um escore (maior = mais suspeita) ou um dicionário ``{modelo:
-    escore}``, e cada modelo vira uma aba da página. ``models`` descreve cada
-    um (todas as chaves são opcionais): ``label`` (nome na aba), ``family``
-    (as abas são agrupadas por família, na ordem em que aparecem), ``color``,
-    ``metrics`` (``{"average_precision": ..., "precision_at_k": ...}``, mostradas
-    na aba) e ``known`` (contas cujo rótulo o modelo usou, marcadas nos detalhes).
-    ``initial_model`` é a aba aberta ao carregar a página (padrão: a primeira).
+    ``risk``: um escore por conta, ou vários, como ``{nome do modelo: escores}``;
+    com vários, a página ganha um seletor de modelo, e ``risk_groups``
+    (``{nome do modelo: grupo}``, ex.: "Supervisionados") separa a lista em
+    grupos. Cada escore vira percentil, para que modelos de escalas diferentes
+    usem a mesma escala de cor.
     """
+    if risk is None:
+        risk = {}
+    elif isinstance(risk, pd.Series):
+        risk = {"risco": risk}
+    risk_groups = risk_groups or {}
+    percentiles = [scores.rank(pct=True) for scores in risk.values()]
     if communities is None:
         communities = detect_communities(graph, seed=seed)
     if positions is None:
@@ -136,24 +146,6 @@ def explorer_payload(
         fraud_pairs = transactions.loc[transactions["is_fraud"].astype(bool), ["sender", "receiver"]]
         edge_fraud = {tuple(p) for p in fraud_pairs.itertuples(index=False)}
 
-    scores = {} if risk is None else dict(risk) if isinstance(risk, dict) else {"risco": risk}
-    risk_models, risk_k, risk_p = [], [], []
-    for key, score in scores.items():
-        score = score.reindex(nodes)
-        percentile = score.rank(pct=True)
-        position = score.rank(ascending=False, method="min")
-        meta = (models or {}).get(key, {})
-        known = {index[v] for v in meta.get("known", ()) if v in index}
-        risk_models.append({
-            "key": str(key),
-            "label": str(meta.get("label", key)),
-            "family": str(meta.get("family", "")),
-            "color": meta.get("color"),
-            "metrics": {m: round(float(v), 4) for m, v in meta.get("metrics", {}).items()},
-            "known": sorted(known),
-        })
-        risk_k.append([None if pd.isna(x) else round(float(x), 4) for x in percentile])
-        risk_p.append([None if pd.isna(x) else int(x) for x in position])
     node_rows = []
     for i, v in enumerate(nodes):
         degree = graph.in_degree(v) + graph.out_degree(v)
@@ -163,6 +155,9 @@ def explorer_payload(
             "y": round(float(xy[i, 1]), 2),
             "s": round(1.0 + 0.75 * math.log2(1 + degree), 2),
             "r": str(roles.get(v, "?")) if roles is not None else "?",
+            # 5 casas: o bastante para a ordem das contas (e a AP calculada na página) sobreviver em redes grandes
+            "k": [round(float(p[v]), 5) if v in p.index else None for p in percentiles],
+            "g": int(bool(labels.get(v, False))) if labels is not None else None,
             "c": int(communities.get(v, -1)),
             "i": graph.in_degree(v),
             "o": graph.out_degree(v),
@@ -187,9 +182,10 @@ def explorer_payload(
         "nodes": node_rows,
         "edges": edges,
         "days": days,
-        "hasRisk": bool(scores),
-        "risk": {"models": risk_models, "k": risk_k, "p": risk_p,
-                 "initial": list(scores).index(initial_model) if initial_model in scores else 0},
+        "hasRisk": bool(risk),
+        "hasLabels": labels is not None,
+        "initialModel": min(max(int(initial_model), 0), max(len(risk) - 1, 0)),
+        "models": [{"name": str(name), "group": str(risk_groups.get(name, ""))} for name in risk],
         "hasFraudEdges": bool(edge_fraud),
         "communities": int(communities.nunique()),
     }
@@ -206,13 +202,13 @@ def network_explorer_html(
     positions: dict | None = None,
     seed: int = 42,
     center_roles: Iterable[str] = CENTER_ROLES,
-    models: dict[str, dict] | None = None,
-    initial_model: str | None = None,
+    risk_groups: dict[str, str] | None = None,
+    labels: pd.Series | None = None,
+    initial_model: int = 0,
 ) -> str:
-    """Página HTML completa do explorador (ver ``save_network_explorer`` e, para ``risk`` e
-    ``models``, ``explorer_payload``)."""
+    """Página HTML completa do explorador (ver ``save_network_explorer``)."""
     payload = explorer_payload(graph, transactions, roles, risk, communities, positions, seed, center_roles,
-                               models, initial_model)
+                               risk_groups, labels, initial_model)
     data = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     page = _TEMPLATE
     for key, value in {
@@ -339,13 +335,19 @@ _TEMPLATE = r"""<meta charset="utf-8">
   }
   .panel h2 { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
   .field { display: flex; flex-direction: column; gap: 6px; }
+  .field[hidden] { display: none; }
   label { cursor: pointer; }
-  input[type="search"], select {
+  .perf { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .perf div { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+  .perf b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .perf span { color: var(--muted); font-size: 11.5px; }
+  .perf .wide { grid-column: 1 / -1; }
+  input[type="search"], input[type="number"], select {
     font: inherit; color: var(--ink); background: var(--canvas); border: 1px solid var(--line);
     border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;
   }
   input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .segmented { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .segmented { display: grid; grid-template-columns: repeat(4, 1fr); font-size: 12.5px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
   .segmented button { font: inherit; border: 0; background: var(--canvas); color: var(--ink); padding: 6px 4px; cursor: pointer; }
   .segmented button + button { border-left: 1px solid var(--line); }
   .segmented button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
@@ -454,7 +456,18 @@ _TEMPLATE = r"""<meta charset="utf-8">
           <button id="mode-role" type="button" data-mode="role" aria-pressed="true">Papel</button>
           <button id="mode-risk" type="button" data-mode="risk" aria-pressed="false">Risco</button>
           <button id="mode-community" type="button" data-mode="community" aria-pressed="false">Grupo</button>
+          <button id="mode-hits" type="button" data-mode="hits" aria-pressed="false" title="Fraudes achadas, alarmes falsos e fraudes perdidas entre as k contas mais suspeitas">Acertos</button>
         </div>
+      </div>
+      <div class="field" id="model-field" hidden>
+        <h2><label for="risk-model">Modelo do risco</label></h2>
+        <select id="risk-model"></select>
+        <span class="hint">escolher um modelo pinta as contas pelo risco que ele deu</span>
+      </div>
+      <div class="field" id="perf-field" hidden>
+        <h2><label for="top-k">Contas investigadas (top-k)</label></h2>
+        <input id="top-k" type="number" min="1" step="1">
+        <div class="perf" id="perf" aria-live="polite"></div>
       </div>
       <div class="field">
         <h2>Papéis</h2>
@@ -521,9 +534,7 @@ _TEMPLATE = r"""<meta charset="utf-8">
   const money = (v) => "R$ " + Math.round(v).toLocaleString("pt-BR");
   const nodes = DATA.nodes, E = DATA.edges, nDays = Math.max(DATA.days.length, 1);
 
-  const RISK_DATA = DATA.risk || { models: [], k: [], p: [], initial: 0 };
-  const MODELS = RISK_DATA.models;
-  const state = { model: 0, mode: "role", day: nDays - 1, minAmount: 0, onlyFraud: false, normalAlpha: 0.12, edgeScale: 1, hovered: null, roles: new Set(), selected: null, neighbors: new Set() };
+  const state = { mode: "role", model: DATA.initialModel || 0, day: nDays - 1, minAmount: 0, onlyFraud: false, normalAlpha: 0.12, edgeScale: 1, hovered: null, roles: new Set(), selected: null, neighbors: new Set() };
   const FRAUD_ROLES = new Set(["laranja", "intermediario", "coletor"]);
   // Cor das setas do dinheiro da quadrilha, pelo papel de quem pagou (mais saturadas que as dos nós).
   const FLOW_COLORS = { vitima: "#2f9e44", laranja: "#f76707", intermediario: "#ae3ec9", coletor: "#e03131" };
@@ -627,10 +638,94 @@ _TEMPLATE = r"""<meta charset="utf-8">
     $("center").classList.add("single");
   }
   if (!DATA.hasFraudEdges) { $("only-fraud").disabled = true; }
-  document.querySelectorAll(".segmented button").forEach((b) => b.addEventListener("click", () => {
-    setMode(b.dataset.mode);
+  function setMode(mode) {
+    state.mode = mode;
+    document.querySelectorAll(".segmented button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.mode === mode)));
     update();
-  }));
+  }
+  document.querySelectorAll(".segmented button").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
+  // Seletor de modelo: só aparece com mais de um escore; os modelos ficam separados pelo grupo (supervisionado ou não).
+  if (DATA.models.length > 1) {
+    const picker = $("risk-model"), groups = new Map();
+    DATA.models.forEach((m, k) => {
+      let parent = picker;
+      if (m.group) {
+        if (!groups.has(m.group)) { const g = document.createElement("optgroup"); g.label = m.group; picker.appendChild(g); groups.set(m.group, g); }
+        parent = groups.get(m.group);
+      }
+      const o = document.createElement("option");
+      o.value = String(k);
+      o.textContent = m.name;
+      parent.appendChild(o);
+    });
+    picker.value = String(state.model);
+    picker.addEventListener("change", (e) => {
+      state.model = +e.target.value;
+      setMode(state.mode === "hits" ? "hits" : "risk");
+      details();
+    });
+    $("model-field").hidden = false;
+  }
+  const riskOf = (n) => n.k[state.model];
+
+  // ---- ranking e desempenho do modelo (com o gabarito) ----
+  // Ordem das contas por modelo, da mais suspeita para a menos, calculada uma vez por modelo.
+  const orders = new Map();
+  function order(model) {
+    if (!orders.has(model)) {
+      const idx = nodes.map((_, i) => i).filter((i) => nodes[i].k[model] !== null && nodes[i].k[model] !== undefined);
+      idx.sort((a, b) => nodes[b].k[model] - nodes[a].k[model]);
+      const position = new Map(idx.map((i, p) => [i, p]));
+      orders.set(model, { idx, position });
+    }
+    return orders.get(model);
+  }
+  const nFraud = DATA.hasLabels ? nodes.reduce((s, n) => s + (n.g ? 1 : 0), 0) : 0;
+  state.topK = Math.max(1, nFraud);
+  // Average precision: média da precisão em cada fraude encontrada ao descer a fila.
+  function averagePrecision(model) {
+    let hits = 0, sum = 0;
+    order(model).idx.forEach((i, p) => { if (nodes[i].g) { hits += 1; sum += hits / (p + 1); } });
+    return nFraud ? sum / nFraud : 0;
+  }
+  function topKHits(model, k) {
+    return order(model).idx.slice(0, k).reduce((s, i) => s + (nodes[i].g ? 1 : 0), 0);
+  }
+  function outcome(i) {
+    const inTop = order(state.model).position.get(i) < state.topK;
+    if (nodes[i].g) return inTop ? "achou" : "perdeu";
+    return inTop ? "alarme_falso" : "resto";
+  }
+  const OUTCOME_COLORS = { achou: "#d62728", alarme_falso: "#f2a541", perdeu: "#7b3fbf", resto: "#9aa7a4" };
+  const OUTCOME_NAMES = { achou: "fraude achada (no top-k)", alarme_falso: "alarme falso (legítima no top-k)",
+                          perdeu: "fraude perdida (fora do top-k)", resto: "legítima fora do top-k" };
+  const pct = (x) => (100 * x).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%";
+  const num = (x, d) => x.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d });
+  function performance() {
+    if (!DATA.hasLabels || !DATA.hasRisk) return;
+    const k = state.topK, hits = topKHits(state.model, k);
+    $("perf").innerHTML =
+      '<div><b>' + num(averagePrecision(state.model), 2) + "</b><span>average precision (AP)</span></div>" +
+      '<div><b>' + pct(hits / k) + "</b><span>precisão no top-" + k + "</span></div>" +
+      '<div><b>' + hits + " de " + nFraud + "</b><span>fraudes achadas</span></div>" +
+      '<div><b>' + (k - hits) + "</b><span>alarmes falsos</span></div>" +
+      '<div class="wide"><span>Ao acaso, a AP seria ~' + num(nFraud / nodes.length, 3) +
+      " (a fração de fraudes). O top-k é a fila que um analista olharia primeiro.</span></div>";
+  }
+  if (DATA.hasLabels && DATA.hasRisk) {
+    $("perf-field").hidden = false;
+    $("top-k").max = String(nodes.length);
+    $("top-k").value = String(state.topK);
+    $("top-k").addEventListener("change", (e) => {
+      state.topK = Math.min(nodes.length, Math.max(1, Math.round(+e.target.value) || 1));
+      e.target.value = String(state.topK);
+      details();
+      update();
+    });
+  } else {
+    $("mode-hits").disabled = true;
+    $("mode-hits").title = "Precisa do gabarito (rótulos) e de um escore de risco";
+  }
   const slider = $("day");
   slider.max = String(nDays - 1);
   slider.value = String(state.day);
@@ -683,8 +778,9 @@ _TEMPLATE = r"""<meta charset="utf-8">
     const [a, b] = [rgb(color), rgb(other)];
     return "rgb(" + lerp(a[0], b[0], t) + "," + lerp(a[1], b[1], t) + "," + lerp(a[2], b[2], t) + ")";
   }
-  function nodeColor(n) {
-    if (state.mode === "risk") return riskColor(n.k);
+  function nodeColor(n, i) {
+    if (state.mode === "risk") return riskColor(riskOf(n));
+    if (state.mode === "hits") return OUTCOME_COLORS[outcome(i)];
     if (state.mode === "community") return groupColor(n.c);
     return ROLE_COLORS[n.r] || ROLE_COLORS["?"];
   }
@@ -700,8 +796,12 @@ _TEMPLATE = r"""<meta charset="utf-8">
     }
     const direction = '<span class="item arrow">seta: quem paga → quem recebe; mais grossa = mais dinheiro</span>';
     if (state.mode === "risk") {
-      const name = MODELS.length > 1 ? "<b>" + MODELS[state.model].label + "</b>: " : "";
-      box.innerHTML = '<span class="item">' + name + 'menos suspeita <span class="gradient"></span> mais suspeita</span>' + direction;
+      const model = DATA.models.length > 1 ? '<span class="item">' + DATA.models[state.model].name + ":</span>" : "";
+      box.innerHTML = model + '<span class="item">menos suspeita <span class="gradient"></span> mais suspeita</span>' + direction;
+    } else if (state.mode === "hits") {
+      const model = DATA.models.length > 1 ? '<span class="item">' + DATA.models[state.model].name + ", top-" + state.topK + ":</span>" : "";
+      box.innerHTML = model + Object.keys(OUTCOME_COLORS).map((o) =>
+        '<span class="item"><span class="dot" style="background:' + OUTCOME_COLORS[o] + '"></span>' + OUTCOME_NAMES[o] + "</span>").join("") + direction;
     } else if (state.mode === "community") {
       box.innerHTML = '<span class="item">' + DATA.communities + " grupos detectados pelo algoritmo de Louvain; cada cor é um grupo</span>" + direction;
     } else {
@@ -762,11 +862,15 @@ _TEMPLATE = r"""<meta charset="utf-8">
         const n = nodes[i];
         const out = Object.assign({}, attrs);
         if (!nodeVisible(i)) { out.hidden = true; return out; }
-        out.color = nodeColor(n);
+        out.color = nodeColor(n, i);
         if (state.selected !== null) {
           if (i === state.selected) { out.forceLabel = true; out.zIndex = 2; out.size = attrs.size * 1.6; }
           else if (state.neighbors.has(i)) { out.zIndex = 1; out.forceLabel = true; }
           else { out.color = theme.fade; out.label = ""; out.zIndex = 0; }
+        } else if (state.mode === "hits") {
+          // o que o modelo acertou ou errou fica grande e por cima; o resto recua
+          if (outcome(i) !== "resto") { out.zIndex = 2; out.size = attrs.size * 1.6 + 1.5; }
+          else { out.color = mix(out.color, theme.canvas, 0.45); }
         } else if (FRAUD_ROLES.has(n.r)) {
           out.zIndex = 1;
           if (state.mode === "role") out.size = attrs.size * 1.8 + 2;  // poucas e decisivas: maiores
@@ -916,9 +1020,9 @@ _TEMPLATE = r"""<meta charset="utf-8">
       "<dt>pagou a</dt><dd>" + n.o + " contas</dd>" +
       "<dt>recebeu</dt><dd>" + money(n.ai) + "</dd>" +
       "<dt>enviou</dt><dd>" + money(n.ao) + "</dd>" +
-      // uma casa decimal: com 2 mil contas, as 10 primeiras arredondariam todas para "100%"
-      (n.k !== null && n.k !== undefined ? "<dt>percentil de risco" + (MODELS.length > 1 ? " (" + MODELS[state.model].label + ")" : "") + "</dt><dd>" + pct(n.k) + "</dd>" : "") +
-      (n.p !== null && n.p !== undefined ? "<dt>posição no risco</dt><dd>" + n.p + "ª de " + nodes.length.toLocaleString("pt-BR") + "</dd>" : "") +
+      (DATA.hasRisk && riskOf(n) !== null ? "<dt>percentil de risco" + (DATA.models.length > 1 ? " (" + DATA.models[state.model].name + ")" : "") + "</dt><dd>" + (riskOf(n) * 100).toFixed(0) + "%</dd>" +
+        "<dt>posição na fila</dt><dd>" + (order(state.model).position.get(i) + 1).toLocaleString("pt-BR") + "ª de " + order(state.model).idx.length.toLocaleString("pt-BR") + "</dd>" : "") +
+      (DATA.hasLabels ? "<dt>gabarito</dt><dd>" + (n.g ? "fraude" : "legítima") + (DATA.hasRisk ? " · " + OUTCOME_NAMES[outcome(i)] : "") + "</dd>" : "") +
       "<dt>grupo (Louvain)</dt><dd>" + n.c + "</dd>" +
       (DATA.days.length ? "<dt>primeiro Pix</dt><dd>" + DATA.days[n.d] + "</dd>" : "") +
       "</dl>" +
@@ -939,7 +1043,7 @@ _TEMPLATE = r"""<meta charset="utf-8">
     $("day-label").textContent = DATA.days.length ? "dia " + (state.day + 1) + " de " + nDays + " (" + DATA.days[state.day] + ")" : "sem datas";
   }
 
-  function update() { legend(); stats(); renderer.refresh(); }
+  function update() { legend(); stats(); performance(); renderer.refresh(); }
 
   function retheme() { readTheme(); renderer.setSetting("labelColor", { color: theme.ink }); renderer.refresh(); }
   new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });

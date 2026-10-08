@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./graphify-out/graph.json)",
+      "Read(./reports/results/sementes_execucoes.csv)",
+      "Read(./reports/estudos/rede_completa.html)"
+    ]
+  }
+}

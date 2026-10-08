@@ -1,0 +1,103 @@
+# Gerado por scripts/otimizar_hiperparametros.py: cópia de configs/experimento.yaml com a seção
+# `modelos` trocada pelos hiperparâmetros de maior average precision nas redes de
+# validação (cenários realista, negativos_dificeis, quadrilhas_realistas; sementes 1001, 1002; 4 rodadas de busca).
+# Não edite à mão: rode o script de novo. Cada candidato testado está em
+# reports/results/otimizacao_resumo.csv.
+
+simulacao:
+  seed: 42
+  start_date: '2026-01-01'
+  n_days: 30
+  n_people: 2000
+  n_merchants: 100
+  community_size: 20
+  tx_per_person_day: 0.6
+  p_merchant: 0.4
+  p_contact: 0.8
+  amount_mu: 4.0
+  amount_sigma: 1.1
+  n_rings: 6
+  mules_per_ring: 4
+  victims_per_ring: 15
+  p_chain: 0.5
+  chain_length: 3
+  fraud_amount_shift: 1.5
+  forward_delay_min: 30
+  camouflage_tx: 3
+  fraud_hours: uniforme
+  p_new_fraud_account: 0.7
+  quiet_fraction: 0.0
+  quiet_activity: 0.1
+  merchant_amount_mu: null
+  merchant_amount_sigma: null
+  calendar: uniforme
+  employees_per_merchant: 0
+  salary_business_day: 5
+  supplier_tx_per_week: 0
+  p_organizer: 0.0
+  p_fast_forwarder: 0.0
+  p_recruited_mule: 0.0
+  collector_cashout: false
+  cashout_delay_min: 180
+  collector_payouts: 0
+  laundering_typologies:
+  - cadeia
+  p_contested: 0.0
+  contest_delay_h: 48
+atributos:
+  betweenness_k: 500
+  seed: 42
+modelos:
+  isolation_forest:
+    contamination: auto
+    max_features: 0.5
+    max_samples: 1.0
+    n_estimators: 300
+    seed: 42
+  dbscan:
+    eps: auto
+    eps_quantile: 0.95
+    max_exact: 20000
+    min_samples: 10
+  local_outlier_factor:
+    n_neighbors: 100
+  ecod:
+    contamination: 0.05
+  one_class_svm:
+    gamma: 0.03
+    max_exact: 5000
+    n_components: 300
+    nu: 0.05
+    seed: 42
+  autoencoder:
+    alpha: 0.1
+    bottleneck: 0.5
+    contamination: 0.05
+    max_iter: 300
+    seed: 42
+  knn:
+    contamination: 0.05
+    method: largest
+    n_neighbors: 10
+  kmeans:
+    contamination: 0.05
+    large_fraction: 0.99
+    n_clusters: 16
+    seed: 42
+  pca:
+    components: minor
+    contamination: 0.05
+    weighted: true
+  random_forest:
+    max_depth: null
+    max_features: sqrt
+    min_samples_leaf: 1
+    n_estimators: 300
+  gradient_boosting:
+    learning_rate: 1.0
+    max_iter: 300
+    max_leaf_nodes: 2
+    min_samples_leaf: 80
+  node2vec_if:
+    dimensions: 32
+    window: 5

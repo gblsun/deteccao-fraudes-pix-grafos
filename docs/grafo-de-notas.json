@@ -63,6 +63,13 @@
    ]
   },
   {
+   "caminho": "docs/diario/2026-10-08.md",
+   "titulo": "Diário 2026-10-08",
+   "tags": [
+    "diario"
+   ]
+  },
+  {
    "caminho": "docs/diario/diario-de-pesquisa.md",
    "titulo": "Diário de pesquisa",
    "tags": [
@@ -72,6 +79,13 @@
   {
    "caminho": "docs/futuro/deteccao-adversarial.md",
    "titulo": "Detecção sob camuflagem adversarial",
+   "tags": [
+    "ideia"
+   ]
+  },
+  {
+   "caminho": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "titulo": "Detecção conformal com controle de alarmes falsos",
    "tags": [
     "ideia"
    ]
@@ -154,6 +168,13 @@
    ]
   },
   {
+   "caminho": "docs/glossario/componente-gigante.md",
+   "titulo": "Componente gigante",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
    "caminho": "docs/glossario/comunidades-e-modularidade.md",
    "titulo": "Comunidades e modularidade (Louvain)",
    "tags": [
@@ -184,6 +205,13 @@
   {
    "caminho": "docs/glossario/delta-de-cliff.md",
    "titulo": "Delta de Cliff ($\\delta$)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/deteccao-conformal.md",
+   "titulo": "Detecção conformal (p-valor por conta)",
    "tags": [
     "glossario"
    ]
@@ -259,6 +287,13 @@
    ]
   },
   {
+   "caminho": "docs/glossario/kruskal-wallis.md",
+   "titulo": "Teste de Kruskal-Wallis",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
    "caminho": "docs/glossario/lof.md",
    "titulo": "Local Outlier Factor (LOF)",
    "tags": [
@@ -275,6 +310,13 @@
   {
    "caminho": "docs/glossario/med.md",
    "titulo": "MED (Mecanismo Especial de Devolução)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "titulo": "Otimização de hiperparâmetros",
    "tags": [
     "glossario"
    ]
@@ -329,6 +371,20 @@
    ]
   },
   {
+   "caminho": "docs/glossario/semente.md",
+   "titulo": "Semente (aleatória)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "titulo": "Supervisionado e não supervisionado",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
    "caminho": "docs/glossario/tempo-de-permanencia.md",
    "titulo": "Tempo de permanência (dwell time)",
    "tags": [
@@ -338,6 +394,13 @@
   {
    "caminho": "docs/glossario/teste-de-wilcoxon-pareado.md",
    "titulo": "Teste de Wilcoxon pareado",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/testes-para-classificadores.md",
+   "titulo": "Testes de hipótese para classificadores",
    "tags": [
     "glossario"
    ]
@@ -694,6 +757,11 @@
  "arestas": [
   {
    "de": "CLAUDE.md",
+   "para": ".claude/settings.json",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "CLAUDE.md",
    "para": "docs/grafo-de-notas.json",
    "tipo": "arquivo"
   },
@@ -724,7 +792,12 @@
   },
   {
    "de": "app/guia-do-explorador.md",
-   "para": "src/pixfraud/README.md",
+   "para": "configs/cenarios.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "configs/parametros-dos-experimentos.md",
+   "para": "configs/busca_hiperparametros.yaml",
    "tipo": "arquivo"
   },
   {
@@ -746,6 +819,11 @@
    "de": "configs/parametros-dos-experimentos.md",
    "para": "scripts/mapa-dos-scripts.md",
    "tipo": "nota"
+  },
+  {
+   "de": "configs/parametros-dos-experimentos.md",
+   "para": "src/pixfraud/models/mapa-dos-modelos.md",
+   "tipo": "arquivo"
   },
   {
    "de": "docs/cronograma.md",
@@ -893,6 +971,66 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "app/guia-do-explorador.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "docs/glossario/componente-gigante.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "docs/glossario/deteccao-conformal.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "docs/glossario/kruskal-wallis.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "docs/glossario/semente.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "docs/glossario/testes-para-classificadores.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "scripts/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "scripts/otimizar_hiperparametros.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/diario/2026-10-08.md",
+   "para": "src/pixfraud/models/mapa-dos-modelos.md",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "docs/diario/2026-09-21.md",
    "tipo": "nota"
@@ -915,6 +1053,11 @@
   {
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "docs/diario/2026-09-29.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/diario/diario-de-pesquisa.md",
+   "para": "docs/diario/2026-10-08.md",
    "tipo": "nota"
   },
   {
@@ -976,6 +1119,36 @@
    "de": "docs/futuro/deteccao-adversarial.md",
    "para": "src/pixfraud/simulation.py",
    "tipo": "arquivo"
+  },
+  {
+   "de": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "para": "app/guia-do-explorador.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "para": "docs/diario/2026-10-08.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "para": "docs/glossario/deteccao-conformal.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "para": "docs/glossario/kruskal-wallis.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "para": "docs/leituras/mapa-das-leituras.md",
+   "tipo": "nota"
   },
   {
    "de": "docs/futuro/explicabilidade-para-auditoria.md",
@@ -1090,6 +1263,11 @@
   {
    "de": "docs/futuro/ideias-futuras.md",
    "para": "docs/futuro/deteccao-adversarial.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/futuro/ideias-futuras.md",
+   "para": "docs/futuro/deteccao-conformal-com-fdr.md",
    "tipo": "nota"
   },
   {
@@ -1218,6 +1396,26 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/glossario/componente-gigante.md",
+   "para": "app/guia-do-explorador.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/componente-gigante.md",
+   "para": "docs/glossario/grafo-direcionado-ponderado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/componente-gigante.md",
+   "para": "docs/glossario/pass-through.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/componente-gigante.md",
+   "para": "src/pixfraud/network.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/glossario/comunidades-e-modularidade.md",
    "para": "app/guia-do-explorador.md",
    "tipo": "nota"
@@ -1298,6 +1496,26 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/glossario/deteccao-conformal.md",
+   "para": "docs/futuro/deteccao-conformal-com-fdr.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/deteccao-conformal.md",
+   "para": "docs/glossario/isolation-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/deteccao-conformal.md",
+   "para": "docs/glossario/testes-para-classificadores.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/deteccao-conformal.md",
+   "para": "src/pixfraud/models/unsupervised/statistical/pca.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/glossario/egonet-e-oddball.md",
    "para": "src/pixfraud/communities.py",
    "tipo": "arquivo"
@@ -1374,6 +1592,11 @@
   },
   {
    "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/componente-gigante.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/comunidades-e-modularidade.md",
    "tipo": "nota"
   },
@@ -1395,6 +1618,11 @@
   {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/delta-de-cliff.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/deteccao-conformal.md",
    "tipo": "nota"
   },
   {
@@ -1444,6 +1672,11 @@
   },
   {
    "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/kruskal-wallis.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/lof.md",
    "tipo": "nota"
   },
@@ -1455,6 +1688,11 @@
   {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/otimizacao-de-hiperparametros.md",
    "tipo": "nota"
   },
   {
@@ -1494,12 +1732,27 @@
   },
   {
    "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/semente.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/tempo-de-permanencia.md",
    "tipo": "nota"
   },
   {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/testes-para-classificadores.md",
    "tipo": "nota"
   },
   {
@@ -1578,6 +1831,41 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "docs/glossario/delta-de-cliff.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "docs/glossario/mann-whitney.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "docs/glossario/tempo-de-permanencia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "docs/glossario/testes-para-classificadores.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "src/pixfraud/models/mapa-dos-modelos.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/glossario/lof.md",
    "para": "docs/glossario/dbscan-e-k-distance.md",
    "tipo": "nota"
@@ -1620,6 +1908,31 @@
   {
    "de": "docs/glossario/med.md",
    "para": "src/pixfraud/online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "para": "configs/busca_hiperparametros.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "para": "docs/glossario/semente.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "para": "src/pixfraud/models/mapa-dos-modelos.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "para": "src/pixfraud/tuning/__init__.py",
    "tipo": "arquivo"
   },
   {
@@ -1748,6 +2061,56 @@
    "tipo": "nota"
   },
   {
+   "de": "docs/glossario/semente.md",
+   "para": "docs/glossario/intervalo-de-confianca.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/semente.md",
+   "para": "docs/glossario/isolation-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/semente.md",
+   "para": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/semente.md",
+   "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/semente.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "para": "docs/glossario/propagacao-de-risco.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "para": "src/pixfraud/models/mapa-dos-modelos.md",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/glossario/tempo-de-permanencia.md",
    "para": "docs/glossario/conta-laranja.md",
    "tipo": "nota"
@@ -1766,6 +2129,46 @@
    "de": "docs/glossario/teste-de-wilcoxon-pareado.md",
    "para": "src/pixfraud/stats.py",
    "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/bootstrap.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/deteccao-conformal.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/intervalo-de-confianca.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/kruskal-wallis.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/roc-auc.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "tipo": "nota"
   },
   {
    "de": "docs/glossario/validacao-cruzada.md",
@@ -2978,6 +3381,11 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/modelos.md",
+   "para": "src/pixfraud/models/mapa-dos-modelos.md",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/modelos/fichamento.md",
    "para": "docs/referencias.bib",
    "tipo": "arquivo"
@@ -4154,6 +4562,11 @@
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/buscar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/criar_grafo.py",
    "tipo": "arquivo"
   },
@@ -4180,6 +4593,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/importar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/otimizar_hiperparametros.py",
    "tipo": "arquivo"
   },
   {

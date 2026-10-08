@@ -22,6 +22,11 @@ ponta.
 - [Bootstrap](bootstrap.md)
 - [Intervalo de confiança (IC 95%)](intervalo-de-confianca.md)
 - [Validação cruzada estratificada](validacao-cruzada.md)
+- [Teste de Kruskal-Wallis](kruskal-wallis.md) — compara grupos, não classifica contas
+- [Testes de hipótese para classificadores](testes-para-classificadores.md) — permutação, Fisher, DeLong, McNemar
+- [Detecção conformal](deteccao-conformal.md) — um p-valor por conta, com alarmes falsos controlados
+- [Semente (aleatória)](semente.md)
+- [Otimização de hiperparâmetros](otimizacao-de-hiperparametros.md) — grade, limite da grade, validação × teste
 
 ## Teoria dos grafos
 
@@ -36,9 +41,11 @@ ponta.
 - [Egonet e OddBall](egonet-e-oddball.md)
 - [Fluxo máximo e corte mínimo](fluxo-maximo-e-corte-minimo.md)
 - [Caminho temporal](caminho-temporal.md)
+- [Componente gigante](componente-gigante.md) — fraca e forte
 
 ## Detecção
 
+- [Supervisionado e não supervisionado](supervisionado-e-nao-supervisionado.md) — e o meio-termo
 - [Isolation Forest](isolation-forest.md)
 - [DBSCAN e k-distance](dbscan-e-k-distance.md)
 - [Local Outlier Factor (LOF)](lof.md)

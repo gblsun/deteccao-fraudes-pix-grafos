@@ -120,12 +120,35 @@ graphify path "prepare" "graph_features"  # prepare -> build_features -> graph_f
 graphify explain "propagate_risk"
 ```
 
+### Busca única nos dois grafos
+
+`python scripts/buscar.py termo` procura ao mesmo tempo no grafo do código (nome das
+funções, com quem chama e o que chamam) e no **texto** de todas as notas do cofre,
+inclusive as que o Graphify deixa de fora (leituras, diário, atas). Ignora acentos,
+maiúsculas e `_`/`-`, descarta palavras como "de" e "para" e põe na frente a nota cujo
+título tem os termos. No fim lista os `.py` citados nas notas achadas: é a ponte entre o
+português das notas e o inglês do código.
+
+```text
+> python scripts/buscar.py "propagação de risco" --limite 3
+## Código (0)
+## Notas (3)
+- docs/glossario/propagacao-de-risco.md  "Propagação de risco (culpa por associação)"
+...
+## Código citado nessas notas
+- src/pixfraud/flow.py (3), ...
+```
+
+`--so codigo` ou `--so notas` restringe, e `--limite N` muda o número de resultados. Se o
+grafo do código estiver mais velho que os `.py`, a busca avisa para rodar `graphify update .`.
+
 `python scripts/reproduzir_tudo.py --etapas notas graphify --extras` atualiza os dois
 grafos (notas e código) e abre a página do Graphify no navegador e este cofre no Obsidian
 (a URI `obsidian://` só funciona se o cofre já tiver sido aberto uma vez).
 
 O `.graphifyignore` tira do grafo o `docs/proposta-original.pdf` (arquivo de submissão),
-`data/`, `reports/` e os notebooks. O `graphify update .` também lê as notas em Markdown,
+`data/`, `reports/`, os notebooks e as notas que não falam do código (leituras, diário,
+atas, ideias futuras, modelos de nota e relatório), que já estão no grafo de notas. O `graphify update .` também lê as notas em Markdown,
 mas só a estrutura (títulos e links), localmente e sem LLM. A leitura *semântica* dos
 docs (conceitos e relações extraídos do texto) exigiria mandar o texto para um LLM, e
 fica de fora de propósito: as notas já estão ligadas pelo grafo de notas. Se um dia
