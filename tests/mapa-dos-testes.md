@@ -32,7 +32,8 @@ instalado.
 | `test_algorithms.py` | `algorithms` | caminho gargalo, ramificação máxima, VF2, HITS, cosseno = ângulo entre vetores |
 | `test_network.py` | `network` | expoente da lei de potência recuperado, BA × ER, componente gigante fraca e forte, passeios que terminam na coletora (ou passam por ela, com `collector_payouts`) |
 | `test_patterns.py` | `patterns` | formato dos padrões, comissão por salto, injeção |
-| `test_anomaly.py` | `anomaly`, `evaluation` | o detector acha o ponto isolado; métricas num ranking perfeito |
+| `test_anomaly.py` | `models.unsupervised`, `evaluation` | o detector acha o ponto isolado; o k-means não perde um grupinho estranho; o PCA acha quem quebra a correlação; métricas num ranking perfeito |
+| `test_tuning.py` | `tuning`, `models` | os módulos antigos reexportam os mesmos modelos; toda grade usa modelos e hiperparâmetros que existem; a grade só se amplia na ponta do vencedor, no mesmo passo e sem passar do limite; a configuração atual entra uma vez e vence os empates |
 | `test_evaluation.py` | `evaluation`, `visualization` | recall por grupo; matriz de resultados |
 | `test_stats.py` | `stats` | delta de Cliff, Holm, bootstrap, testes pareados, modelo nulo |
 | `test_experiment.py` | `experiment` | uma rodada por semente; cenários válidos |
@@ -43,10 +44,11 @@ instalado.
 | `test_gnn_direcionada.py` | `gnn` | a GraphSAGE direcionada (`graphsage_scores`) fica bem acima do acaso e é reproduzível pela semente (pulado sem `torch_geometric`) |
 | `test_graph_models.py` | `graph_models` | FRAUDAR por remoção gulosa e node2vec + Isolation Forest |
 | `test_gnn.py` | `gnn` | a GraphSAGE acha a quadrilha só pela estrutura (atributos são ruído); o DOMINANT pontua mais a quadrilha; recusa grafo grande demais (pulado sem torch) |
-| `test_explorer.py` | `explorer` | layout por comunidades e página HTML |
+| `test_explorer.py` | `explorer` | layout por comunidades, página HTML, vários modelos no seletor e o gabarito para o modo "Acertos" |
 | `test_pipeline.py` | tudo | o pipeline de ponta a ponta num dataset pequeno |
 | `test_scripts.py` | `scripts/` | os scripts de avaliação rodam e gravam o que prometem; progresso salvo é reaproveitado |
-| `test_app.py` | `app/` | o explorador Streamlit abre todas as abas sem erro |
+| `test_app.py` | `app/` | o explorador Streamlit abre todas as abas sem erro e gera uma rede nova a partir de uma semente digitada |
+| `test_exploration.py` | `exploration` | resumo da rede calculado à mão (golpes sem contar repasses, componente gigante), top-k (achou, alarme falso, perdeu), ordem dos modelos por grupo e AP, mesma semente = mesma rede |
 | `test_docs.py` | documentação | links relativos existem, toda nota tem tag, cada pasta tem nota-mapa, docstrings, `docs/grafo-de-notas.json` atualizado |
 
 ## Escrevendo um teste novo

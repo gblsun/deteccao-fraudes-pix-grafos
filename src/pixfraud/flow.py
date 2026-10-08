@@ -11,6 +11,9 @@
 * ``label_spreading``: a mesma ideia, mas com exemplos positivos e negativos
   (contas sabidamente legítimas puxam as vizinhas para baixo).
 
+As duas últimas são modelos semi-supervisionados e moram em
+``pixfraud.models.semi_supervised``; continuam importáveis daqui.
+
 Atenção: no grafo agregado o tempo é ignorado. Para respeitar a ordem dos Pix,
 aplique estas funções sobre ``pixfraud.temporal.temporal_trail``.
 """
@@ -20,9 +23,11 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 import networkx as nx
-import numpy as np
-import pandas as pd
-import scipy.sparse as sp
+
+from pixfraud.models.semi_supervised import label_spreading, propagate_risk
+
+__all__ = ["blocking_accounts", "blocking_cut", "label_spreading", "max_money_flow", "propagate_risk",
+           "relevant_accounts"]
 
 SUPER_SOURCE = "__origem__"
 
@@ -99,89 +104,6 @@ def blocking_accounts(graph: nx.DiGraph, sources, sink) -> list | None:
         aux.add_edge(SUPER_SOURCE, s)
     _, (reachable, _) = nx.minimum_cut(aux, SUPER_SOURCE, sink)
     return sorted(v for v in relevant - fixed if (v, "entrada") in reachable and (v, "saida") not in reachable)
-
-
-def propagate_risk(
-    graph: nx.DiGraph,
-    seeds: Iterable,
-    alpha: float = 0.85,
-    direction: str = "both",
-    weight: str | None = "amount",
-    relative: bool = False,
-) -> pd.Series:
-    """Culpa por associação: PageRank personalizado a partir das contas ``seeds``.
-
-    A "moeda" do PageRank sempre salta de volta para uma das contas-semente,
-    então o escore mede o quão perto (e por quantos caminhos) cada conta está
-    delas. ``direction``: ``"forward"`` segue o dinheiro (para onde as sementes
-    pagaram), ``"backward"`` volta à origem (quem pagou as sementes) e
-    ``"both"`` ignora o sentido, o que alcança as laranjas "irmãs" que repassam
-    para o mesmo intermediário. Com ``relative=True`` o escore é dividido pelo
-    PageRank comum, para não favorecer só as contas muito conectadas
-    (como comércios).
-    """
-    seeds = [s for s in seeds if s in graph]
-    if not seeds:
-        raise ValueError("nenhuma conta-semente está no grafo")
-    if direction == "forward":
-        g = graph
-    elif direction == "backward":
-        g = graph.reverse(copy=False)
-    elif direction == "both":
-        g = graph.to_undirected(as_view=True)
-    else:
-        raise ValueError("direction deve ser 'forward', 'backward' ou 'both'")
-    personalization = dict.fromkeys(seeds, 1.0)
-    score = pd.Series(nx.pagerank(g, alpha=alpha, personalization=personalization, weight=weight), name="risk")
-    if relative:
-        score = score / pd.Series(nx.pagerank(g, alpha=alpha, weight=weight))
-    return score.sort_values(ascending=False)
-
-
-def label_spreading(
-    graph: nx.DiGraph,
-    positives: Iterable,
-    negatives: Iterable = (),
-    alpha: float = 0.85,
-    weight: str | None = None,
-    max_iter: int = 200,
-    tol: float = 1e-6,
-) -> pd.Series:
-    """Propagação de rótulos com exemplos positivos **e negativos** (Zhou et al., 2004).
-
-    Cada conta começa com +1 (fraude conhecida), -1 (legítima conhecida) ou 0
-    (desconhecida), e a cada passo recebe a média dos vizinhos, normalizada
-    pelos graus (``S = D^{-1/2} W D^{-1/2}``), sem esquecer o valor inicial:
-    ``F <- alpha * S F + (1 - alpha) * Y``. No fim, o escore diz de qual dos
-    dois lados a conta está mais perto no grafo.
-
-    A diferença para ``propagate_risk`` é usar também o que se sabe de bom: uma
-    conta ao lado de muitas legítimas conhecidas é puxada para baixo. O grafo é
-    tratado como não direcionado, e com ``weight=None`` cada par de contas pesa
-    1, para os comércios, com muitos Pix, não dominarem.
-    """
-    nodes = list(graph.nodes)
-    position = {v: i for i, v in enumerate(nodes)}
-    positives = [position[v] for v in positives if v in position]
-    if not positives:
-        raise ValueError("nenhuma conta positiva está no grafo")
-    adjacency = nx.to_scipy_sparse_array(graph, nodelist=nodes, weight=weight, format="csr")
-    symmetric = (adjacency + adjacency.T).tocsr()
-    degree = np.asarray(symmetric.sum(axis=1)).ravel()
-    inv_sqrt = np.divide(1.0, np.sqrt(degree), out=np.zeros_like(degree, dtype=float), where=degree > 0)
-    normalized = sp.diags(inv_sqrt) @ symmetric @ sp.diags(inv_sqrt)
-
-    seeds = np.zeros(len(nodes))
-    seeds[[position[v] for v in negatives if v in position]] = -1.0
-    seeds[positives] = 1.0
-    scores = seeds.copy()
-    for _ in range(max_iter):
-        updated = alpha * (normalized @ scores) + (1 - alpha) * seeds
-        converged = np.abs(updated - scores).max() < tol
-        scores = updated
-        if converged:
-            break
-    return pd.Series(scores, index=nodes, name="risk").sort_values(ascending=False)
 
 
 def _as_list(sources) -> list:

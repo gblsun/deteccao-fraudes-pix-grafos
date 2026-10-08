@@ -31,6 +31,10 @@ agregados e públicos. Detalhes em `CLAUDE.md`.
 
 - [src/pixfraud/README.md](src/pixfraud/README.md): os módulos do pacote e como se
   encaixam (simulação, grafo, atributos, detectores, avaliação, propagação de risco).
+- [src/pixfraud/models/mapa-dos-modelos.md](src/pixfraud/models/mapa-dos-modelos.md):
+  cada modelo (um arquivo `.py` por modelo, separados em não supervisionados e
+  supervisionados), seus hiperparâmetros, a otimização em redes de validação e a AP de
+  todos nos cenários realistas.
 - [scripts/mapa-dos-scripts.md](scripts/mapa-dos-scripts.md): cada script, o que lê e
   grava, e a ordem para reproduzir os resultados do zero.
 - [configs/parametros-dos-experimentos.md](configs/parametros-dos-experimentos.md):

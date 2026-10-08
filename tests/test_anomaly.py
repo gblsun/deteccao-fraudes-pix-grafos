@@ -10,8 +10,11 @@ from pixfraud.anomaly import (
     dbscan,
     ecod,
     isolation_forest,
+    kmeans,
+    knn,
     local_outlier_factor,
     one_class_svm,
+    pca,
     prepare_matrix,
 )
 from pixfraud.evaluation import evaluate
@@ -27,7 +30,7 @@ def blob_with_outlier():
     return features
 
 
-@pytest.mark.parametrize("detector", [isolation_forest, dbscan, ecod, one_class_svm, autoencoder])
+@pytest.mark.parametrize("detector", [isolation_forest, dbscan, ecod, one_class_svm, autoencoder, knn, kmeans, pca])
 def test_detector_flags_outlier(detector, blob_with_outlier):
     detection = detector(blob_with_outlier)
     assert detection.scores.idxmax() == "outlier"
@@ -77,6 +80,26 @@ def test_autoencoder_is_reproducible_with_the_seed(blob_with_outlier):
     first = autoencoder(blob_with_outlier, seed=3).scores
     assert first.equals(autoencoder(blob_with_outlier, seed=3).scores)
     assert not first.equals(autoencoder(blob_with_outlier, seed=4).scores)
+
+
+def test_kmeans_scores_a_small_odd_group_against_the_large_ones():
+    # 5 contas iguais e estranhas ganhariam um centro só delas (distância 0); o
+    # escore mede a distância aos grupos grandes, então elas continuam no topo
+    rng = np.random.default_rng(0)
+    features = pd.DataFrame(rng.lognormal(0, 0.3, (300, 2)), columns=["a", "b"])
+    for i in range(300, 305):
+        features.loc[i] = [60.0, 60.0]
+    top = kmeans(features, n_clusters=4).scores.nlargest(5).index
+    assert set(top) == set(range(300, 305))
+
+
+def test_pca_flags_the_account_that_breaks_the_correlation():
+    # a e b andam juntos; a última conta tem valores comuns em cada um, mas a combinação é rara
+    rng = np.random.default_rng(0)
+    a = rng.lognormal(0, 0.5, 400)
+    features = pd.DataFrame({"a": a, "b": a * rng.lognormal(0, 0.05, 400)})
+    features.loc[400] = [np.quantile(a, 0.9), np.quantile(a, 0.1)]
+    assert pca(features).scores.idxmax() == 400
 
 
 def test_evaluate_perfect_ranking(blob_with_outlier):

@@ -24,6 +24,7 @@ Volta para o [índice da documentação](../mapa-da-pesquisa.md).
 | [GNN supervisionada como próximo passo](gnn-supervisionada.md) | aprender a representação da vizinhança em vez de atributos escolhidos à mão, com o TCC de Guerra como comparação direta |
 | [Explicabilidade para auditoria](explicabilidade-para-auditoria.md) | SHAP/LIME por conta sinalizada, para justificar um bloqueio cautelar de verdade |
 | [Detecção sob camuflagem adversarial](deteccao-adversarial.md) | o que acontece quando a quadrilha se adapta para escapar dos detectores, com o CARE-GNN como referência |
+| [Detecção conformal com controle de alarmes falsos](deteccao-conformal-com-fdr.md) | um p-valor por conta a partir do escore de qualquer modelo e Benjamini-Hochberg para garantir "no máximo q% de alarmes falsos" |
 | [Grafos heterogêneos e custo operacional](grafos-heterogeneos-e-custo-operacional.md) | identidades sintéticas (dispositivo, CPF) que o grafo conta-a-conta não vê, e avaliar por custo de investigação, não só por AP |
 
 ## Como acrescentar uma ideia

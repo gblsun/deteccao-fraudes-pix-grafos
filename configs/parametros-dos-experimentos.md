@@ -16,7 +16,9 @@ passe `--seed N` (o `reproduzir_tudo.py` usa `--seed 42`, o dataset dos resultad
 
 | Arquivo | Usado por | O que define |
 |---------|-----------|--------------|
-| [`experimento.yaml`](experimento.yaml) | todos os scripts | `simulacao` (o gerador sintético), `atributos` (intermediação aproximada) e `modelos` (Isolation Forest e DBSCAN) |
+| [`experimento.yaml`](experimento.yaml) | todos os scripts | `simulacao` (o gerador sintético), `atributos` (intermediação aproximada) e `modelos` (os hiperparâmetros de cada modelo, escolhidos à mão) |
+| [`busca_hiperparametros.yaml`](busca_hiperparametros.yaml) | `otimizar_hiperparametros.py` | os valores testados de cada hiperparâmetro e os limites até onde a grade pode crescer |
+| `experimento_otimizado.yaml` | `avaliar_modelos.py --config` | cópia gerada por `scripts/otimizar_hiperparametros.py`, com os hiperparâmetros que venceram nas redes de validação (ver [mapa dos modelos](../src/pixfraud/models/mapa-dos-modelos.md)) |
 | [`cenarios.yaml`](cenarios.yaml) | `avaliar_cenarios.py`, `avaliar_deteccao_online.py` | cenários de dificuldade: cada um troca alguns parâmetros de `simulacao` |
 
 Os comentários dentro de cada arquivo explicam os parâmetros. Um deles decide quanta

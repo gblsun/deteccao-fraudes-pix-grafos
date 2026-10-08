@@ -22,7 +22,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-from pixfraud.anomaly import Detection
+from pixfraud.models import Detection
 
 
 def evaluate(y_true: pd.Series, detection: Detection, k: int | None = None) -> dict[str, float]:

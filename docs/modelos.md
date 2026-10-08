@@ -6,7 +6,9 @@ tags: [metodo]
 
 Este documento explica **o que cada modelo faz, por que ele está aqui e como está
 configurado**. Os resultados de cada um estão em [resultados.md](resultados.md); os
-parâmetros, em [`configs/experimento.yaml`](../configs/experimento.yaml).
+parâmetros, em [`configs/experimento.yaml`](../configs/experimento.yaml). O código de
+cada modelo, a otimização dos hiperparâmetros e a comparação de todos nos cenários
+realistas estão no [mapa dos modelos](../src/pixfraud/models/mapa-dos-modelos.md).
 
 As referências citadas estão em [`referencias.bib`](referencias.bib), com fichamento em
 [`leituras/`](leituras/mapa-das-leituras.md).

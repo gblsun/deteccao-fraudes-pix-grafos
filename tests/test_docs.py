@@ -25,6 +25,7 @@ FOLDER_MAPS = {
     "reports": "mapa-dos-resultados.md",
     "scripts": "mapa-dos-scripts.md",
     "src/pixfraud": None,  # README técnico do pacote, não faz parte do cofre de pesquisa
+    "src/pixfraud/models": "mapa-dos-modelos.md",
     "tests": "mapa-dos-testes.md",
 }
 FOLDERS_WITH_README = sorted(FOLDER_MAPS)
@@ -64,7 +65,8 @@ def test_relative_links_point_to_existing_files(path):
     assert not missing, f"links quebrados em {path.relative_to(ROOT)}: {missing}"
 
 
-@pytest.mark.parametrize("path", sorted((ROOT / "src" / "pixfraud").glob("*.py")), ids=lambda p: p.name)
+@pytest.mark.parametrize("path", sorted((ROOT / "src" / "pixfraud").rglob("*.py")),
+                         ids=lambda p: str(p.relative_to(ROOT / "src" / "pixfraud")))
 def test_public_code_has_docstrings(path):
     tree = ast.parse(path.read_text(encoding="utf-8"))
     assert ast.get_docstring(tree), f"{path.name} sem docstring de módulo"
