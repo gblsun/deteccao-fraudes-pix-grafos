@@ -43,7 +43,7 @@ def test_run_seeds_one_dataset_per_seed():
 def test_seeded_models_reach_every_random_detector():
     seeded = seeded_models(CONFIG["modelos"], 7)
     assert {m for m, params in seeded.items() if params.get("seed") == 7} == {
-        "isolation_forest", "one_class_svm", "autoencoder", "node2vec_if"}
+        "isolation_forest", "one_class_svm", "autoencoder", "kmeans", "node2vec_if"}
     assert "seed" not in seeded["dbscan"]  # determinístico: não recebe semente
     assert seeded["isolation_forest"]["n_estimators"] == 50
     assert "seed" not in CONFIG["modelos"]["isolation_forest"]  # a original não muda

@@ -188,7 +188,8 @@ def _evaluate(simulation, name, seed, config, conjunto, use_gnn) -> list[dict]:
     scores["combinado"] = (percentile("propagacao_relativa") + percentile(REFERENCE)) / 2
     scores["label_spreading_combinado"] = (percentile("label_spreading") + percentile(REFERENCE)) / 2
     for model in SUPERVISED_MODELS:
-        scores[model] = supervised_scores(prepared.features[columns], labels, seed=seed, model=model)
+        scores[model] = supervised_scores(prepared.features[columns], labels, seed=seed, model=model,
+                                          **models.get(model, {}))
     if use_gnn:
         scores["graphsage"] = gnn.graphsage_scores(prepared.graph, prepared.features[columns], labels, seed=seed)
 

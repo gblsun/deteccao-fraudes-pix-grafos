@@ -54,6 +54,9 @@ MODEL_COLORS = {
     "ecod": "#b8860b",
     "one_class_svm": "#54a24b",
     "autoencoder": "#88c77f",
+    "knn": "#0b3d7a",
+    "kmeans": "#2a9d8f",
+    "pca": "#3c7a36",
     "fraudar": "#7a5cc7",
     "node2vec_if": "#b279a2",
     "propagacao": "#f58518",
@@ -74,6 +77,9 @@ MODEL_LABELS = {
     "ecod": "ECOD",
     "one_class_svm": "One-Class SVM",
     "autoencoder": "Autoencoder",
+    "knn": "kNN",
+    "kmeans": "k-means",
+    "pca": "PCA",
     "fraudar": "FRAUDAR",
     "node2vec_if": "node2vec + IF",
     "propagacao": "PageRank personalizado",
@@ -84,6 +90,8 @@ MODEL_LABELS = {
     "random_forest": "Random Forest",
     "gradient_boosting": "Gradient boosting",
     "graphsage": "GraphSAGE",
+    "graphsage_propria": "GraphSAGE (própria)",
+    "dominant": "DOMINANT",
 }
 
 
