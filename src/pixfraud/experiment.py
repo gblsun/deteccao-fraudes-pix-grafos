@@ -253,7 +253,7 @@ def all_model_scores(
     scores["combinado"] = (percentile("propagacao_relativa") + percentile(reference)) / 2
     scores["label_spreading_combinado"] = (percentile("label_spreading") + percentile(reference)) / 2
     for model in SUPERVISED_MODELS:
-        scores[model] = supervised_scores(table, prepared.labels, seed=seed, model=model)
+        scores[model] = supervised_scores(table, prepared.labels, seed=seed, model=model, **models.get(model, {}))
     if use_gnn:
         from pixfraud import gnn
 

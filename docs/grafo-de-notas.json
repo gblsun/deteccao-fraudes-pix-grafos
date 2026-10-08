@@ -77,6 +77,13 @@
    ]
   },
   {
+   "caminho": "docs/fluxo-da-pesquisa.md",
+   "titulo": "Fluxo da pesquisa",
+   "tags": [
+    "metodo"
+   ]
+  },
+  {
    "caminho": "docs/futuro/deteccao-adversarial.md",
    "titulo": "Detecção sob camuflagem adversarial",
    "tags": [
@@ -280,8 +287,22 @@
    ]
   },
   {
+   "caminho": "docs/glossario/k-means.md",
+   "titulo": "K-Means",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
    "caminho": "docs/glossario/k-nucleo.md",
    "titulo": "K-núcleo (core number)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/knn.md",
+   "titulo": "KNN (k vizinhos mais próximos)",
    "tags": [
     "glossario"
    ]
@@ -331,6 +352,13 @@
   {
    "caminho": "docs/glossario/pass-through.md",
    "titulo": "Pass-through (dinheiro que atravessa a conta)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/pca.md",
+   "titulo": "PCA (análise de componentes principais)",
    "tags": [
     "glossario"
    ]
@@ -639,6 +667,13 @@
   {
    "caminho": "docs/reunioes/2026-09-24.md",
    "titulo": "Reunião 2026-09-24",
+   "tags": [
+    "ata"
+   ]
+  },
+  {
+   "caminho": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "titulo": "Para o orientador: respostas à reunião de 01/10",
    "tags": [
     "ata"
    ]
@@ -1089,6 +1124,211 @@
    "de": "docs/diario/diario-de-pesquisa.md",
    "para": "scripts/mapa-dos-scripts.md",
    "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "configs/cenarios.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/cronograma.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/classes-raras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/componente-gigante.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/comunidades-e-modularidade.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/conta-laranja.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/delta-de-cliff.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/grau.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/intervalo-de-confianca.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/mann-whitney.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/med.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/otimizacao-de-hiperparametros.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/pagerank.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/precision-at-k.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/semente.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/supervisionado-e-nao-supervisionado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/testes-para-classificadores.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/analisar_tipo_de_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/auditar_papeis.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/avaliar_cenarios.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/avaliar_deteccao_online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/avaliar_robustez.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/baixar_dados_bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/gerar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/importar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/investigar_falsos_positivos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/otimizar_hiperparametros.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "src/pixfraud/graph.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "src/pixfraud/models",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "src/pixfraud/tuning",
+   "tipo": "arquivo"
   },
   {
    "de": "docs/futuro/deteccao-adversarial.md",
@@ -1667,7 +1907,17 @@
   },
   {
    "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/k-means.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/k-nucleo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/knn.md",
    "tipo": "nota"
   },
   {
@@ -1703,6 +1953,11 @@
   {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/pass-through.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/pca.md",
    "tipo": "nota"
   },
   {
@@ -1821,6 +2076,31 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/glossario/k-means.md",
+   "para": "configs/experimento.yaml",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/k-means.md",
+   "para": "docs/glossario/dbscan-e-k-distance.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/k-means.md",
+   "para": "docs/glossario/isolation-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/k-means.md",
+   "para": "docs/reunioes/2026-10-01.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/k-means.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/glossario/k-nucleo.md",
    "para": "docs/resultados.md",
    "tipo": "nota"
@@ -1828,6 +2108,51 @@
   {
    "de": "docs/glossario/k-nucleo.md",
    "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "docs/glossario/dbscan-e-k-distance.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "docs/glossario/precision-at-k.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "docs/glossario/random-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "docs/glossario/roc-auc.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "docs/glossario/validacao-cruzada.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "docs/reunioes/2026-10-01.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/knn.md",
+   "para": "src/pixfraud/experiment.py",
    "tipo": "arquivo"
   },
   {
@@ -1963,6 +2288,26 @@
   {
    "de": "docs/glossario/pass-through.md",
    "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/pca.md",
+   "para": "docs/glossario/grau.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/pca.md",
+   "para": "docs/glossario/isolation-forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/pca.md",
+   "para": "docs/reunioes/2026-10-01.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/pca.md",
+   "para": "src/pixfraud/anomaly.py",
    "tipo": "arquivo"
   },
   {
@@ -3162,6 +3507,11 @@
   },
   {
    "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/fluxo-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
    "para": "docs/futuro/ideias-futuras.md",
    "tipo": "nota"
   },
@@ -3881,6 +4231,56 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "docs/glossario/k-means.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "docs/glossario/knn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "docs/glossario/pca.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "docs/reunioes/2026-10-01.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "docs/reunioes/atas-de-reuniao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01-para-o-orientador.md",
+   "para": "estudos/06_tipo_de_rede.ipynb",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/reunioes/2026-10-01.md",
    "para": "docs/modelos.md",
    "tipo": "nota"
@@ -3893,6 +4293,11 @@
   {
    "de": "docs/reunioes/2026-10-01.md",
    "para": "docs/reunioes/2026-09-24.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/reunioes/2026-10-01.md",
+   "para": "docs/reunioes/2026-10-01-para-o-orientador.md",
    "tipo": "nota"
   },
   {
@@ -4437,6 +4842,11 @@
   },
   {
    "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/figures/modelos_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
    "para": "reports/figures/online_deteccao.png",
    "tipo": "arquivo"
   },
@@ -4498,6 +4908,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/analisar_tipo_de_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/auditar_papeis.py",
    "tipo": "arquivo"
   },
   {
@@ -4593,6 +5008,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/importar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/investigar_falsos_positivos.py",
    "tipo": "arquivo"
   },
   {

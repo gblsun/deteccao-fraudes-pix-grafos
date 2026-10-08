@@ -13,8 +13,7 @@ estiver instalado. Com ``--modelo``, a página usa um detector só, como antes.
 
 Uso:
     python scripts/visualizar_rede.py
-    python scripts/visualizar_rede.py --modelos dbscan knn kmeans pca
-    python scripts/visualizar_rede.py --modelos isolation_forest --atributos grafo_avancado --saida reports/estudos/rede_if.html
+    python scripts/visualizar_rede.py --modelo isolation_forest --atributos grafo_avancado --saida reports/estudos/rede_if.html
 """  # noqa: E501 (exemplos de comando ficam numa linha só, para copiar e colar)
 
 import argparse
@@ -26,10 +25,6 @@ from pixfraud.explorer import save_network_explorer
 from pixfraud.features import FEATURE_SETS
 from pixfraud.models import DETECTORS
 from pixfraud.simulation import load_dataset
-from pixfraud.visualization import model_color, model_label
-
-KNOWN_FRACTION = 0.25  # a mesma fração de rótulos conhecidos de scripts/avaliar_modelos.py
-REFERENCE = "dbscan"
 
 
 def main() -> None:
@@ -44,7 +39,6 @@ def main() -> None:
     args = parser.parse_args()
 
     config = load_experiment_config(args.config)
-    seed = config.get("simulacao", {}).get("seed", 42)
     accounts, transactions = load_dataset(args.dados)
     prepared = prepare(accounts, transactions, config)
     columns = FEATURE_SETS[args.atributos]
@@ -71,7 +65,7 @@ def main() -> None:
         args.saida, prepared.graph, transactions=transactions, roles=roles, risk=risk, risk_groups=groups,
         labels=prepared.labels, title="Rede Pix sintética", subtitle=subtitle,
     )
-    print(f"explorador salvo em {path} ({path.stat().st_size / 1e6:.1f} MB), {len(risk)} modelos")
+    print(f"explorador salvo em {path} ({path.stat().st_size / 1e6:.1f} MB)")
 
 
 if __name__ == "__main__":

@@ -4,8 +4,7 @@ Mostra todas as contas e Pix de uma vez, com ferramentas dinâmicas: busca de
 conta, filtro por papel, cor por papel / risco (de um ou vários modelos, com
 seletor) / comunidade, clique para ver a
 vizinhança e os detalhes de uma conta, e uma linha do tempo que mostra a rede
-crescendo dia a dia (com botão de "tocar"). Com o risco de vários modelos, cada
-um ganha uma aba: a cor, o ranking e os detalhes da conta seguem a aba escolhida.
+crescendo dia a dia (com botão de "tocar").
 
 O posicionamento é calculado em Python (``community_layout``): cada
 comunidade (Louvain) é desenhada separadamente e as comunidades são dispostas
@@ -16,9 +15,7 @@ dezenas de milhares de arestas.
 Uso típico::
 
     save_network_explorer("reports/estudos/rede.html", graph, transactions=tx,
-                          roles=papel, risk=escores)            # um modelo
-    save_network_explorer(..., risk={"dbscan": s1, "knn": s2},  # uma aba por modelo
-                          models={"knn": {"label": "KNN", "family": "não supervisionado"}})
+                          roles=papel, risk=escores)
 
 A página abre em qualquer navegador e precisa de internet para carregar as
 bibliotecas (sigma.js e graphology, via cdnjs).
@@ -363,37 +360,6 @@ _TEMPLATE = r"""<meta charset="utf-8">
   input[type="range"] { width: 100%; accent-color: var(--accent); }
   .day { font: 500 13px var(--mono); color: var(--muted); }
   .hint { color: var(--muted); font-size: 12px; margin: 0; }
-  .center { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 8px; min-height: 0; }
-  .center.single { grid-template-rows: minmax(0, 1fr); }
-  .tabs { display: flex; gap: 6px 14px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
-  .tabs[hidden] { display: none; }
-  .family { display: flex; flex-direction: column; gap: 4px; flex: none; }
-  .family-name { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-  .family-tabs { display: flex; gap: 4px; }
-  .tab {
-    font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
-    background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px;
-    padding: 5px 10px; cursor: pointer; white-space: nowrap; border-top: 3px solid var(--tab-color, var(--line));
-  }
-  .tab:hover { border-color: var(--accent); border-top-color: var(--tab-color, var(--accent)); }
-  .tab[aria-selected="true"] { background: var(--accent-soft); border-color: var(--accent); border-top-color: var(--tab-color, var(--accent)); font-weight: 600; }
-  .tab small { font: 11px var(--mono); color: var(--muted); font-weight: 400; }
-  .ranking { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 12px; }
-  .ranking th { text-align: left; color: var(--muted); font-weight: 500; padding: 2px 4px; border-bottom: 1px solid var(--line); }
-  .ranking th.num { text-align: right; }
-  .ranking td { padding: 0; border-bottom: 1px solid var(--line); }
-  .ranking td.num { text-align: right; font-family: var(--mono); padding: 3px 4px; }
-  .ranking td.txt { padding: 3px 4px; }
-  .ranking tr.current td { background: var(--accent-soft); font-weight: 600; }
-  .ranking button {
-    width: 100%; font: 12px var(--mono); text-align: left; background: transparent; color: var(--ink);
-    border: 0; padding: 3px 4px; cursor: pointer; display: flex; align-items: center; gap: 6px;
-  }
-  .ranking button:hover { background: var(--accent-soft); }
-  .tag { font: 600 10px var(--sans); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
-  .summary { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; font-variant-numeric: tabular-nums; }
-  .summary dt { color: var(--muted); }
-  .summary dd { margin: 0; font-family: var(--mono); text-align: right; }
   .stage { position: relative; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px; min-height: 0; overflow: hidden; }
   #sigma { position: absolute; inset: 0; }
   .legend { position: absolute; left: 12px; bottom: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: calc(100% - 24px); }
@@ -424,7 +390,6 @@ _TEMPLATE = r"""<meta charset="utf-8">
     .app { height: auto; }
     .main { grid-template-columns: 1fr; }
     .stage { height: 65vh; }
-    .center { height: auto; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -501,13 +466,10 @@ _TEMPLATE = r"""<meta charset="utf-8">
       <p class="hint">Cada seta vai de quem pagou para quem recebeu. Passe o mouse ou clique numa conta para ver as entradas (azul) e as saídas (laranja). Arraste para mover e use a roda do mouse (ou o gesto de pinça) para dar zoom. Clique no fundo para limpar.</p>
     </aside>
 
-    <div class="center" id="center">
-      <nav class="tabs" id="tabs" role="tablist" aria-label="Modelo de risco" hidden></nav>
-      <section class="stage" aria-label="Rede de transações">
-        <div id="sigma"></div>
-        <div class="legend" id="legend"></div>
-      </section>
-    </div>
+    <section class="stage" aria-label="Rede de transações">
+      <div id="sigma"></div>
+      <div class="legend" id="legend"></div>
+    </section>
 
     <aside class="panel details" id="details" aria-label="Detalhes da conta" aria-live="polite">
       <div><h2>Conta selecionada</h2><p class="empty">Nenhuma. Clique numa conta ou use a busca.</p></div>
@@ -567,76 +529,6 @@ _TEMPLATE = r"""<meta charset="utf-8">
   const idIndex = new Map(nodes.map((n, i) => [n.id, i]));
 
   if (!DATA.hasRisk) { $("mode-risk").disabled = true; $("mode-risk").title = "Nenhum escore de risco foi fornecido"; }
-
-  // ---- abas: um modelo de risco por aba ----
-  const pct = (k) => (k * 100).toFixed(1).replace(".", ",") + "%";
-  const num = (v, d) => v === undefined || v === null ? "–" : v.toFixed(d === undefined ? 2 : d).replace(".", ",");
-  const knownSets = MODELS.map((m) => new Set(m.known));
-  function applyModel(m) {
-    state.model = m;
-    nodes.forEach((n, i) => { n.k = MODELS.length ? RISK_DATA.k[m][i] : null; n.p = MODELS.length ? RISK_DATA.p[m][i] : null; });
-  }
-  function setMode(mode) {
-    state.mode = mode;
-    document.querySelectorAll(".segmented button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.mode === mode)));
-  }
-  function chooseModel(m) {
-    applyModel(m);
-    document.querySelectorAll(".tab").forEach((t) => {
-      const on = +t.dataset.model === m;
-      t.setAttribute("aria-selected", String(on));
-      t.tabIndex = on ? 0 : -1;
-    });
-    setMode("risk");
-    details();
-    update();
-  }
-  applyModel(RISK_DATA.initial || 0);
-  if (MODELS.length > 1) {
-    const tabs = $("tabs");
-    tabs.hidden = false;
-    const families = [];
-    MODELS.forEach((m, i) => {
-      let group = families.find((f) => f.name === m.family);
-      if (!group) { group = { name: m.family, items: [] }; families.push(group); }
-      group.items.push(i);
-    });
-    families.forEach((f) => {
-      const box = document.createElement("div");
-      box.className = "family";
-      box.setAttribute("role", "presentation");
-      box.innerHTML = (f.name ? '<span class="family-name">' + f.name + "</span>" : "") + '<div class="family-tabs" role="presentation"></div>';
-      f.items.forEach((i) => {
-        const m = MODELS[i];
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "tab";
-        b.dataset.model = String(i);
-        b.setAttribute("role", "tab");
-        b.setAttribute("aria-selected", String(i === state.model));
-        b.tabIndex = i === state.model ? 0 : -1;
-        if (m.color) b.style.setProperty("--tab-color", m.color);
-        const ap = m.metrics.average_precision;
-        b.innerHTML = m.label + (ap !== undefined ? "<small>AP " + num(ap) + "</small>" : "");
-        b.title = m.label + (m.family ? " (" + m.family + ")" : "") + (ap !== undefined ? ": average precision " + num(ap, 3) + ", precision@k " + num(m.metrics.precision_at_k, 3) : "");
-        b.addEventListener("click", () => chooseModel(i));
-        box.querySelector(".family-tabs").appendChild(b);
-      });
-      tabs.appendChild(box);
-    });
-    // setas do teclado passam de aba em aba, como num tablist
-    tabs.addEventListener("keydown", (e) => {
-      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-      const next = (state.model + (e.key === "ArrowRight" ? 1 : MODELS.length - 1)) % MODELS.length;
-      chooseModel(next);
-      const t = tabs.querySelector('[data-model="' + next + '"]');
-      t.focus();
-      t.scrollIntoView({ block: "nearest", inline: "nearest" });
-      e.preventDefault();
-    });
-  } else {
-    $("center").classList.add("single");
-  }
   if (!DATA.hasFraudEdges) { $("only-fraud").disabled = true; }
   function setMode(mode) {
     state.mode = mode;
@@ -819,6 +711,199 @@ _TEMPLATE = r"""<meta charset="utf-8">
     return nodeVisible(E.s[j]) && nodeVisible(E.t[j]);
   }
 
+  // ---- desenho sem WebGL ----
+  // Alguns navegadores não oferecem WebGL (aceleração de hardware desligada, GPU bloqueada
+  // ou contextos esgotados depois de muitas páginas). Aí a rede é desenhada com Canvas 2D,
+  // com a parte da interface do sigma que a página usa: refresh, eventos, câmera e setSetting.
+  class CanvasRenderer {
+    constructor(graph, container, settings) {
+      this.graph = graph;
+      this.container = container;
+      this.settings = Object.assign({}, settings);
+      this.handlers = {};
+      this.camera = { x: 0.5, y: 0.5, ratio: 1 };
+      this.camera.animate = (target, options) => this.animate(target, (options && options.duration) || 0);
+      this.hovered = null;
+      this.frame = null;
+      this.screen = new Map();
+      this.shown = [];
+      this.canvas = document.createElement("canvas");
+      this.canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab";
+      container.appendChild(this.canvas);
+      this.context = this.canvas.getContext("2d");
+      let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      graph.forEachNode((key, a) => { x0 = Math.min(x0, a.x); x1 = Math.max(x1, a.x); y0 = Math.min(y0, a.y); y1 = Math.max(y1, a.y); });
+      this.box = graph.order ? { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, range: Math.max(x1 - x0, y1 - y0) || 1 } : { cx: 0, cy: 0, range: 1 };
+      this.listen();
+      new ResizeObserver(() => this.refresh()).observe(container);
+      this.refresh();
+    }
+    on(event, handler) { (this.handlers[event] = this.handlers[event] || []).push(handler); return this; }
+    emit(event, payload) { (this.handlers[event] || []).forEach((h) => h(payload)); }
+    setSetting(key, value) { this.settings[key] = value; }
+    getCamera() { return this.camera; }
+    // posição normalizada (0 a 1, y para baixo), a mesma que a câmera usa
+    normalized(a) { return { x: (a.x - this.box.cx) / this.box.range + 0.5, y: (this.box.cy - a.y) / this.box.range + 0.5 }; }
+    getNodeDisplayData(key) { return this.graph.hasNode(key) ? this.normalized(this.graph.getNodeAttributes(key)) : undefined; }
+    scale() { return Math.min(this.width, this.height) * 0.92 / this.camera.ratio; }
+    toScreen(p) { const s = this.scale(); return { x: this.width / 2 + (p.x - this.camera.x) * s, y: this.height / 2 + (p.y - this.camera.y) * s }; }
+    animate(target, duration) {
+      const from = { x: this.camera.x, y: this.camera.y, ratio: this.camera.ratio }, start = performance.now();
+      const step = (now) => {
+        const t = duration ? Math.min(1, (now - start) / duration) : 1, e = t * (2 - t);
+        ["x", "y", "ratio"].forEach((k) => { if (target[k] !== undefined) this.camera[k] = from[k] + (target[k] - from[k]) * e; });
+        this.draw();
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+    refresh() {
+      if (this.frame === null) this.frame = requestAnimationFrame(() => { this.frame = null; this.draw(); });
+    }
+    draw() {
+      const dpr = window.devicePixelRatio || 1, rect = this.container.getBoundingClientRect();
+      this.width = rect.width;
+      this.height = rect.height;
+      const w = Math.round(rect.width * dpr), h = Math.round(rect.height * dpr);
+      if (this.canvas.width !== w || this.canvas.height !== h) { this.canvas.width = w; this.canvas.height = h; }
+      const ctx = this.context, st = this.settings, zoom = 1 / Math.sqrt(this.camera.ratio);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, this.width, this.height);
+      // contas: posição na tela, já com o redutor da página (cor, tamanho, escondida, destaque)
+      const shown = [];
+      this.screen = new Map();
+      this.graph.forEachNode((key, attrs) => {
+        const d = st.nodeReducer ? st.nodeReducer(key, attrs) : attrs;
+        if (d.hidden) return;
+        const p = this.toScreen(this.normalized(attrs));
+        const item = { key, x: p.x, y: p.y, size: Math.max(1, d.size * zoom), color: d.color || "#999",
+                       label: d.label, forceLabel: d.forceLabel, z: d.zIndex || 0 };
+        this.screen.set(key, item);
+        shown.push(item);
+      });
+      // Pix: agrupados por cor e espessura, para traçar milhares de linhas de uma vez
+      const edges = [];
+      this.graph.forEachEdge((key, attrs, source, target) => {
+        const a = this.screen.get(source), b = this.screen.get(target);
+        if (!a || !b) return;
+        const d = st.edgeReducer ? st.edgeReducer(key, attrs) : attrs;
+        if (d.hidden) return;
+        edges.push({ a, b, color: d.color || "#ccc", width: Math.max(0.4, d.size * 0.5 * zoom), z: d.zIndex || 0 });
+      });
+      edges.sort((p, q) => p.z - q.z);
+      let batch = null;
+      const flush = () => { if (batch) { ctx.strokeStyle = batch.color; ctx.lineWidth = batch.width; ctx.stroke(); } };
+      edges.forEach((e) => {
+        if (!batch || batch.color !== e.color || batch.width !== e.width || batch.z !== e.z) { flush(); batch = e; ctx.beginPath(); }
+        const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y, len = Math.hypot(dx, dy) || 1, end = Math.max(0, len - e.b.size);
+        ctx.moveTo(e.a.x, e.a.y);
+        ctx.lineTo(e.a.x + dx * end / len, e.a.y + dy * end / len);
+      });
+      flush();
+      // pontas de seta: em todas quando há poucas linhas; senão, só nas destacadas
+      const allArrows = edges.length < 4000;
+      edges.forEach((e) => {
+        if (!allArrows && e.z === 0) return;
+        const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y, len = Math.hypot(dx, dy);
+        if (len < e.b.size + 4) return;
+        const ux = dx / len, uy = dy / len, tip = len - e.b.size, head = Math.max(4, e.width * 3);
+        const tx = e.a.x + ux * tip, ty = e.a.y + uy * tip;
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(tx - ux * head - uy * head / 2, ty - uy * head + ux * head / 2);
+        ctx.lineTo(tx - ux * head + uy * head / 2, ty - uy * head - ux * head / 2);
+        ctx.closePath();
+        ctx.fillStyle = e.color;
+        ctx.fill();
+      });
+      shown.sort((p, q) => p.z - q.z);
+      shown.forEach((n) => {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.size, 0, 2 * Math.PI);
+        ctx.fillStyle = n.color;
+        ctx.fill();
+      });
+      // rótulos: os forçados e os das contas grandes na tela, sem empilhar na mesma célula
+      const size = st.labelSize || 11, taken = new Set();
+      ctx.font = size + "px " + (st.labelFont || "sans-serif");
+      ctx.fillStyle = (st.labelColor && st.labelColor.color) || "#000";
+      for (let k = shown.length - 1; k >= 0; k--) {
+        const n = shown[k];
+        if (!n.label || (!n.forceLabel && n.size < (st.labelRenderedSizeThreshold || 6))) continue;
+        const cell = Math.round(n.x / 90) + ":" + Math.round(n.y / (size + 6));
+        if (!n.forceLabel && taken.has(cell)) continue;
+        taken.add(cell);
+        ctx.fillText(n.label, n.x + n.size + 3, n.y + size / 3);
+      }
+      this.shown = shown;
+      const hov = this.hovered !== null && this.screen.get(this.hovered);
+      if (hov && st.hoverRenderer) {
+        st.hoverRenderer(ctx, { x: hov.x, y: hov.y, size: hov.size, label: this.graph.getNodeAttribute(hov.key, "label") }, st);
+      }
+    }
+    nodeAt(x, y) {
+      for (let k = this.shown.length - 1; k >= 0; k--) {
+        const n = this.shown[k];
+        if (Math.hypot(n.x - x, n.y - y) <= Math.max(n.size, 4)) return n.key;
+      }
+      return null;
+    }
+    listen() {
+      const c = this.canvas;
+      let drag = null;
+      const local = (e) => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+      c.addEventListener("pointerdown", (e) => {
+        c.setPointerCapture(e.pointerId);
+        const p = local(e);
+        drag = { x: p.x, y: p.y, cx: this.camera.x, cy: this.camera.y, moved: false };
+      });
+      c.addEventListener("pointermove", (e) => {
+        const p = local(e);
+        if (drag) {
+          if (Math.hypot(p.x - drag.x, p.y - drag.y) > 3) { drag.moved = true; c.style.cursor = "grabbing"; }
+          if (drag.moved) {
+            const s = this.scale();
+            this.camera.x = drag.cx - (p.x - drag.x) / s;
+            this.camera.y = drag.cy - (p.y - drag.y) / s;
+            this.refresh();
+          }
+          return;
+        }
+        const key = this.nodeAt(p.x, p.y);
+        if (key !== this.hovered) {
+          if (this.hovered !== null) this.emit("leaveNode", { node: this.hovered });
+          this.hovered = key;
+          c.style.cursor = key === null ? "grab" : "pointer";
+          if (key !== null) this.emit("enterNode", { node: key });
+          this.refresh();
+        }
+      });
+      c.addEventListener("pointerup", (e) => {
+        const p = local(e), was = drag;
+        drag = null;
+        c.style.cursor = this.hovered === null ? "grab" : "pointer";
+        if (!was || was.moved) return;
+        const key = this.nodeAt(p.x, p.y);
+        if (key !== null) this.emit("clickNode", { node: key });
+        else this.emit("clickStage", {});
+      });
+      c.addEventListener("pointerleave", () => {
+        if (this.hovered !== null && !drag) { this.emit("leaveNode", { node: this.hovered }); this.hovered = null; this.refresh(); }
+      });
+      c.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const p = local(e), s = this.scale();
+        const gx = this.camera.x + (p.x - this.width / 2) / s, gy = this.camera.y + (p.y - this.height / 2) / s;
+        this.camera.ratio = Math.min(this.settings.maxCameraRatio || 10, Math.max(this.settings.minCameraRatio || 0.01,
+          this.camera.ratio * Math.exp(e.deltaY * 0.0015)));
+        const s2 = this.scale();
+        this.camera.x = gx - (p.x - this.width / 2) / s2;
+        this.camera.y = gy - (p.y - this.height / 2) / s2;
+        this.refresh();
+      }, { passive: false });
+    }
+  }
+
   // ---- grafo e renderização ----
   if (!window.graphology || !window.Sigma) {
     $("sigma").innerHTML = '<div class="error">Não foi possível carregar as bibliotecas de visualização. Verifique a conexão com a internet e recarregue a página.</div>';
@@ -831,8 +916,7 @@ _TEMPLATE = r"""<meta charset="utf-8">
   }
 
   let renderer;
-  try {
-    renderer = new Sigma(graph, $("sigma"), {
+  const settings = {
       defaultEdgeType: "arrow",
       labelRenderedSizeThreshold: 9,
       labelFont: "IBM Plex Mono, monospace",
@@ -917,10 +1001,20 @@ _TEMPLATE = r"""<meta charset="utf-8">
         }
         return out;
       },
-    });
+  };
+  try {
+    renderer = new Sigma(graph, $("sigma"), settings);
   } catch (err) {
-    $("sigma").innerHTML = '<div class="error">O navegador não conseguiu iniciar o WebGL, necessário para desenhar a rede.</div>';
-    return;
+    // sem WebGL: o mesmo desenho em Canvas 2D (um pouco mais lento em redes grandes)
+    console.warn("WebGL indisponível; a rede é desenhada com Canvas 2D.", err);
+    $("sigma").innerHTML = "";
+    try {
+      renderer = new CanvasRenderer(graph, $("sigma"), settings);
+    } catch (err2) {
+      console.error(err2);
+      $("sigma").innerHTML = '<div class="error">O navegador não conseguiu desenhar a rede.</div>';
+      return;
+    }
   }
 
   function select(i, focus) {
@@ -953,51 +1047,10 @@ _TEMPLATE = r"""<meta charset="utf-8">
     select(i, true);
   });
 
-  const dot = (color) => '<span class="dot" style="display:inline-block;background:' + color + '"></span>';
-  const KNOWN_TAG = ' <span class="tag" title="o modelo usou o rótulo desta conta">conhecida</span>';
-  // As contas de maior risco no modelo da aba, com o papel real: os falsos positivos saltam aos olhos.
-  function modelSummary() {
-    if (!MODELS.length) return "";
-    const m = MODELS[state.model], known = knownSets[state.model];
-    const order = nodes.map((n, i) => i).filter((i) => nodes[i].p !== null).sort((a, b) => nodes[a].p - nodes[b].p);
-    const nFraud = nodes.filter((n) => FRAUD_ROLES.has(n.r)).length;
-    const hits = order.slice(0, nFraud).filter((i) => FRAUD_ROLES.has(nodes[i].r)).length;
-    const rows = order.slice(0, 20).map((i) =>
-      '<tr><td><button type="button" data-node="' + i + '">' + dot(ROLE_COLORS[nodes[i].r] || "#999") + nodes[i].id +
-      (known.has(i) ? KNOWN_TAG : "") + "</button></td>" +
-      '<td class="txt">' + (ROLE_NAMES[nodes[i].r] || nodes[i].r) + '</td><td class="num">' + nodes[i].p + "ª</td></tr>").join("");
-    return '<div><h2>Modelo</h2><div class="account">' + m.label + "</div>" +
-      (m.family ? '<div class="hint">' + m.family + "</div>" : "") + "</div>" +
-      '<dl class="summary">' +
-      (m.metrics.average_precision !== undefined ? "<dt>average precision</dt><dd>" + num(m.metrics.average_precision, 3) + "</dd>" : "") +
-      (m.metrics.precision_at_k !== undefined ? "<dt>precision@k</dt><dd>" + num(m.metrics.precision_at_k, 3) + "</dd>" : "") +
-      (nFraud ? "<dt>fraudes entre as " + nFraud + " primeiras</dt><dd>" + hits + "</dd>" : "") +
-      (known.size ? "<dt>rótulos que o modelo viu</dt><dd>" + known.size + "</dd>" : "") +
-      "</dl>" +
-      '<div><h2>Mais suspeitas neste modelo</h2><table class="ranking"><thead><tr><th>conta</th><th>papel real</th><th class="num">posição</th></tr></thead><tbody>' +
-      rows + "</tbody></table></div>";
-  }
-  // A posição da conta em cada modelo: em quais abas ela está no topo?
-  function allModels(i) {
-    if (MODELS.length < 2) return "";
-    const rows = MODELS.map((m, j) =>
-      '<tr class="' + (j === state.model ? "current" : "") + '"><td><button type="button" data-model="' + j + '">' +
-      dot(m.color || "#8f9a98") + m.label + (knownSets[j].has(i) ? KNOWN_TAG : "") + "</button></td>" +
-      '<td class="num">' + (RISK_DATA.p[j][i] === null ? "–" : RISK_DATA.p[j][i] + "ª") + '</td><td class="num">' +
-      (RISK_DATA.k[j][i] === null ? "–" : pct(RISK_DATA.k[j][i])) + "</td></tr>").join("");
-    return '<div><h2>Risco em todos os modelos</h2><table class="ranking"><thead><tr><th>modelo</th><th class="num">posição</th><th class="num">percentil</th></tr></thead><tbody>' +
-      rows + "</tbody></table></div>";
-  }
-  function wire(box) {
-    box.querySelectorAll("button[data-node]").forEach((b) => b.addEventListener("click", () => select(+b.dataset.node, true)));
-    box.querySelectorAll("button[data-model]").forEach((b) => b.addEventListener("click", () => chooseModel(+b.dataset.model)));
-  }
-
   function details() {
     const box = $("details");
     if (state.selected === null) {
-      box.innerHTML = '<div><h2>Conta selecionada</h2><p class="empty">Nenhuma. Clique numa conta ou use a busca.</p></div>' + modelSummary();
-      wire(box);
+      box.innerHTML = '<div><h2>Conta selecionada</h2><p class="empty">Nenhuma. Clique numa conta ou use a busca.</p></div>';
       return;
     }
     const i = state.selected, n = nodes[i];
@@ -1013,8 +1066,7 @@ _TEMPLATE = r"""<meta charset="utf-8">
     const color = ROLE_COLORS[n.r] || ROLE_COLORS["?"];
     box.innerHTML =
       '<div><h2>Conta selecionada</h2><div class="account">' + n.id + '</div>' +
-      '<span class="pill" style="background:' + color + '">' + (ROLE_NAMES[n.r] || n.r) + "</span>" +
-      '<div class="hint">papel real, do gerador (não é previsão do modelo)</div></div>' +
+      '<span class="pill" style="background:' + color + '">' + (ROLE_NAMES[n.r] || n.r) + "</span></div>" +
       "<dl>" +
       "<dt>recebeu de</dt><dd>" + n.i + " contas</dd>" +
       "<dt>pagou a</dt><dd>" + n.o + " contas</dd>" +
@@ -1027,9 +1079,8 @@ _TEMPLATE = r"""<meta charset="utf-8">
       (DATA.days.length ? "<dt>primeiro Pix</dt><dd>" + DATA.days[n.d] + "</dd>" : "") +
       "</dl>" +
       '<div><h2>Maiores pagadores</h2><ul class="neighbors">' + top(incoming, (j) => E.s[j]) + "</ul></div>" +
-      '<div><h2>Maiores recebedores</h2><ul class="neighbors">' + top(outgoing, (j) => E.t[j]) + "</ul></div>" +
-      allModels(i);
-    wire(box);
+      '<div><h2>Maiores recebedores</h2><ul class="neighbors">' + top(outgoing, (j) => E.t[j]) + "</ul></div>";
+    box.querySelectorAll("button[data-node]").forEach((b) => b.addEventListener("click", () => select(+b.dataset.node, true)));
   }
 
   function stats() {
@@ -1049,7 +1100,6 @@ _TEMPLATE = r"""<meta charset="utf-8">
   new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
 
-  details();
   update();
 })();
 </script>

@@ -12,6 +12,7 @@ do projeto e o passo a passo para rodar estão no [README principal](../README.m
 | Documento | Para que serve |
 |-----------|----------------|
 | [Proposta](proposta.md) ([PDF original](proposta-original.pdf)) | objetivos, justificativa e metodologia planejada |
+| [Fluxo da pesquisa](fluxo-da-pesquisa.md) | mapa mental: dataset → inferência → modelos → avaliação, com os scripts de cada etapa |
 | [Cronograma](cronograma.md) | etapas de 12 meses e o que cada uma entrega no repositório |
 | [Próximos passos](proximos-passos.md) | o que ficou em aberto, para retomar na próxima sessão |
 | [Resultados](resultados.md) | o que os experimentos mostraram, com números, figuras e ressalvas |

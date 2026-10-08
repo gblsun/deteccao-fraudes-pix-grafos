@@ -67,7 +67,6 @@ MODEL_COLORS = {
     "label_spreading_combinado": "#e8a33d",
     "random_forest": "#52514e",
     "gradient_boosting": "#8a8a8a",
-    "knn_supervisionado": "#b5b5b5",
     "graphsage": "#0b0b0b",
 }
 
@@ -84,7 +83,6 @@ MODEL_LABELS = {
     "pca": "PCA",
     "fraudar": "FRAUDAR",
     "node2vec_if": "node2vec + IF",
-    "dominant": "DOMINANT (GNN)",
     "propagacao": "PageRank personalizado",
     "propagacao_relativa": "PageRank relativo",
     "label_spreading": "Label spreading",
@@ -92,7 +90,6 @@ MODEL_LABELS = {
     "label_spreading_combinado": "Label spreading + DBSCAN",
     "random_forest": "Random Forest",
     "gradient_boosting": "Gradient boosting",
-    "knn_supervisionado": "KNN supervisionado",
     "graphsage": "GraphSAGE",
     "graphsage_propria": "GraphSAGE (própria)",
     "dominant": "DOMINANT",
