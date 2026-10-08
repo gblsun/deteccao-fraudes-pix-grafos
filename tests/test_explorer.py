@@ -60,3 +60,24 @@ def test_payload_and_page(data, tmp_path):
     embedded = re.search(r"const DATA = (\{.*?\});\n", page, re.S).group(1)
     assert json.loads(embedded)["communities"] >= 2
     assert "sigma.min.js" in page and "graphology.umd.min.js" in page
+
+
+def test_one_tab_per_model(data):
+    accounts, tx, graph = data
+    roles = accounts.set_index("account_id")["role"]
+    a = roles.map({"normal": 0.1, "comercio": 0.2}).fillna(0.9)
+    b = -a  # ordem inversa: quem era a última vira a primeira
+    known = list(roles.index[:3])
+    meta = {"label": "Modelo B", "family": "teste", "metrics": {"average_precision": 0.5}, "known": known}
+    payload = explorer_payload(graph, roles=roles, risk={"a": a, "b": b}, initial_model="b", models={"b": meta})
+    risk = payload["risk"]
+    assert [m["key"] for m in risk["models"]] == ["a", "b"] and risk["initial"] == 1
+    assert risk["models"][0]["label"] == "a" and risk["models"][1]["label"] == "Modelo B"
+    assert risk["models"][1]["metrics"] == {"average_precision": 0.5}
+    ids = [n["id"] for n in payload["nodes"]]
+    assert [ids[i] for i in risk["models"][1]["known"]] == sorted(known, key=ids.index)
+    assert len(risk["k"][0]) == len(risk["p"][1]) == graph.number_of_nodes()
+    best_a, best_b = risk["p"][0].index(1), risk["p"][1].index(1)
+    assert roles[ids[best_a]] not in ("normal", "comercio") and roles[ids[best_b]] == "normal"
+    single = explorer_payload(graph, roles=roles, risk=a)["risk"]  # um escore só: uma aba, sem barra
+    assert len(single["models"]) == 1 and single["initial"] == 0

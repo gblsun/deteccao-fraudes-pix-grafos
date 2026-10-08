@@ -21,6 +21,16 @@ uma quadrilha ao lado da outra, e os grupos de contas normais (Louvain) em volta
 dinheiro dos golpes aparece como setas convergindo das vítimas para o meio, em vez de
 riscos cruzando a rede de um lado a outro.
 
+**Uma aba por modelo.** Acima do desenho há uma aba para cada modelo da vitrine
+(não supervisionados, estrutura do grafo, semi-supervisionados e tetos supervisionados),
+com a *average precision* no próprio dataset; a página abre no DBSCAN. Escolher uma aba
+pinta as contas pelo risco daquele modelo e mostra, à direita, as 20 contas mais suspeitas
+com o papel real. Clicando numa conta, a tabela "Risco em todos os modelos" mostra a posição
+dela em cada modelo: dá para ver, por exemplo, que os comércios C001118 e C000560 estão no
+topo de quase todos os não supervisionados, mas não dos semi-supervisionados nem dos tetos.
+Os semi-supervisionados partem de 25% das fraudes e 25% das contas legítimas já conhecidas
+(marcadas como "conhecida"), e as métricas de todas as abas usam só as contas restantes.
+
 As relações são **direcionadas**: cada seta vai de quem pagou para quem recebeu, e a
 espessura cresce com o valor (o controle "Espessura das setas" aumenta todas). Na cor por
 papel, o dinheiro da quadrilha leva a cor e o nome do **tipo de fluxo**, pelo papel de quem
@@ -57,7 +67,7 @@ A trilha do dinheiro em volta de uma conta coletora, gerada por
 ## Como gerar outros recortes
 
 ```powershell
-python scripts/visualizar_rede.py --modelo isolation_forest --atributos grafo_avancado
+python scripts/visualizar_rede.py --modelos dbscan knn kmeans pca --atributos grafo_avancado
 python scripts/criar_grafo.py csv data/synthetic/transactions.csv --conta C000167 --saltos 2 --direcao tras --saida reports/estudos/trilha.png
 ```
 

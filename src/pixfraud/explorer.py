@@ -3,7 +3,8 @@
 Mostra todas as contas e Pix de uma vez, com ferramentas dinâmicas: busca de
 conta, filtro por papel, cor por papel / risco / comunidade, clique para ver a
 vizinhança e os detalhes de uma conta, e uma linha do tempo que mostra a rede
-crescendo dia a dia (com botão de "tocar").
+crescendo dia a dia (com botão de "tocar"). Com o risco de vários modelos, cada
+um ganha uma aba: a cor, o ranking e os detalhes da conta seguem a aba escolhida.
 
 O posicionamento é calculado em Python (``community_layout``): cada
 comunidade (Louvain) é desenhada separadamente e as comunidades são dispostas
@@ -14,7 +15,9 @@ dezenas de milhares de arestas.
 Uso típico::
 
     save_network_explorer("reports/estudos/rede.html", graph, transactions=tx,
-                          roles=papel, risk=escores)
+                          roles=papel, risk=escores)            # um modelo
+    save_network_explorer(..., risk={"dbscan": s1, "knn": s2},  # uma aba por modelo
+                          models={"knn": {"label": "KNN", "family": "não supervisionado"}})
 
 A página abre em qualquer navegador e precisa de internet para carregar as
 bibliotecas (sigma.js e graphology, via cdnjs).
@@ -96,16 +99,26 @@ def explorer_payload(
     graph: nx.DiGraph,
     transactions: pd.DataFrame | None = None,
     roles: pd.Series | None = None,
-    risk: pd.Series | None = None,
+    risk: pd.Series | dict[str, pd.Series] | None = None,
     communities: pd.Series | None = None,
     positions: dict | None = None,
     seed: int = 42,
     center_roles: Iterable[str] = CENTER_ROLES,
+    models: dict[str, dict] | None = None,
+    initial_model: str | None = None,
 ) -> dict:
     """Dados compactos (listas de números) que a página do explorador consome.
 
     As contas com papel em ``center_roles`` (as da quadrilha) ficam no centro do
     desenho (ver ``community_layout``); passe ``()`` para desligar.
+
+    ``risk`` é um escore (maior = mais suspeita) ou um dicionário ``{modelo:
+    escore}``, e cada modelo vira uma aba da página. ``models`` descreve cada
+    um (todas as chaves são opcionais): ``label`` (nome na aba), ``family``
+    (as abas são agrupadas por família, na ordem em que aparecem), ``color``,
+    ``metrics`` (``{"average_precision": ..., "precision_at_k": ...}``, mostradas
+    na aba) e ``known`` (contas cujo rótulo o modelo usou, marcadas nos detalhes).
+    ``initial_model`` é a aba aberta ao carregar a página (padrão: a primeira).
     """
     if communities is None:
         communities = detect_communities(graph, seed=seed)
@@ -123,8 +136,24 @@ def explorer_payload(
         fraud_pairs = transactions.loc[transactions["is_fraud"].astype(bool), ["sender", "receiver"]]
         edge_fraud = {tuple(p) for p in fraud_pairs.itertuples(index=False)}
 
-    percentile = risk.rank(pct=True) if risk is not None else None
-    position = risk.rank(ascending=False, method="min") if risk is not None else None
+    scores = {} if risk is None else dict(risk) if isinstance(risk, dict) else {"risco": risk}
+    risk_models, risk_k, risk_p = [], [], []
+    for key, score in scores.items():
+        score = score.reindex(nodes)
+        percentile = score.rank(pct=True)
+        position = score.rank(ascending=False, method="min")
+        meta = (models or {}).get(key, {})
+        known = {index[v] for v in meta.get("known", ()) if v in index}
+        risk_models.append({
+            "key": str(key),
+            "label": str(meta.get("label", key)),
+            "family": str(meta.get("family", "")),
+            "color": meta.get("color"),
+            "metrics": {m: round(float(v), 4) for m, v in meta.get("metrics", {}).items()},
+            "known": sorted(known),
+        })
+        risk_k.append([None if pd.isna(x) else round(float(x), 4) for x in percentile])
+        risk_p.append([None if pd.isna(x) else int(x) for x in position])
     node_rows = []
     for i, v in enumerate(nodes):
         degree = graph.in_degree(v) + graph.out_degree(v)
@@ -134,8 +163,6 @@ def explorer_payload(
             "y": round(float(xy[i, 1]), 2),
             "s": round(1.0 + 0.75 * math.log2(1 + degree), 2),
             "r": str(roles.get(v, "?")) if roles is not None else "?",
-            "k": round(float(percentile[v]), 4) if percentile is not None and v in percentile.index else None,
-            "p": int(position[v]) if position is not None and v in position.index else None,
             "c": int(communities.get(v, -1)),
             "i": graph.in_degree(v),
             "o": graph.out_degree(v),
@@ -160,7 +187,9 @@ def explorer_payload(
         "nodes": node_rows,
         "edges": edges,
         "days": days,
-        "hasRisk": percentile is not None,
+        "hasRisk": bool(scores),
+        "risk": {"models": risk_models, "k": risk_k, "p": risk_p,
+                 "initial": list(scores).index(initial_model) if initial_model in scores else 0},
         "hasFraudEdges": bool(edge_fraud),
         "communities": int(communities.nunique()),
     }
@@ -170,16 +199,20 @@ def network_explorer_html(
     graph: nx.DiGraph,
     transactions: pd.DataFrame | None = None,
     roles: pd.Series | None = None,
-    risk: pd.Series | None = None,
+    risk: pd.Series | dict[str, pd.Series] | None = None,
     communities: pd.Series | None = None,
     title: str = "Rede Pix",
     subtitle: str = "",
     positions: dict | None = None,
     seed: int = 42,
     center_roles: Iterable[str] = CENTER_ROLES,
+    models: dict[str, dict] | None = None,
+    initial_model: str | None = None,
 ) -> str:
-    """Página HTML completa do explorador (ver ``save_network_explorer``)."""
-    payload = explorer_payload(graph, transactions, roles, risk, communities, positions, seed, center_roles)
+    """Página HTML completa do explorador (ver ``save_network_explorer`` e, para ``risk`` e
+    ``models``, ``explorer_payload``)."""
+    payload = explorer_payload(graph, transactions, roles, risk, communities, positions, seed, center_roles,
+                               models, initial_model)
     data = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     page = _TEMPLATE
     for key, value in {
@@ -328,6 +361,37 @@ _TEMPLATE = r"""<meta charset="utf-8">
   input[type="range"] { width: 100%; accent-color: var(--accent); }
   .day { font: 500 13px var(--mono); color: var(--muted); }
   .hint { color: var(--muted); font-size: 12px; margin: 0; }
+  .center { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 8px; min-height: 0; }
+  .center.single { grid-template-rows: minmax(0, 1fr); }
+  .tabs { display: flex; gap: 6px 14px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+  .tabs[hidden] { display: none; }
+  .family { display: flex; flex-direction: column; gap: 4px; flex: none; }
+  .family-name { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .family-tabs { display: flex; gap: 4px; }
+  .tab {
+    font: inherit; font-size: 13px; display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px;
+    padding: 5px 10px; cursor: pointer; white-space: nowrap; border-top: 3px solid var(--tab-color, var(--line));
+  }
+  .tab:hover { border-color: var(--accent); border-top-color: var(--tab-color, var(--accent)); }
+  .tab[aria-selected="true"] { background: var(--accent-soft); border-color: var(--accent); border-top-color: var(--tab-color, var(--accent)); font-weight: 600; }
+  .tab small { font: 11px var(--mono); color: var(--muted); font-weight: 400; }
+  .ranking { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 12px; }
+  .ranking th { text-align: left; color: var(--muted); font-weight: 500; padding: 2px 4px; border-bottom: 1px solid var(--line); }
+  .ranking th.num { text-align: right; }
+  .ranking td { padding: 0; border-bottom: 1px solid var(--line); }
+  .ranking td.num { text-align: right; font-family: var(--mono); padding: 3px 4px; }
+  .ranking td.txt { padding: 3px 4px; }
+  .ranking tr.current td { background: var(--accent-soft); font-weight: 600; }
+  .ranking button {
+    width: 100%; font: 12px var(--mono); text-align: left; background: transparent; color: var(--ink);
+    border: 0; padding: 3px 4px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+  .ranking button:hover { background: var(--accent-soft); }
+  .tag { font: 600 10px var(--sans); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+  .summary { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; font-variant-numeric: tabular-nums; }
+  .summary dt { color: var(--muted); }
+  .summary dd { margin: 0; font-family: var(--mono); text-align: right; }
   .stage { position: relative; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px; min-height: 0; overflow: hidden; }
   #sigma { position: absolute; inset: 0; }
   .legend { position: absolute; left: 12px; bottom: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: calc(100% - 24px); }
@@ -358,6 +422,7 @@ _TEMPLATE = r"""<meta charset="utf-8">
     .app { height: auto; }
     .main { grid-template-columns: 1fr; }
     .stage { height: 65vh; }
+    .center { height: auto; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -423,10 +488,13 @@ _TEMPLATE = r"""<meta charset="utf-8">
       <p class="hint">Cada seta vai de quem pagou para quem recebeu. Passe o mouse ou clique numa conta para ver as entradas (azul) e as saídas (laranja). Arraste para mover e use a roda do mouse (ou o gesto de pinça) para dar zoom. Clique no fundo para limpar.</p>
     </aside>
 
-    <section class="stage" aria-label="Rede de transações">
-      <div id="sigma"></div>
-      <div class="legend" id="legend"></div>
-    </section>
+    <div class="center" id="center">
+      <nav class="tabs" id="tabs" role="tablist" aria-label="Modelo de risco" hidden></nav>
+      <section class="stage" aria-label="Rede de transações">
+        <div id="sigma"></div>
+        <div class="legend" id="legend"></div>
+      </section>
+    </div>
 
     <aside class="panel details" id="details" aria-label="Detalhes da conta" aria-live="polite">
       <div><h2>Conta selecionada</h2><p class="empty">Nenhuma. Clique numa conta ou use a busca.</p></div>
@@ -453,7 +521,9 @@ _TEMPLATE = r"""<meta charset="utf-8">
   const money = (v) => "R$ " + Math.round(v).toLocaleString("pt-BR");
   const nodes = DATA.nodes, E = DATA.edges, nDays = Math.max(DATA.days.length, 1);
 
-  const state = { mode: "role", day: nDays - 1, minAmount: 0, onlyFraud: false, normalAlpha: 0.12, edgeScale: 1, hovered: null, roles: new Set(), selected: null, neighbors: new Set() };
+  const RISK_DATA = DATA.risk || { models: [], k: [], p: [], initial: 0 };
+  const MODELS = RISK_DATA.models;
+  const state = { model: 0, mode: "role", day: nDays - 1, minAmount: 0, onlyFraud: false, normalAlpha: 0.12, edgeScale: 1, hovered: null, roles: new Set(), selected: null, neighbors: new Set() };
   const FRAUD_ROLES = new Set(["laranja", "intermediario", "coletor"]);
   // Cor das setas do dinheiro da quadrilha, pelo papel de quem pagou (mais saturadas que as dos nós).
   const FLOW_COLORS = { vitima: "#2f9e44", laranja: "#f76707", intermediario: "#ae3ec9", coletor: "#e03131" };
@@ -486,10 +556,79 @@ _TEMPLATE = r"""<meta charset="utf-8">
   const idIndex = new Map(nodes.map((n, i) => [n.id, i]));
 
   if (!DATA.hasRisk) { $("mode-risk").disabled = true; $("mode-risk").title = "Nenhum escore de risco foi fornecido"; }
+
+  // ---- abas: um modelo de risco por aba ----
+  const pct = (k) => (k * 100).toFixed(1).replace(".", ",") + "%";
+  const num = (v, d) => v === undefined || v === null ? "–" : v.toFixed(d === undefined ? 2 : d).replace(".", ",");
+  const knownSets = MODELS.map((m) => new Set(m.known));
+  function applyModel(m) {
+    state.model = m;
+    nodes.forEach((n, i) => { n.k = MODELS.length ? RISK_DATA.k[m][i] : null; n.p = MODELS.length ? RISK_DATA.p[m][i] : null; });
+  }
+  function setMode(mode) {
+    state.mode = mode;
+    document.querySelectorAll(".segmented button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.mode === mode)));
+  }
+  function chooseModel(m) {
+    applyModel(m);
+    document.querySelectorAll(".tab").forEach((t) => {
+      const on = +t.dataset.model === m;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+    });
+    setMode("risk");
+    details();
+    update();
+  }
+  applyModel(RISK_DATA.initial || 0);
+  if (MODELS.length > 1) {
+    const tabs = $("tabs");
+    tabs.hidden = false;
+    const families = [];
+    MODELS.forEach((m, i) => {
+      let group = families.find((f) => f.name === m.family);
+      if (!group) { group = { name: m.family, items: [] }; families.push(group); }
+      group.items.push(i);
+    });
+    families.forEach((f) => {
+      const box = document.createElement("div");
+      box.className = "family";
+      box.setAttribute("role", "presentation");
+      box.innerHTML = (f.name ? '<span class="family-name">' + f.name + "</span>" : "") + '<div class="family-tabs" role="presentation"></div>';
+      f.items.forEach((i) => {
+        const m = MODELS[i];
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "tab";
+        b.dataset.model = String(i);
+        b.setAttribute("role", "tab");
+        b.setAttribute("aria-selected", String(i === state.model));
+        b.tabIndex = i === state.model ? 0 : -1;
+        if (m.color) b.style.setProperty("--tab-color", m.color);
+        const ap = m.metrics.average_precision;
+        b.innerHTML = m.label + (ap !== undefined ? "<small>AP " + num(ap) + "</small>" : "");
+        b.title = m.label + (m.family ? " (" + m.family + ")" : "") + (ap !== undefined ? ": average precision " + num(ap, 3) + ", precision@k " + num(m.metrics.precision_at_k, 3) : "");
+        b.addEventListener("click", () => chooseModel(i));
+        box.querySelector(".family-tabs").appendChild(b);
+      });
+      tabs.appendChild(box);
+    });
+    // setas do teclado passam de aba em aba, como num tablist
+    tabs.addEventListener("keydown", (e) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const next = (state.model + (e.key === "ArrowRight" ? 1 : MODELS.length - 1)) % MODELS.length;
+      chooseModel(next);
+      const t = tabs.querySelector('[data-model="' + next + '"]');
+      t.focus();
+      t.scrollIntoView({ block: "nearest", inline: "nearest" });
+      e.preventDefault();
+    });
+  } else {
+    $("center").classList.add("single");
+  }
   if (!DATA.hasFraudEdges) { $("only-fraud").disabled = true; }
   document.querySelectorAll(".segmented button").forEach((b) => b.addEventListener("click", () => {
-    state.mode = b.dataset.mode;
-    document.querySelectorAll(".segmented button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    setMode(b.dataset.mode);
     update();
   }));
   const slider = $("day");
@@ -561,7 +700,8 @@ _TEMPLATE = r"""<meta charset="utf-8">
     }
     const direction = '<span class="item arrow">seta: quem paga → quem recebe; mais grossa = mais dinheiro</span>';
     if (state.mode === "risk") {
-      box.innerHTML = '<span class="item">menos suspeita <span class="gradient"></span> mais suspeita</span>' + direction;
+      const name = MODELS.length > 1 ? "<b>" + MODELS[state.model].label + "</b>: " : "";
+      box.innerHTML = '<span class="item">' + name + 'menos suspeita <span class="gradient"></span> mais suspeita</span>' + direction;
     } else if (state.mode === "community") {
       box.innerHTML = '<span class="item">' + DATA.communities + " grupos detectados pelo algoritmo de Louvain; cada cor é um grupo</span>" + direction;
     } else {
@@ -709,10 +849,51 @@ _TEMPLATE = r"""<meta charset="utf-8">
     select(i, true);
   });
 
+  const dot = (color) => '<span class="dot" style="display:inline-block;background:' + color + '"></span>';
+  const KNOWN_TAG = ' <span class="tag" title="o modelo usou o rótulo desta conta">conhecida</span>';
+  // As contas de maior risco no modelo da aba, com o papel real: os falsos positivos saltam aos olhos.
+  function modelSummary() {
+    if (!MODELS.length) return "";
+    const m = MODELS[state.model], known = knownSets[state.model];
+    const order = nodes.map((n, i) => i).filter((i) => nodes[i].p !== null).sort((a, b) => nodes[a].p - nodes[b].p);
+    const nFraud = nodes.filter((n) => FRAUD_ROLES.has(n.r)).length;
+    const hits = order.slice(0, nFraud).filter((i) => FRAUD_ROLES.has(nodes[i].r)).length;
+    const rows = order.slice(0, 20).map((i) =>
+      '<tr><td><button type="button" data-node="' + i + '">' + dot(ROLE_COLORS[nodes[i].r] || "#999") + nodes[i].id +
+      (known.has(i) ? KNOWN_TAG : "") + "</button></td>" +
+      '<td class="txt">' + (ROLE_NAMES[nodes[i].r] || nodes[i].r) + '</td><td class="num">' + nodes[i].p + "ª</td></tr>").join("");
+    return '<div><h2>Modelo</h2><div class="account">' + m.label + "</div>" +
+      (m.family ? '<div class="hint">' + m.family + "</div>" : "") + "</div>" +
+      '<dl class="summary">' +
+      (m.metrics.average_precision !== undefined ? "<dt>average precision</dt><dd>" + num(m.metrics.average_precision, 3) + "</dd>" : "") +
+      (m.metrics.precision_at_k !== undefined ? "<dt>precision@k</dt><dd>" + num(m.metrics.precision_at_k, 3) + "</dd>" : "") +
+      (nFraud ? "<dt>fraudes entre as " + nFraud + " primeiras</dt><dd>" + hits + "</dd>" : "") +
+      (known.size ? "<dt>rótulos que o modelo viu</dt><dd>" + known.size + "</dd>" : "") +
+      "</dl>" +
+      '<div><h2>Mais suspeitas neste modelo</h2><table class="ranking"><thead><tr><th>conta</th><th>papel real</th><th class="num">posição</th></tr></thead><tbody>' +
+      rows + "</tbody></table></div>";
+  }
+  // A posição da conta em cada modelo: em quais abas ela está no topo?
+  function allModels(i) {
+    if (MODELS.length < 2) return "";
+    const rows = MODELS.map((m, j) =>
+      '<tr class="' + (j === state.model ? "current" : "") + '"><td><button type="button" data-model="' + j + '">' +
+      dot(m.color || "#8f9a98") + m.label + (knownSets[j].has(i) ? KNOWN_TAG : "") + "</button></td>" +
+      '<td class="num">' + (RISK_DATA.p[j][i] === null ? "–" : RISK_DATA.p[j][i] + "ª") + '</td><td class="num">' +
+      (RISK_DATA.k[j][i] === null ? "–" : pct(RISK_DATA.k[j][i])) + "</td></tr>").join("");
+    return '<div><h2>Risco em todos os modelos</h2><table class="ranking"><thead><tr><th>modelo</th><th class="num">posição</th><th class="num">percentil</th></tr></thead><tbody>' +
+      rows + "</tbody></table></div>";
+  }
+  function wire(box) {
+    box.querySelectorAll("button[data-node]").forEach((b) => b.addEventListener("click", () => select(+b.dataset.node, true)));
+    box.querySelectorAll("button[data-model]").forEach((b) => b.addEventListener("click", () => chooseModel(+b.dataset.model)));
+  }
+
   function details() {
     const box = $("details");
     if (state.selected === null) {
-      box.innerHTML = '<div><h2>Conta selecionada</h2><p class="empty">Nenhuma. Clique numa conta ou use a busca.</p></div>';
+      box.innerHTML = '<div><h2>Conta selecionada</h2><p class="empty">Nenhuma. Clique numa conta ou use a busca.</p></div>' + modelSummary();
+      wire(box);
       return;
     }
     const i = state.selected, n = nodes[i];
@@ -736,14 +917,15 @@ _TEMPLATE = r"""<meta charset="utf-8">
       "<dt>recebeu</dt><dd>" + money(n.ai) + "</dd>" +
       "<dt>enviou</dt><dd>" + money(n.ao) + "</dd>" +
       // uma casa decimal: com 2 mil contas, as 10 primeiras arredondariam todas para "100%"
-      (n.k !== null ? "<dt>percentil de risco</dt><dd>" + (n.k * 100).toFixed(1).replace(".", ",") + "%</dd>" : "") +
+      (n.k !== null && n.k !== undefined ? "<dt>percentil de risco" + (MODELS.length > 1 ? " (" + MODELS[state.model].label + ")" : "") + "</dt><dd>" + pct(n.k) + "</dd>" : "") +
       (n.p !== null && n.p !== undefined ? "<dt>posição no risco</dt><dd>" + n.p + "ª de " + nodes.length.toLocaleString("pt-BR") + "</dd>" : "") +
       "<dt>grupo (Louvain)</dt><dd>" + n.c + "</dd>" +
       (DATA.days.length ? "<dt>primeiro Pix</dt><dd>" + DATA.days[n.d] + "</dd>" : "") +
       "</dl>" +
       '<div><h2>Maiores pagadores</h2><ul class="neighbors">' + top(incoming, (j) => E.s[j]) + "</ul></div>" +
-      '<div><h2>Maiores recebedores</h2><ul class="neighbors">' + top(outgoing, (j) => E.t[j]) + "</ul></div>";
-    box.querySelectorAll("button[data-node]").forEach((b) => b.addEventListener("click", () => select(+b.dataset.node, true)));
+      '<div><h2>Maiores recebedores</h2><ul class="neighbors">' + top(outgoing, (j) => E.t[j]) + "</ul></div>" +
+      allModels(i);
+    wire(box);
   }
 
   function stats() {
@@ -763,6 +945,7 @@ _TEMPLATE = r"""<meta charset="utf-8">
   new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
 
+  details();
   update();
 })();
 </script>

@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -232,6 +233,20 @@ def test_avaliar_modelos(tmp_path):
     for figure in ("modelos_average_precision.png", "modelos_comparacoes.png"):
         assert (tmp_path / "figures" / figure).stat().st_size > 0
     _run("avaliar_modelos.py", "--so-figuras", "--saida", str(tmp_path))  # redesenha só a partir dos CSVs
+
+
+def test_visualizar_rede_uma_aba_por_modelo(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    _run("gerar_dataset.py", "--config", str(tmp_path / "config.yaml"), "--saida", str(tmp_path / "dados"))
+    out = _run("visualizar_rede.py", "--config", str(tmp_path / "config.yaml"), "--dados", str(tmp_path / "dados"),
+               "--sem-gnn", "--saida", str(tmp_path / "rede.html"))
+    page = (tmp_path / "rede.html").read_text(encoding="utf-8")
+    risk = json.loads(re.search(r"const DATA = (\{.*?\});\n", page, re.S).group(1))["risk"]
+    keys = [m["key"] for m in risk["models"]]
+    assert {*DETECTORS, "fraudar", "label_spreading", *SUPERVISED_MODELS} <= set(keys) and "18 modelos" in out
+    assert keys[risk["initial"]] == "dbscan"  # a página abre na referência
+    assert all(0 <= m["metrics"]["average_precision"] <= 1 for m in risk["models"])
+    assert {len(m["known"]) > 0 for m in risk["models"] if m["family"] == "semi-supervisionado"} == {True}
 
 
 def test_avaliar_fraudar(tmp_path):

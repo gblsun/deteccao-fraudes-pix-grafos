@@ -52,29 +52,23 @@ from pixfraud import gnn  # noqa: E402
 from pixfraud.anomaly import DETECTORS  # noqa: E402
 from pixfraud.evaluation import ranking_metrics  # noqa: E402
 from pixfraud.experiment import (  # noqa: E402
-    SUPERVISED_MODELS,
+    FAMILY_OF,
+    MODEL_FAMILIES,
+    MODEL_ORDER,
+    all_model_scores,
     load_experiment_config,
     load_scenarios,
     prepare,
     save_metadata,
     seeded_models,
-    supervised_scores,
 )
 from pixfraud.features import FEATURE_SETS  # noqa: E402
-from pixfraud.flow import label_spreading, propagate_risk  # noqa: E402
 from pixfraud.graph_models import GRAPH_DETECTORS  # noqa: E402
 from pixfraud.simulation import generate_dataset, load_config, with_overrides  # noqa: E402
 from pixfraud.stats import compare_runs, summarize_runs  # noqa: E402
 from pixfraud.visualization import INK, SURFACE, plot_differences, plot_model_intervals  # noqa: E402
 
-FAMILIES = {
-    "não supervisionado": list(DETECTORS),
-    "estrutura do grafo": [*GRAPH_DETECTORS, "dominant"],
-    "semi-supervisionado": ["propagacao_relativa", "label_spreading", "combinado", "label_spreading_combinado"],
-    "teto supervisionado": [*SUPERVISED_MODELS, "graphsage"],
-}
-FAMILY_OF = {model: family for family, models in FAMILIES.items() for model in models}
-ORDER = [model for models in FAMILIES.values() for model in models]
+FAMILIES, ORDER = MODEL_FAMILIES, MODEL_ORDER
 REFERENCE = "dbscan"
 COMPARISONS = [
     *[(m, REFERENCE) for m in [*DETECTORS, *GRAPH_DETECTORS, "dominant"] if m != REFERENCE],
@@ -179,22 +173,8 @@ def _evaluate(simulation, name, seed, config, conjunto, use_gnn) -> list[dict]:
     known_legit = list(rng.choice(legit, size=round(KNOWN_FRACTION * len(legit)), replace=False))
     evaluated = labels.drop(known + known_legit)
 
-    columns = FEATURE_SETS[conjunto]
-    scores = {m: detect(prepared.features[columns], **models.get(m, {})).scores for m, detect in DETECTORS.items()}
-    scores |= {m: detect(prepared.graph, **models.get(m, {})).scores for m, detect in GRAPH_DETECTORS.items()}
-    scores["propagacao_relativa"] = propagate_risk(prepared.graph, known, relative=True)
-    scores["label_spreading"] = label_spreading(prepared.graph, known, known_legit)
-
-    def percentile(model):
-        return scores[model].reindex(evaluated.index).rank(pct=True)
-
-    scores["combinado"] = (percentile("propagacao_relativa") + percentile(REFERENCE)) / 2
-    scores["label_spreading_combinado"] = (percentile("label_spreading") + percentile(REFERENCE)) / 2
-    for model in SUPERVISED_MODELS:
-        scores[model] = supervised_scores(prepared.features[columns], labels, seed=seed, model=model)
-    if use_gnn:
-        scores["dominant"] = gnn.dominant_scores(prepared.graph, prepared.features[columns], seed=seed)
-        scores["graphsage"] = gnn.graphsage_scores(prepared.graph, prepared.features[columns], labels, seed=seed)
+    scores = all_model_scores(prepared, models, FEATURE_SETS[conjunto], known, known_legit, seed=seed,
+                              use_gnn=use_gnn, reference=REFERENCE, rank_index=evaluated.index)
 
     common = {"cenario": name, "semente": seed, "atributos": "vitrine", "taxa_fraude": float(evaluated.mean()),
               "fraudes_avaliadas": int(evaluated.sum()), "contas_avaliadas": len(evaluated),

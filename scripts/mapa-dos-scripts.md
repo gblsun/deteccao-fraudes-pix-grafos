@@ -30,7 +30,7 @@ com exemplos de uso.
 | [`avaliar_externo.py`](avaliar_externo.py) | mesma configuração num dataset externo, por janelas; recall por tipologia | `data/external/<nome>/` | `reports/amlworld/` | minutos por janela |
 | [`importar_dataset.py`](importar_dataset.py) | converte AMLworld ou PaySim para o formato do projeto | `data/raw/` | `data/external/<nome>/` | ~1 min |
 | [`baixar_dados_bcb.py`](baixar_dados_bcb.py) | baixa estatísticas do Pix do Banco Central | API do BCB | `data/bcb/` | segundos |
-| [`visualizar_rede.py`](visualizar_rede.py) | página HTML da rede inteira, com filtros e linha do tempo | `data/synthetic/` | `reports/estudos/rede_completa.html` | ~1 min |
+| [`visualizar_rede.py`](visualizar_rede.py) | página HTML da rede inteira, com filtros, linha do tempo e uma aba de risco por modelo (18, ou 20 com a GNN) | `data/synthetic/` | `reports/estudos/rede_completa.html` | ~1 min |
 | [`reproduzir_tudo.py`](reproduzir_tudo.py) | refaz todos os resultados na ordem certa (ver abaixo); [`reproduzir_tudo.ps1`](reproduzir_tudo.ps1) é um atalho para ele | configuração | `reports/` | algumas horas |
 | [`gerar_ilustracoes.py`](gerar_ilustracoes.py) | figuras explicativas do README: padrões, GIF da quadrilha e recorte da rede | configuração | `reports/figures/padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | ~1 min |
 | [`criar_grafo.py`](criar_grafo.py) | grafos avulsos: padrões, CSVs quaisquer, trilha do dinheiro, fluxo | CSV ou padrão | o arquivo de `--saida` | segundos |
