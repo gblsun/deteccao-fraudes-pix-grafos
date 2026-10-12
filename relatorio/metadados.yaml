@@ -1,4 +1,4 @@
-# Metadados do relatório para o Pandoc (usados por scripts/gerar_relatorio.py).
+# Metadados do relatório para o Pandoc (usados por scripts/ferramentas/gerar_relatorio.py).
 title: "Detecção de Fraudes em Transações PIX utilizando Teoria dos Grafos e Machine Learning"
 subtitle: "Relatório final de iniciação científica (rascunho)"
 lang: pt-BR

@@ -9,7 +9,7 @@ Volta para o [roteiro do relatório](../mapa-do-relatorio.md).
 > **Rascunho** tirado de [`docs/resultados.md`](../../docs/resultados.md), onde estão os
 > números completos, as figuras e as ressalvas. Reescreva com as suas palavras e escolha
 > o que entra no relatório; cada afirmação aqui tem a tabela correspondente em
-> `reports/results/`.
+> `reports/*/results/`.
 
 ## Validação do dataset sintético
 
@@ -33,7 +33,7 @@ detectores (diferença de +0,28 no Isolation Forest e +0,19 no DBSCAN, p ajustad
 de 0,02). O mesmo vale nos cenários seguintes, incluindo aquele em que os golpes têm o
 valor de um Pix comum.
 
-![Average precision por cenário](../../reports/figures/cenarios_average_precision.png)
+![Average precision por cenário](../../reports/04_avaliacao/figures/cenarios_average_precision.png)
 
 O conjunto com todos os atributos e o DBSCAN é a abordagem mais robusta: tem a maior AP em
 seis dos oito cenários e, no cenário mais realista, alcança 0,50 [0,45; 0,55], cerca de 80
@@ -56,7 +56,7 @@ cerca de 22 horas depois do golpe; com atributos temporais, em três horas, pert
 imposto pela frequência das execuções. A fração do dinheiro que ficaria retida acompanha
 esse atraso (45% contra 83%, supondo que o dinheiro parado por mais de uma hora é sacado).
 
-![Detecção a tempo](../../reports/figures/online_deteccao.png)
+![Detecção a tempo](../../reports/04_avaliacao/figures/online_deteccao.png)
 
 ## Poucos rótulos rendem muito
 

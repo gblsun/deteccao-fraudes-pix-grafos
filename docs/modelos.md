@@ -159,7 +159,7 @@ valem menos quando chegam a contas muito procuradas, para resistir a camuflagem.
 por conta (a densidade do bloco), ignorando blocos com mais de 5% das contas.
 
 **Configuração.** `--blocos 10` e `--fatia-maxima 0.05` em
-[`avaliar_fraudar.py`](../scripts/avaliar_fraudar.py). Sem rótulos e sem atributos.
+[`avaliar_fraudar.py`](../scripts/04_avaliacao/avaliar_fraudar.py). Sem rótulos e sem atributos.
 
 **Onde é melhor.** Sozinho, perde para o DBSCAN; combinado com ele, é a melhor opção não
 supervisionada enquanto a rede legítima não se parte em muitos círculos pequenos e densos
@@ -191,7 +191,7 @@ DOMINANT, sem rótulos, ainda fica abaixo do DBSCAN (ver [resultados, seção
 Feitos em paralelo entre 22 e 24/09 e integrados ao `main` em 29/09 (branch
 `local-2026-09-24`). O código e os testes estão prontos; **nenhum deles tem resultado em
 `reports/` ainda**. O script que compara todos nas mesmas contas é
-[`avaliar_modelos.py`](../scripts/avaliar_modelos.py).
+[`avaliar_modelos.py`](../scripts/03_modelos/avaliar_modelos.py).
 
 | Modelo | Onde | Tipo |
 |---|---|---|

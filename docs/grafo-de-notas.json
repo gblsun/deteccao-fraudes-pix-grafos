@@ -1,5 +1,5 @@
 {
- "descricao": "Grafo de notas do cofre do Obsidian (gerado por scripts/exportar_grafo_de_notas.py; não edite à mão).",
+ "descricao": "Grafo de notas do cofre do Obsidian (gerado por scripts/ferramentas/exportar_grafo_de_notas.py; não edite à mão).",
  "nos": [
   {
    "caminho": "CLAUDE.md",
@@ -637,6 +637,13 @@
    ]
   },
   {
+   "caminho": "docs/plano-de-testes-estatisticos.md",
+   "titulo": "Plano de testes estatísticos",
+   "tags": [
+    "metodo"
+   ]
+  },
+  {
    "caminho": "docs/proposta.md",
    "titulo": "Detecção de Fraudes em Transações PIX utilizando Teoria dos Grafos e Machine Learning",
    "tags": [
@@ -942,12 +949,12 @@
   },
   {
    "de": "docs/diario/2026-09-26.md",
-   "para": "scripts/avaliar_fraudar.py",
+   "para": "scripts/04_avaliacao/avaliar_fraudar.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/diario/2026-09-26.md",
-   "para": "scripts/avaliar_gnn.py",
+   "para": "scripts/04_avaliacao/avaliar_gnn.py",
    "tipo": "arquivo"
   },
   {
@@ -967,7 +974,7 @@
   },
   {
    "de": "docs/diario/2026-09-28.md",
-   "para": "scripts/avaliar_gnn_rotulos.py",
+   "para": "scripts/04_avaliacao/avaliar_gnn_rotulos.py",
    "tipo": "arquivo"
   },
   {
@@ -992,12 +999,12 @@
   },
   {
    "de": "docs/diario/2026-09-29.md",
-   "para": "scripts/analisar_tipo_de_rede.py",
+   "para": "scripts/02_exploracao/analisar_tipo_de_rede.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/diario/2026-09-29.md",
-   "para": "scripts/avaliar_sementes.py",
+   "para": "scripts/04_avaliacao/avaliar_sementes.py",
    "tipo": "arquivo"
   },
   {
@@ -1052,12 +1059,12 @@
   },
   {
    "de": "docs/diario/2026-10-08.md",
-   "para": "scripts/avaliar_modelos.py",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/diario/2026-10-08.md",
-   "para": "scripts/otimizar_hiperparametros.py",
+   "para": "scripts/03_modelos/otimizar_hiperparametros.py",
    "tipo": "arquivo"
   },
   {
@@ -1237,57 +1244,127 @@
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
+   "para": "docs/plano-de-testes-estatisticos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
    "para": "docs/resultados.md",
    "tipo": "nota"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/analisar_tipo_de_rede.py",
+   "para": "reports/01_dados",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/auditar_papeis.py",
+   "para": "reports/02_exploracao",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/avaliar_cenarios.py",
+   "para": "reports/03_modelos",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/avaliar_deteccao_online.py",
+   "para": "reports/04_avaliacao",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/avaliar_modelos.py",
+   "para": "reports/ilustracoes",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/avaliar_robustez.py",
+   "para": "reports/mapa-dos-resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/01_dados",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/baixar_dados_bcb.py",
+   "para": "scripts/01_dados/auditar_papeis.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/gerar_dataset.py",
+   "para": "scripts/01_dados/baixar_dados_bcb.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/importar_dataset.py",
+   "para": "scripts/01_dados/gerar_dataset.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/investigar_falsos_positivos.py",
+   "para": "scripts/01_dados/importar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/02_exploracao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/02_exploracao/analisar_tipo_de_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/03_modelos",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/03_modelos/otimizar_hiperparametros.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/04_avaliacao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/04_avaliacao/avaliar_cenarios.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/04_avaliacao/avaliar_deteccao_online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/04_avaliacao/avaliar_robustez.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/05_interpretacao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/05_interpretacao/investigar_falsos_positivos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
+   "para": "scripts/ferramentas",
    "tipo": "arquivo"
   },
   {
@@ -1297,7 +1374,7 @@
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
-   "para": "scripts/otimizar_hiperparametros.py",
+   "para": "src/pixfraud/README.md",
    "tipo": "arquivo"
   },
   {
@@ -1792,7 +1869,7 @@
   },
   {
    "de": "docs/glossario/fraudar.md",
-   "para": "scripts/avaliar_fraudar.py",
+   "para": "scripts/04_avaliacao/avaliar_fraudar.py",
    "tipo": "arquivo"
   },
   {
@@ -2387,7 +2464,7 @@
   },
   {
    "de": "docs/glossario/redes-neurais-para-grafos.md",
-   "para": "scripts/avaliar_gnn.py",
+   "para": "scripts/04_avaliacao/avaliar_gnn.py",
    "tipo": "arquivo"
   },
   {
@@ -3552,6 +3629,11 @@
   },
   {
    "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/plano-de-testes-estatisticos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
    "para": "docs/proposta-original.pdf",
    "tipo": "arquivo"
   },
@@ -3707,12 +3789,12 @@
   },
   {
    "de": "docs/modelos.md",
-   "para": "scripts/avaliar_fraudar.py",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/modelos.md",
-   "para": "scripts/avaliar_modelos.py",
+   "para": "scripts/04_avaliacao/avaliar_fraudar.py",
    "tipo": "arquivo"
   },
   {
@@ -3792,12 +3874,82 @@
   },
   {
    "de": "docs/obsidian.md",
-   "para": "reports/figures/grafo_de_notas.png",
+   "para": "reports/ilustracoes/grafo_de_notas.png",
    "tipo": "arquivo"
   },
   {
    "de": "docs/obsidian.md",
-   "para": "reports/figures/grafo_do_codigo.png",
+   "para": "reports/ilustracoes/grafo_do_codigo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "docs/fluxo-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "docs/glossario/delta-de-cliff.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "docs/glossario/kruskal-wallis.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "docs/glossario/mann-whitney.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "docs/glossario/testes-para-classificadores.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "docs/resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "scripts/01_dados",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "scripts/02_exploracao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "scripts/05_interpretacao/investigar_falsos_positivos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "scripts/reproduzir_tudo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "src/pixfraud/stats.py",
    "tipo": "arquivo"
   },
   {
@@ -3877,12 +4029,12 @@
   },
   {
    "de": "docs/proximos-passos.md",
-   "para": "scripts/avaliar_gnn.py",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/proximos-passos.md",
-   "para": "scripts/avaliar_modelos.py",
+   "para": "scripts/04_avaliacao/avaliar_gnn.py",
    "tipo": "arquivo"
   },
   {
@@ -3902,6 +4054,16 @@
   },
   {
    "de": "docs/rede-pix.md",
+   "para": "reports/03_modelos/figures/grafo_de_calor_dbscan_completo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
+   "para": "reports/03_modelos/figures/heatmap_risco_dbscan_completo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/rede-pix.md",
    "para": "reports/estudos/rede_completa.html",
    "tipo": "arquivo"
   },
@@ -3912,32 +4074,22 @@
   },
   {
    "de": "docs/rede-pix.md",
-   "para": "reports/figures/grafo_de_calor_dbscan_completo.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "docs/rede-pix.md",
-   "para": "reports/figures/heatmap_risco_dbscan_completo.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "docs/rede-pix.md",
    "para": "reports/mapa-dos-resultados.md",
    "tipo": "nota"
   },
   {
    "de": "docs/rede-pix.md",
-   "para": "scripts/criar_grafo.py",
+   "para": "scripts/02_exploracao/criar_grafo.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/rede-pix.md",
-   "para": "scripts/rodar_experimento.py",
+   "para": "scripts/02_exploracao/visualizar_rede.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/rede-pix.md",
-   "para": "scripts/visualizar_rede.py",
+   "para": "scripts/03_modelos/rodar_experimento.py",
    "tipo": "arquivo"
   },
   {
@@ -4082,97 +4234,97 @@
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/figures/atributos_ablacao.png",
+   "para": "reports/04_avaliacao/figures/atributos_ablacao.png",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/figures/cenarios_average_precision.png",
+   "para": "reports/04_avaliacao/figures/cenarios_average_precision.png",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/figures/cenarios_efeitos.png",
+   "para": "reports/04_avaliacao/figures/cenarios_efeitos.png",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/figures/online_deteccao.png",
+   "para": "reports/04_avaliacao/figures/online_deteccao.png",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/results/cenarios_comparacoes.csv",
+   "para": "reports/04_avaliacao/results/cenarios_comparacoes.csv",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/results/cenarios_efeitos.csv",
+   "para": "reports/04_avaliacao/results/cenarios_efeitos.csv",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/results/robustez_resumo.csv",
+   "para": "reports/04_avaliacao/results/robustez_resumo.csv",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/results/sementes_convergencia.csv",
+   "para": "reports/04_avaliacao/results/sementes_convergencia.csv",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/results/sementes_pareadas.csv",
+   "para": "reports/04_avaliacao/results/sementes_pareadas.csv",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "reports/results/sementes_sorteios.csv",
+   "para": "reports/04_avaliacao/results/sementes_sorteios.csv",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/analisar_tipo_de_rede.py",
+   "para": "scripts/02_exploracao/analisar_tipo_de_rede.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/avaliar_atributos.py",
+   "para": "scripts/04_avaliacao/avaliar_atributos.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/avaliar_deteccao_online.py",
+   "para": "scripts/04_avaliacao/avaliar_deteccao_online.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/avaliar_externo.py",
+   "para": "scripts/04_avaliacao/avaliar_externo.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/avaliar_fraudar.py",
+   "para": "scripts/04_avaliacao/avaliar_fraudar.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/avaliar_gnn.py",
+   "para": "scripts/04_avaliacao/avaliar_gnn.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/avaliar_gnn_rotulos.py",
+   "para": "scripts/04_avaliacao/avaliar_gnn_rotulos.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/avaliar_propagacao.py",
+   "para": "scripts/04_avaliacao/avaliar_propagacao.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/resultados.md",
-   "para": "scripts/avaliar_sementes.py",
+   "para": "scripts/04_avaliacao/avaliar_sementes.py",
    "tipo": "arquivo"
   },
   {
@@ -4217,12 +4369,12 @@
   },
   {
    "de": "docs/reunioes/2026-09-24.md",
-   "para": "scripts/analisar_tipo_de_rede.py",
+   "para": "scripts/02_exploracao/analisar_tipo_de_rede.py",
    "tipo": "arquivo"
   },
   {
    "de": "docs/reunioes/2026-09-24.md",
-   "para": "scripts/avaliar_sementes.py",
+   "para": "scripts/04_avaliacao/avaliar_sementes.py",
    "tipo": "arquivo"
   },
   {
@@ -4702,12 +4854,12 @@
   },
   {
    "de": "relatorio/capitulos/04_resultados.md",
-   "para": "reports/figures/cenarios_average_precision.png",
+   "para": "reports/04_avaliacao/figures/cenarios_average_precision.png",
    "tipo": "arquivo"
   },
   {
    "de": "relatorio/capitulos/04_resultados.md",
-   "para": "reports/figures/online_deteccao.png",
+   "para": "reports/04_avaliacao/figures/online_deteccao.png",
    "tipo": "arquivo"
   },
   {
@@ -4777,6 +4929,11 @@
   },
   {
    "de": "reports/mapa-dos-resultados.md",
+   "para": "docs/fluxo-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
    "para": "docs/rede-pix.md",
    "tipo": "nota"
   },
@@ -4784,6 +4941,96 @@
    "de": "reports/mapa-dos-resultados.md",
    "para": "docs/resultados.md",
    "tipo": "nota"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/01_dados",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/02_exploracao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/02_exploracao/figures/tipo_de_rede_graus.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/03_modelos",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/03_modelos/figures/grafo_de_calor_dbscan_completo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/03_modelos/figures/heatmap_risco_dbscan_completo.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/03_modelos/figures/modelos_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/atributos_ablacao.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/atributos_teto.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/cenarios_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/cenarios_efeitos.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/fraudar_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/gnn_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/online_deteccao.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/propagacao_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/robustez_average_precision.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/04_avaliacao/figures/sementes_convergencia.png",
+   "tipo": "arquivo"
   },
   {
    "de": "reports/mapa-dos-resultados.md",
@@ -4802,87 +5049,22 @@
   },
   {
    "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/atributos_ablacao.png",
+   "para": "reports/ilustracoes",
    "tipo": "arquivo"
   },
   {
    "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/atributos_teto.png",
+   "para": "reports/ilustracoes/padroes_de_fraude.png",
    "tipo": "arquivo"
   },
   {
    "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/cenarios_average_precision.png",
+   "para": "reports/ilustracoes/quadrilha.gif",
    "tipo": "arquivo"
   },
   {
    "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/cenarios_efeitos.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/fraudar_average_precision.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/gnn_average_precision.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/grafo_de_calor_dbscan_completo.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/heatmap_risco_dbscan_completo.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/modelos_average_precision.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/online_deteccao.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/padroes_de_fraude.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/propagacao_average_precision.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/quadrilha.gif",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/rede_exemplo.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/robustez_average_precision.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/sementes_convergencia.png",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "reports/mapa-dos-resultados.md",
-   "para": "reports/figures/tipo_de_rede_graus.png",
+   "para": "reports/ilustracoes/rede_exemplo.png",
    "tipo": "arquivo"
   },
   {
@@ -4897,6 +5079,11 @@
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
+   "para": "docs/fluxo-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
    "para": "docs/obsidian.md",
    "tipo": "nota"
   },
@@ -4907,117 +5094,157 @@
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/analisar_tipo_de_rede.py",
+   "para": "scripts/01_dados",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/auditar_papeis.py",
+   "para": "scripts/01_dados/auditar_papeis.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_atributos.py",
+   "para": "scripts/01_dados/baixar_dados_bcb.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_cenarios.py",
+   "para": "scripts/01_dados/gerar_dataset.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_deteccao_online.py",
+   "para": "scripts/01_dados/importar_dataset.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_externo.py",
+   "para": "scripts/02_exploracao",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_fraudar.py",
+   "para": "scripts/02_exploracao/analisar_tipo_de_rede.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_gnn.py",
+   "para": "scripts/02_exploracao/criar_grafo.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_gnn_rotulos.py",
+   "para": "scripts/02_exploracao/visualizar_rede.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_modelos.py",
+   "para": "scripts/03_modelos",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_propagacao.py",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_robustez.py",
+   "para": "scripts/03_modelos/otimizar_hiperparametros.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/avaliar_sementes.py",
+   "para": "scripts/03_modelos/rodar_experimento.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/baixar_dados_bcb.py",
+   "para": "scripts/04_avaliacao",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/buscar.py",
+   "para": "scripts/04_avaliacao/avaliar_atributos.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/criar_grafo.py",
+   "para": "scripts/04_avaliacao/avaliar_cenarios.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/exportar_grafo_de_notas.py",
+   "para": "scripts/04_avaliacao/avaliar_deteccao_online.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/gerar_dataset.py",
+   "para": "scripts/04_avaliacao/avaliar_externo.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/gerar_ilustracoes.py",
+   "para": "scripts/04_avaliacao/avaliar_fraudar.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/ilustrar_grafos_de_conhecimento.py",
+   "para": "scripts/04_avaliacao/avaliar_gnn.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/importar_dataset.py",
+   "para": "scripts/04_avaliacao/avaliar_gnn_rotulos.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/investigar_falsos_positivos.py",
+   "para": "scripts/04_avaliacao/avaliar_propagacao.py",
    "tipo": "arquivo"
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/otimizar_hiperparametros.py",
+   "para": "scripts/04_avaliacao/avaliar_robustez.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/04_avaliacao/avaliar_sementes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/05_interpretacao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/05_interpretacao/investigar_falsos_positivos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/ferramentas",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/ferramentas/buscar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/ferramentas/exportar_grafo_de_notas.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/ferramentas/gerar_ilustracoes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/ferramentas/ilustrar_grafos_de_conhecimento.py",
    "tipo": "arquivo"
   },
   {
@@ -5028,16 +5255,6 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/reproduzir_tudo.py",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/rodar_experimento.py",
-   "tipo": "arquivo"
-  },
-  {
-   "de": "scripts/mapa-dos-scripts.md",
-   "para": "scripts/visualizar_rede.py",
    "tipo": "arquivo"
   }
  ]

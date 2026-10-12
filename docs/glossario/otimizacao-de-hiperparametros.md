@@ -28,5 +28,5 @@ validação; é por isso que só o teste conta.
 
 **No projeto.** O subpacote [`tuning/`](../../src/pixfraud/tuning/__init__.py), as grades em
 [`configs/busca_hiperparametros.yaml`](../../configs/busca_hiperparametros.yaml) e o script
-`scripts/otimizar_hiperparametros.py`. O resultado, antes e depois, está no
+`scripts/03_modelos/otimizar_hiperparametros.py`. O resultado, antes e depois, está no
 [mapa dos modelos](../../src/pixfraud/models/mapa-dos-modelos.md).

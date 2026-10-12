@@ -1,11 +1,11 @@
-"""Testes da busca única (scripts/buscar.py) num cofre e num grafo de código minúsculos."""
+"""Testes da busca única (scripts/ferramentas/buscar.py) num cofre e num grafo de código minúsculos."""
 
 import importlib.util
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
-spec = importlib.util.spec_from_file_location("buscar", ROOT / "scripts" / "buscar.py")
+spec = importlib.util.spec_from_file_location("buscar", ROOT / "scripts" / "ferramentas" / "buscar.py")
 buscar = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(buscar)
 

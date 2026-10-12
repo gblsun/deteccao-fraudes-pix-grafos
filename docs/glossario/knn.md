@@ -25,7 +25,7 @@ coincidente.
 **Como comparar com os outros.** As duas versões dão um escore por conta, então entram nas
 mesmas métricas de ranking ([average precision](average-precision.md),
 [precision@k](precision-at-k.md), [ROC-AUC](roc-auc.md)) e nas mesmas contas de
-`scripts/avaliar_modelos.py`. A supervisionada só não é comparável "de igual para
+`scripts/03_modelos/avaliar_modelos.py`. A supervisionada só não é comparável "de igual para
 igual": ela viu rótulos que um banco raramente tem.
 
 **No projeto.** [`anomaly.knn`](../../src/pixfraud/anomaly.py) e

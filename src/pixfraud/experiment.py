@@ -207,7 +207,7 @@ def known_fraud_scores(features: pd.DataFrame, known: list, seed: int = 42, fold
     return random_forest_known_fraud_scores(features, known, seed=seed, folds=folds, **params)
 
 
-# Todos os modelos da vitrine (``scripts/avaliar_modelos.py`` e o explorador da rede),
+# Todos os modelos da vitrine (``scripts/03_modelos/avaliar_modelos.py`` e o explorador da rede),
 # agrupados por família, na ordem em que aparecem nas figuras.
 MODEL_FAMILIES = {
     "não supervisionado": list(DETECTORS),

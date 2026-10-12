@@ -25,4 +25,4 @@ jupyter nbconvert --to notebook --execute --inplace notebooks/01_analise_explora
 ```
 
 - Os notebooks leem `data/`, que não é versionada: gere os dados antes
-  (`python scripts/gerar_dataset.py`).
+  (`python scripts/01_dados/gerar_dataset.py`).

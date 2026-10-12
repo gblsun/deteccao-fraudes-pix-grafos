@@ -81,10 +81,10 @@ Todas estão no pacote `pixfraud` e são usadas nos notebooks.
 **Pela linha de comando** (na raiz do repositório):
 
 ```powershell
-python scripts/criar_grafo.py padrao mule_ring --saida reports/estudos/anel.png
-python scripts/criar_grafo.py padrao chain --tamanho 6 --saida reports/estudos/cadeia.html
-python scripts/criar_grafo.py csv estudos/dados/exemplo_transacoes.csv --contas estudos/dados/exemplo_contas.csv --saida reports/estudos/exemplo.png
-python scripts/criar_grafo.py csv data/synthetic/transactions.csv --conta C000333 --saltos 5 --direcao tras --saida reports/estudos/trilha.html
+python scripts/02_exploracao/criar_grafo.py padrao mule_ring --saida reports/estudos/anel.png
+python scripts/02_exploracao/criar_grafo.py padrao chain --tamanho 6 --saida reports/estudos/cadeia.html
+python scripts/02_exploracao/criar_grafo.py csv estudos/dados/exemplo_transacoes.csv --contas estudos/dados/exemplo_contas.csv --saida reports/estudos/exemplo.png
+python scripts/02_exploracao/criar_grafo.py csv data/synthetic/transactions.csv --conta C000333 --saltos 5 --direcao tras --saida reports/estudos/trilha.html
 ```
 
 ## Dados de exemplo

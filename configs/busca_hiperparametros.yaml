@@ -1,4 +1,4 @@
-# Grades da otimização de hiperparâmetros (scripts/otimizar_hiperparametros.py).
+# Grades da otimização de hiperparâmetros (scripts/03_modelos/otimizar_hiperparametros.py).
 #
 # Para cada modelo, os valores testados de cada hiperparâmetro. Todas as combinações
 # são testadas, mais a configuração atual de configs/experimento.yaml.

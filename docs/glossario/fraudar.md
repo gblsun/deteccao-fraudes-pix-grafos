@@ -27,6 +27,6 @@ parte em vários círculos pequenos e densos, que competem com as quadrilhas. Po
 escore do projeto ignora blocos com mais de 5% das contas.
 
 **No projeto.** [`communities.fraudar_blocks` e `fraudar_scores`](../../src/pixfraud/communities.py),
-avaliados por [`scripts/avaliar_fraudar.py`](../../scripts/avaliar_fraudar.py); resultados
+avaliados por [`scripts/04_avaliacao/avaliar_fraudar.py`](../../scripts/04_avaliacao/avaliar_fraudar.py); resultados
 em [resultados](../resultados.md). Ver também [comunidades e
 modularidade](comunidades-e-modularidade.md) e [egonet e OddBall](egonet-e-oddball.md).

@@ -14,5 +14,5 @@ dinheiro chegue lá": as contas desse corte são as melhores candidatas a bloque
 
 **No projeto.** [`flow.max_money_flow`](../../src/pixfraud/flow.py) e
 [`flow.blocking_cut`](../../src/pixfraud/flow.py), usando `nx.maximum_flow`; exposto em
-`scripts/criar_grafo.py fluxo` e na aba "Fluxo e bloqueio" do
+`scripts/02_exploracao/criar_grafo.py fluxo` e na aba "Fluxo e bloqueio" do
 [explorador](../../app/guia-do-explorador.md).

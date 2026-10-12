@@ -9,7 +9,7 @@ estruturais (grau, centralidade, intermediação) alimentam detectores não supe
 (Isolation Forest, DBSCAN e LOF), e os resultados são interpretados com grafos de calor e
 heatmaps de risco.
 
-![Uma quadrilha dentro do movimento normal](reports/figures/rede_exemplo.png)
+![Uma quadrilha dentro do movimento normal](reports/ilustracoes/rede_exemplo.png)
 
 *O problema em uma imagem: as contas da quadrilha (laranja, roxo e vermelho) e as vítimas
 (verde) estão misturadas ao movimento normal (cinza e azul). O que as denuncia não é o que
@@ -28,12 +28,12 @@ desenhar e exportar grafos.
 A vítima paga uma conta **laranja**, que repassa em minutos para **intermediários** até
 chegar à conta **coletora**. Cada quadro é uma hora:
 
-![O dinheiro percorrendo uma quadrilha](reports/figures/quadrilha.gif)
+![O dinheiro percorrendo uma quadrilha](reports/ilustracoes/quadrilha.gif)
 
 O gerador injeta esses formatos na rede, e são eles que os atributos de grafo tentam
 capturar ([`pixfraud.patterns`](src/pixfraud/patterns.py)):
 
-![Padrões de fraude](reports/figures/padroes_de_fraude.png)
+![Padrões de fraude](reports/ilustracoes/padroes_de_fraude.png)
 
 ## O caminho da análise
 
@@ -52,7 +52,7 @@ Cada modelo está explicado em [docs/modelos.md](docs/modelos.md); os resultados
 
 ## O que a pesquisa mostrou até aqui
 
-![Average precision por cenário](reports/figures/cenarios_average_precision.png)
+![Average precision por cenário](reports/04_avaliacao/figures/cenarios_average_precision.png)
 
 No cenário fácil (`base`), os atributos tabulares parecem bastar. Quando o gerador deixa de
 entregar os sinais "de graça" (golpes só de madrugada, contas recém-abertas), a ordem se
@@ -84,12 +84,23 @@ associação, validação no AMLworld) estão em [docs/resultados.md](docs/resul
 │   └── modelos/               modelos de fichamento, reunião e diário
 ├── estudos/                   notebooks de estudo, gabarito e cola de NetworkX
 ├── notebooks/                 análises exploratórias da pesquisa
-├── reports/
-│   ├── figures/               grafos de calor, heatmaps de risco, robustez e cenários
-│   ├── estudos/               grafos gerados nos estudos (inclui a rede inteira em HTML)
-│   └── results/               métricas dos experimentos
+├── reports/                   resultados, uma pasta por etapa (results/ + figures/)
+│   ├── 01_dados/              auditoria dos papéis
+│   ├── 02_exploracao/         tipo de rede e inferência sobre os atributos
+│   ├── 03_modelos/            rodada única, otimização e vitrine de todos os modelos
+│   ├── 04_avaliacao/          robustez, cenários, ablação, propagação, GNN, sementes
+│   ├── 05_interpretacao/      falsos positivos
+│   ├── ilustracoes/           figuras do README
+│   └── estudos/               grafos dos estudos (inclui a rede inteira em HTML)
 ├── relatorio/                 esqueleto do relatório final (Markdown + Pandoc)
-├── scripts/                   pontos de entrada (ver "Pipeline")
+├── scripts/                   pontos de entrada (ver "Pipeline"), na ordem do fluxo da pesquisa
+│   ├── 01_dados/              gerar e importar dados, auditar o gabarito
+│   ├── 02_exploracao/         forma da rede, visualização
+│   ├── 03_modelos/            ajuste, otimização e vitrine dos modelos
+│   ├── 04_avaliacao/          repetições com sementes e cenários, testes entre modelos
+│   ├── 05_interpretacao/      erros dos modelos
+│   ├── ferramentas/           busca, grafo de notas, ilustrações, relatório
+│   └── reproduzir_tudo.py     refaz tudo na ordem
 ├── src/pixfraud/              código da pesquisa (pacote Python)
 │   ├── simulation.py          gerador do dataset sintético de transações PIX
 │   ├── bcb.py                 acesso aos dados abertos do PIX (Banco Central)
@@ -121,7 +132,7 @@ python -m venv .venv
 pip install -e ".[dev,notebooks,app]"
 pytest
 
-# opcional: redes neurais para grafos (scripts/avaliar_gnn.py); a versão só para CPU basta
+# opcional: redes neurais para grafos (scripts/04_avaliacao/avaliar_gnn.py); a versão só para CPU basta
 pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -e ".[gnn]"
 ```
@@ -149,18 +160,18 @@ Ou passo a passo:
 ```powershell
 # 1. gera o dataset sintético em data/synthetic/ (semente sorteada a cada execução;
 #    --seed 42 refaz o dataset dos resultados em reports/)
-python scripts/gerar_dataset.py
+python scripts/01_dados/gerar_dataset.py
 
 # 2. monta o grafo, extrai atributos, roda os detectores e salva métricas e figuras
-python scripts/rodar_experimento.py
+python scripts/03_modelos/rodar_experimento.py
 
 # 3. (opcional) baixa estatísticas públicas do PIX para calibrar o gerador
-python scripts/baixar_dados_bcb.py fraudes 202506
-python scripts/baixar_dados_bcb.py transacoes 202506 --filtro "AnoMes eq 202506"
+python scripts/01_dados/baixar_dados_bcb.py fraudes 202506
+python scripts/01_dados/baixar_dados_bcb.py transacoes 202506 --filtro "AnoMes eq 202506"
 
 # criar grafos avulsos: padrões de fraude, CSVs quaisquer, trilha do dinheiro de uma conta
-python scripts/criar_grafo.py padrao mule_ring --saida reports/estudos/anel.png
-python scripts/criar_grafo.py csv data/synthetic/transactions.csv --conta C000333 --saltos 5 --direcao tras --saida reports/estudos/trilha.html
+python scripts/02_exploracao/criar_grafo.py padrao mule_ring --saida reports/estudos/anel.png
+python scripts/02_exploracao/criar_grafo.py csv data/synthetic/transactions.csv --conta C000333 --saltos 5 --direcao tras --saida reports/estudos/trilha.html
 ```
 
 O formato de saída de `criar_grafo.py` vem da extensão: `.png`/`.svg`/`.pdf`, `.html`
@@ -169,23 +180,23 @@ calcula o fluxo máximo e as contas a bloquear entre origens e um destino.
 
 ```powershell
 # repete o experimento com 10 sementes: médias, intervalos de confiança e testes pareados
-python scripts/avaliar_robustez.py --sementes 10
+python scripts/04_avaliacao/avaliar_robustez.py --sementes 10
 
 # repete em cada cenário de configs/cenarios.yaml (do mais fácil ao mais difícil)
-python scripts/avaliar_cenarios.py --sementes 10
+python scripts/04_avaliacao/avaliar_cenarios.py --sementes 10
 
 # a rede inteira numa página HTML, com busca, filtros e linha do tempo
-python scripts/visualizar_rede.py
+python scripts/02_exploracao/visualizar_rede.py
 
 # explorador interativo: rede, ficha da conta, padrões, fluxo e resultados
 streamlit run app/explorador.py
 
 # validação externa no AMLworld, só com transferências parecidas com o Pix (ver data/README.md)
-python scripts/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --padroes data/raw/HI-Small_Patterns.txt --formatos ACH Wire --saida data/external/amlworld_pix
-python scripts/avaliar_externo.py --dados data/external/amlworld_pix --saida reports/amlworld
+python scripts/01_dados/importar_dataset.py amlworld data/raw/HI-Small_Trans.csv --padroes data/raw/HI-Small_Patterns.txt --formatos ACH Wire --saida data/external/amlworld_pix
+python scripts/04_avaliacao/avaliar_externo.py --dados data/external/amlworld_pix --saida reports/amlworld
 
 # detecção ao longo do tempo: quanto do dinheiro roubado seria bloqueado a tempo?
-python scripts/avaliar_deteccao_online.py --sementes 3
+python scripts/04_avaliacao/avaliar_deteccao_online.py --sementes 3
 ```
 
 As avaliações longas salvam o progresso: se forem interrompidas, rodar de novo continua
@@ -197,11 +208,11 @@ mesma configuração e a mesma semente, o resultado é idêntico.
 O experimento compara **2 detectores × 6 conjuntos de atributos** (tabular, grafo,
 combinado, temporal, grafo avançado e completo) e grava:
 
-- `reports/results/metricas.csv`: precision, recall, F1, ROC-AUC, average precision e
+- `reports/03_modelos/results/metricas.csv`: precision, recall, F1, ROC-AUC, average precision e
   precision@k de cada combinação;
-- `reports/figures/grafo_de_calor_*.png`: as contas mais suspeitas e sua vizinhança,
+- `reports/03_modelos/figures/grafo_de_calor_*.png`: as contas mais suspeitas e sua vizinhança,
   coloridas pelo risco;
-- `reports/figures/heatmap_risco_*.png`: os atributos que explicam o risco de cada conta
+- `reports/03_modelos/figures/heatmap_risco_*.png`: os atributos que explicam o risco de cada conta
   suspeita.
 
 Um único dataset não basta para afirmar que uma abordagem é melhor: `avaliar_robustez.py`
@@ -265,7 +276,7 @@ O repositório inteiro é um cofre do Obsidian: fichamentos em `docs/leituras/`,
 `docs/glossario/`, diário em `docs/diario/`, atas em `docs/reunioes/`, com modelos prontos e
 uma cor por tipo de nota. Configuração e rotina em [docs/obsidian.md](docs/obsidian.md).
 
-![Grafo de notas do Obsidian](reports/figures/grafo_de_notas.png)
+![Grafo de notas do Obsidian](reports/ilustracoes/grafo_de_notas.png)
 
 *Leituras (verde) em volta do mapa das leituras, termos do glossário (roxo) em volta do
 glossário, e `resultados.md` e `modelos.md` (vermelho) no meio, ligando os dois.*
@@ -274,7 +285,7 @@ O mesmo grafo vai para um JSON que um agente consulta sem abrir as notas uma a u
 exemplo, quem cita a nota do PageRank:
 
 ```powershell
-python scripts/exportar_grafo_de_notas.py   # depois de criar, renomear ou religar notas
+python scripts/ferramentas/exportar_grafo_de_notas.py   # depois de criar, renomear ou religar notas
 ```
 
 ```text
@@ -288,7 +299,7 @@ O [Graphify](https://github.com/Graphify-Labs/graphify) lê o código e monta um
 funções, classes e arquivos. Um agente pergunta ao grafo em vez de fazer grep e abrir
 arquivos inteiros.
 
-![Mapa do código pelo Graphify](reports/figures/grafo_do_codigo.png)
+![Mapa do código pelo Graphify](reports/ilustracoes/grafo_do_codigo.png)
 
 *Cada ponto é um arquivo, e o tamanho é o número de ligações. `experiment.py` e
 `simulation.py` são o centro; os scripts (laranja) chamam o pacote (azul).*
@@ -321,7 +332,7 @@ função, ou seja, o que precisa ser revisto junto.
 prepare() --calls--> build_features() --calls--> graph_features()
 ```
 
-**Busca única:** `python scripts/buscar.py "propagação de risco"` procura no código e no
+**Busca única:** `python scripts/ferramentas/buscar.py "propagação de risco"` procura no código e no
 texto de todas as notas de uma vez, sem acentos, e lista os `.py` citados nas notas
 achadas (ver [docs/obsidian.md](docs/obsidian.md)).
 
@@ -339,7 +350,7 @@ ficou 23% menor. Numa sessão inteira o ganho
 é menor, de uns 20 a 40%, porque para editar uma função o agente ainda precisa ler o
 arquivo. O grafo ajuda a descobrir **onde** mexer e **o que** quebra.
 
-As figuras desta seção saem de `python scripts/ilustrar_grafos_de_conhecimento.py`.
+As figuras desta seção saem de `python scripts/ferramentas/ilustrar_grafos_de_conhecimento.py`.
 O [`CLAUDE.md`](CLAUDE.md) e o [`llms.txt`](llms.txt) apontam os agentes para os dois
 grafos, e [docs/obsidian.md](docs/obsidian.md) explica por que Neo4j, GraphRAG, LangGraph
 e Memgraph ficaram de fora por enquanto.
@@ -354,6 +365,6 @@ e Memgraph ficaram de fora por enquanto.
 - Reuniões de orientação: `docs/reunioes/AAAA-MM-DD.md`, a partir de [docs/modelos/reuniao.md](docs/modelos/reuniao.md)
 - Notas no Obsidian: o repositório já é um cofre configurado, ver [docs/obsidian.md](docs/obsidian.md)
 - Relatório final: capítulos em [relatorio/](relatorio/mapa-do-relatorio.md), gerados com
-  `python scripts/gerar_relatorio.py`
+  `python scripts/ferramentas/gerar_relatorio.py`
 - Novos notebooks: prefixo numérico e nome descritivo (`02_perfis_de_fraude.ipynb`).
   Código reaproveitável vai para `src/pixfraud/`, com teste em `tests/`.

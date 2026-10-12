@@ -14,7 +14,7 @@ Volta para o [índice da documentação](mapa-da-pesquisa.md).
 
 A página abaixo tem todas as contas e Pix do dataset sintético, com busca, filtro por
 papel, cor por papel, risco ou comunidade, e uma linha do tempo dia a dia. Ela é gerada
-por [`scripts/visualizar_rede.py`](../scripts/visualizar_rede.py).
+por [`scripts/02_exploracao/visualizar_rede.py`](../scripts/02_exploracao/visualizar_rede.py).
 
 As contas das quadrilhas (laranjas, intermediários e coletoras) ficam juntas no **centro**,
 uma quadrilha ao lado da outra, e os grupos de contas normais (Louvain) em volta. Assim o
@@ -51,24 +51,24 @@ o GitHub sempre remove quadros embutidos), abra o arquivo direto no navegador:
 ## Figuras estáticas
 
 As contas mais suspeitas e sua vizinhança, coloridas pelo risco
-([`rodar_experimento.py`](../scripts/rodar_experimento.py)):
+([`rodar_experimento.py`](../scripts/03_modelos/rodar_experimento.py)):
 
-![Grafo de calor, DBSCAN com o conjunto completo](../reports/figures/grafo_de_calor_dbscan_completo.png)
+![Grafo de calor, DBSCAN com o conjunto completo](../reports/03_modelos/figures/grafo_de_calor_dbscan_completo.png)
 
 Os atributos que explicam o risco de cada conta suspeita:
 
-![Heatmap de risco, DBSCAN com o conjunto completo](../reports/figures/heatmap_risco_dbscan_completo.png)
+![Heatmap de risco, DBSCAN com o conjunto completo](../reports/03_modelos/figures/heatmap_risco_dbscan_completo.png)
 
 A trilha do dinheiro em volta de uma conta coletora, gerada por
-[`criar_grafo.py`](../scripts/criar_grafo.py):
+[`criar_grafo.py`](../scripts/02_exploracao/criar_grafo.py):
 
 ![Trilha do dinheiro até uma coletora](../reports/estudos/trilha_coletor.png)
 
 ## Como gerar outros recortes
 
 ```powershell
-python scripts/visualizar_rede.py --modelos dbscan knn kmeans pca --atributos grafo_avancado
-python scripts/criar_grafo.py csv data/synthetic/transactions.csv --conta C000167 --saltos 2 --direcao tras --saida reports/estudos/trilha.png
+python scripts/02_exploracao/visualizar_rede.py --modelos dbscan knn kmeans pca --atributos grafo_avancado
+python scripts/02_exploracao/criar_grafo.py csv data/synthetic/transactions.csv --conta C000167 --saltos 2 --direcao tras --saida reports/estudos/trilha.png
 ```
 
 O que cada arquivo contém está em [`reports/mapa-dos-resultados.md`](../reports/mapa-dos-resultados.md); a

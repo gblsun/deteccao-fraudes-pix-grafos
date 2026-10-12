@@ -77,12 +77,14 @@ def test_public_code_has_docstrings(path):
 
 def test_notes_graph_json_is_up_to_date():
     """docs/grafo-de-notas.json (o grafo do Obsidian para agentes de IA) acompanha as notas."""
-    spec = importlib.util.spec_from_file_location("exportar", ROOT / "scripts" / "exportar_grafo_de_notas.py")
+    spec = importlib.util.spec_from_file_location(
+        "exportar", ROOT / "scripts" / "ferramentas" / "exportar_grafo_de_notas.py"
+    )
     exportar = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(exportar)
     saved = (ROOT / "docs" / "grafo-de-notas.json").read_text(encoding="utf-8")
     assert saved == exportar.como_json(exportar.grafo_de_notas(ROOT)), (
-        "grafo de notas desatualizado: rode python scripts/exportar_grafo_de_notas.py"
+        "grafo de notas desatualizado: rode python scripts/ferramentas/exportar_grafo_de_notas.py"
     )
 
 
@@ -93,5 +95,5 @@ def test_code_graph_leaves_out_private_and_generated_files():
     if not graph.exists():
         pytest.skip("grafo do Graphify ainda não gerado")
     text = graph.read_text(encoding="utf-8")
-    for forbidden in ("proposta-original.pdf", "data/synthetic", "data/raw", "reports/results"):
+    for forbidden in ("proposta-original.pdf", "data/synthetic", "data/raw", "reports/04_avaliacao/results"):
         assert forbidden not in text, f"graphify-out/graph.json menciona {forbidden}: confira o .graphifyignore"

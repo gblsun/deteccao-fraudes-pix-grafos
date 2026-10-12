@@ -27,6 +27,6 @@ feito à mão.
 
 **No projeto.** [`pixfraud.gnn`](../../src/pixfraud/gnn.py) (`dominant_scores` e
 `sage_supervised_scores`, com PyTorch, sem PyTorch Geometric), avaliado por
-[`scripts/avaliar_gnn.py`](../../scripts/avaliar_gnn.py) contra o [Random
+[`scripts/04_avaliacao/avaliar_gnn.py`](../../scripts/04_avaliacao/avaliar_gnn.py) contra o [Random
 Forest](random-forest.md) e o [DBSCAN](dbscan-e-k-distance.md); resultados em
 [resultados](../resultados.md).

@@ -19,7 +19,7 @@ acaso, e não "metade do ideal".
 **No projeto.** É a métrica principal de todas as comparações, porque só depende da
 **ordem** das contas, e não de um limiar. Calculada em
 [`evaluation.evaluate`](../../src/pixfraud/evaluation.py); aparece em todos os arquivos de
-[`reports/results/`](../../reports/README.md).
+[`reports/*/results/`](../../reports/README.md).
 
 Veja também: [precision@k](precision-at-k.md), [ROC-AUC](roc-auc.md),
 [classes raras](classes-raras.md).

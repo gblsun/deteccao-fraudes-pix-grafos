@@ -38,7 +38,7 @@ instalado.
 | `test_stats.py` | `stats` | delta de Cliff, Holm, bootstrap, testes pareados, modelo nulo |
 | `test_experiment.py` | `experiment` | uma rodada por semente; cenários válidos |
 | `test_external.py` | `external` | AMLworld e PaySim (com arquivos de exemplo embutidos), formas de pagamento, tipologias, janelas |
-| `test_buscar.py` | `scripts/buscar.py` | acentos e separadores ignorados, palavras de parada, nota do título primeiro, vizinhos sem bibliotecas, código citado nas notas |
+| `test_buscar.py` | `scripts/ferramentas/buscar.py` | acentos e separadores ignorados, palavras de parada, nota do título primeiro, vizinhos sem bibliotecas, código citado nas notas |
 | `test_online.py` | `online` | dinheiro recuperado calculado à mão, exposição, pontos de corte |
 | `test_bcb.py` | `bcb` | novas tentativas em 504 e falha de conexão, sem tentar de novo em erro definitivo (404); parâmetros da URL (sem rede) |
 | `test_gnn_direcionada.py` | `gnn` | a GraphSAGE direcionada (`graphsage_scores`) fica bem acima do acaso e é reproduzível pela semente (pulado sem `torch_geometric`) |
