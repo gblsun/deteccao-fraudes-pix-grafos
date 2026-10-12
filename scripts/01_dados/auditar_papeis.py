@@ -43,6 +43,7 @@ ROLES = ["laranja", "intermediario", "coletor", "comercio", "vitima", "normal"]
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Confere se o papel de cada conta bate com as transações dela.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")

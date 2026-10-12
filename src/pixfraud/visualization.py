@@ -134,7 +134,9 @@ def flow_layout(graph: nx.DiGraph) -> dict:
     def reorder(k: int, neighbors) -> None:
         # Heurística do baricentro: cada vértice vai para perto da posição
         # média dos seus vizinhos na coluna ao lado, o que reduz cruzamentos.
+        """Reordena a coluna ``k`` pelo baricentro dos vizinhos, para reduzir cruzamentos."""
         def barycenter(v):
+            """Posição média dos vizinhos de ``v`` na coluna ao lado."""
             near = [position[u] for u in neighbors(v) if u in position]
             return sum(near) / len(near) if near else position.get(v, 0.0)
 
@@ -158,6 +160,7 @@ def flow_layout(graph: nx.DiGraph) -> dict:
 
 
 def _layout(graph: nx.Graph, layout, seed: int) -> dict:
+    """Posições dos vértices: um dicionário pronto ou um dos layouts de ``LAYOUTS``."""
     if isinstance(layout, dict):
         return layout
     if layout not in LAYOUTS:
@@ -197,6 +200,7 @@ def _node_colors(graph: nx.Graph, color_by, cmap: str = CMAP) -> tuple[dict, dic
 
 
 def _format_amount(value: float) -> str:
+    """Valor em reais sem casas decimais, com ponto de milhar."""
     return f"{value:,.0f}".replace(",", ".")
 
 
@@ -368,6 +372,7 @@ def save_graph(graph: nx.Graph, path: str | Path, **draw_kwargs) -> Path:
 
 
 def _serializable(value):
+    """Valor que o JSON aceita: tipos simples ou texto."""
     if isinstance(value, (bool, int, float, str)):
         return value
     if isinstance(value, np.generic):

@@ -60,6 +60,7 @@ STRUCTURE = {
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Compara o dataset sintético com as estatísticas do Pix no BCB.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")

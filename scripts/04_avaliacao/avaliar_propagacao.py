@@ -72,6 +72,7 @@ CONTESTED = "contestacao"
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Avalia a propagação de risco a partir de fraudes conhecidas.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
@@ -179,6 +180,7 @@ def _mean_percentile(scores: dict, labels: pd.Series, *methods: str) -> pd.Serie
 
 
 def _known_label(level) -> str:
+    """Rótulo do nível de conhecimento: as contestações ou a fração de fraudes conhecidas."""
     return "contestações" if level == CONTESTED else f"{level:.0%} conhecidas"
 
 

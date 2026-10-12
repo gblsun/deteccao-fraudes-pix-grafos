@@ -29,6 +29,7 @@ class GraphSAGE(nn.Module if nn is not None else object):
     """Duas camadas GraphSAGE com agregação pela média: [própria conta ‖ média dos vizinhos]."""
 
     def __init__(self, n_features: int, hidden: int, dropout: float):
+        """Duas camadas GraphSAGE (média dos vizinhos) e a saída de um escore por conta."""
         super().__init__()
         self.layer1 = nn.Linear(2 * n_features, hidden)
         self.layer2 = nn.Linear(2 * hidden, hidden)
@@ -36,6 +37,7 @@ class GraphSAGE(nn.Module if nn is not None else object):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, X, mean):
+        """Escore de cada conta a partir dos atributos dela e da média dos vizinhos, em duas camadas."""
         h = torch.relu(self.layer1(torch.cat([X, torch.sparse.mm(mean, X)], dim=1)))
         h = self.dropout(h)
         h = torch.relu(self.layer2(torch.cat([h, torch.sparse.mm(mean, h)], dim=1)))

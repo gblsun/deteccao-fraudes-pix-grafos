@@ -295,6 +295,7 @@ def structural_features(graph: nx.Graph, communities: pd.Series | None = None, s
 
 
 def _power_law_score(x: pd.Series, y: pd.Series) -> np.ndarray:
+    """Distância de cada ponto à lei de potência ajustada em log-log (escore do OddBall)."""
     slope, intercept = np.polyfit(np.log(x), np.log(y), 1)
     expected = np.exp(intercept) * x**slope
     ratio = np.maximum(y, expected) / np.minimum(y, expected)

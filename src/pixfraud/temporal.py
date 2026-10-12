@@ -160,5 +160,6 @@ def _best_hops(events, t, forward, delay, is_origin):
 
 
 def _check_direction(direction: str) -> None:
+    """Erro se ``direction`` não for uma das direções aceitas."""
     if direction not in DIRECTIONS:
         raise ValueError(f"direction deve ser um de {DIRECTIONS}")

@@ -64,6 +64,7 @@ ORACLE = "oráculo"
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Avalia se a detecção acontece a tempo de bloquear o dinheiro.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
@@ -153,6 +154,7 @@ def main() -> None:
 
 def _metrics(first: pd.Series, exposure: pd.Series, tx: pd.DataFrame, fraud, horizon: pd.Timedelta,
              cashouts: list[str]) -> dict:
+    """Fração detectada em até 72 h, atraso mediano e dinheiro recuperado em cada prazo de saque."""
     delay = first - exposure
     in_time = delay <= horizon
     recovered = {c: recovered_amount(tx, fraud, first, cashout=c) for c in cashouts}

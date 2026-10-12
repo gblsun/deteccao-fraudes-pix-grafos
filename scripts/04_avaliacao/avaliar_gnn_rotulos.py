@@ -66,6 +66,7 @@ METRICS = ["average_precision", "precision_at_k"]
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Avalia a GraphSAGE com só parte das fraudes conhecida.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")

@@ -66,6 +66,7 @@ CAVEAT = ("Ressalva: com milhares de contas, quase todo teste cai muito além da
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Figuras didáticas dos testes de hipótese, uma por etapa.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
@@ -116,6 +117,7 @@ def _grid(fig, top: int):
 
 
 def _stage_data(fig, prepared, where):
+    """Etapa 01: z do modelo nulo da reciprocidade e o grau de entrada contra a normal."""
     (ax,), hist, qq = _grid(fig, 1)
     result = null_model_test(prepared.graph, nx.reciprocity, n_samples=50, seed=VALIDATION_SEED)
     plot_test_statistic(ax, sps.norm(), result["z"], "z do modelo nulo")
@@ -127,6 +129,7 @@ def _stage_data(fig, prepared, where):
 
 
 def _stage_exploration(fig, prepared, roles, where):
+    """Etapa 02: z do Mann-Whitney e H do Kruskal-Wallis no atributo de maior efeito."""
     (ax_mw, ax_kw), hist, qq = _grid(fig, 2)
     table = compare_groups(prepared.features, prepared.labels)
     attribute = table.index[0]
@@ -150,6 +153,7 @@ def _stage_exploration(fig, prepared, roles, where):
 
 
 def _stage_models(fig, prepared, config, where):
+    """Etapa 03: a AP do DBSCAN contra o nulo da permutação do gabarito."""
     (ax,), hist, qq = _grid(fig, 1)
     features = prepared.features[FEATURE_SETS["completo"]]
     scores = DETECTORS["dbscan"](features, **config["modelos"].get("dbscan", {})).scores
@@ -167,6 +171,7 @@ def _stage_models(fig, prepared, config, where):
 
 
 def _stage_evaluation(fig, runs_path: Path):
+    """Etapa 04: t pareado, z do Wilcoxon e χ² do Friedman a partir das execuções gravadas."""
     if not runs_path.exists():
         return None
     runs = pd.read_csv(runs_path)

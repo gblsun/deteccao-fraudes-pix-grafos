@@ -52,6 +52,7 @@ from pixfraud.visualization import INK, INK_SECONDARY, SEQUENTIAL_CMAP, SURFACE,
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Avalia os detectores num dataset externo, por janelas de tempo.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--dados", required=True, help="pasta com accounts.csv e transactions.csv (e patterns.csv)")

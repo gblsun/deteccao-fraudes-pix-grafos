@@ -119,6 +119,7 @@ def recovered_amount(
     next_freeze = 0
 
     def freeze_until(t):
+        """Bloqueia as contas sinalizadas até ``t`` e soma o dinheiro que ainda estava nelas."""
         nonlocal next_freeze, recovered
         while next_freeze < len(freezes) and freezes[next_freeze][0] <= t:
             when, account = freezes[next_freeze]

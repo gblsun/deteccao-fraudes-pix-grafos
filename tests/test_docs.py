@@ -14,6 +14,7 @@ FOLDER_MAPS = {
     "configs": "parametros-dos-experimentos.md",
     "data": None,  # data/README.md é a própria documentação, sem nota-mapa separada
     "docs": "mapa-da-pesquisa.md",
+    "docs/codigo": "mapa-do-codigo.md",
     "docs/diario": "diario-de-pesquisa.md",
     "docs/futuro": "ideias-futuras.md",
     "docs/glossario": "glossario.md",
@@ -86,6 +87,31 @@ def test_notes_graph_json_is_up_to_date():
     assert saved == exportar.como_json(exportar.grafo_de_notas(ROOT)), (
         "grafo de notas desatualizado: rode python scripts/ferramentas/exportar_grafo_de_notas.py"
     )
+
+
+def _code_docs():
+    spec = importlib.util.spec_from_file_location(
+        "documentar", ROOT / "scripts" / "ferramentas" / "documentar_codigo.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_code_docs_are_up_to_date():
+    """docs/codigo/ (uma nota por módulo, pasta de scripts e diretório) acompanha as docstrings."""
+    for name, text in _code_docs().build_notes().items():
+        saved = ROOT / "docs" / "codigo" / name
+        assert saved.exists() and saved.read_text(encoding="utf-8") == text, (
+            f"docs/codigo/{name} desatualizado: rode python scripts/ferramentas/documentar_codigo.py"
+        )
+
+
+def test_every_directory_is_described():
+    """Todo diretório versionado tem uma descrição em documentar_codigo.DIRECTORIES."""
+    module = _code_docs()
+    missing = [d for d in module.tracked_directories() if d not in module.DIRECTORIES]
+    assert not missing, f"descreva em scripts/ferramentas/documentar_codigo.py: {missing}"
 
 
 def test_code_graph_leaves_out_private_and_generated_files():

@@ -62,6 +62,7 @@ TOP = 5
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Tipo de rede, passeios aleatórios e similaridade de cosseno.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
@@ -146,6 +147,7 @@ def _measure(graph: nx.DiGraph, accounts: pd.DataFrame, walks_per_start: int, se
 
 
 def _degree_graphs(graph: nx.DiGraph, seed: int) -> dict[str, nx.Graph]:
+    """A rede e dois grafos aleatórios de mesmo tamanho (Erdős–Rényi e Barabási–Albert)."""
     simple = nx.Graph(graph)
     n, m = simple.number_of_nodes(), simple.number_of_edges()
     return {
@@ -156,6 +158,7 @@ def _degree_graphs(graph: nx.DiGraph, seed: int) -> dict[str, nx.Graph]:
 
 
 def _ccdf(degrees: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Distribuição acumulada complementar dos graus positivos: P(grau ≥ k)."""
     k = np.sort(degrees[degrees > 0])
     return k, 1.0 - np.arange(k.size) / k.size
 

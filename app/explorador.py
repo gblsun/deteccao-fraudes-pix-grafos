@@ -120,16 +120,19 @@ def with_roles(graph, roles: pd.Series):
 
 
 def network_title(source: str, scenario: str, seed: int, config_name: str) -> str:
+    """Legenda da rede escolhida: o dataset salvo ou semente, cenário e hiperparâmetros."""
     if source == "salvo":
         return f"Dataset salvo em {SAVED}."
     return f"Semente {seed}, cenário '{scenario}', hiperparâmetros {config_name}s."
 
 
 def brl(value: float) -> str:
+    """Valor em reais sem centavos, com ponto de milhar."""
     return f"R$ {value:,.0f}".replace(",", ".")
 
 
 def br(value: float, digits: int = 0) -> str:
+    """Número no formato brasileiro (ponto de milhar e vírgula decimal)."""
     return f"{value:,.{digits}f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
@@ -142,10 +145,12 @@ st.session_state.setdefault("active", {"source": "salvo" if SAVED else "gerada",
 
 
 def use_shortcut():
+    """Põe na semente o atalho escolhido na barra lateral."""
     st.session_state["seed"] = SHORTCUTS[st.session_state["shortcut"]]
 
 
 def roll_dice():
+    """Sorteia uma semente nova (o botão do dado)."""
     st.session_state["seed"] = random.randint(1, 99_999)
 
 

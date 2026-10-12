@@ -41,6 +41,7 @@ TITULOS = {
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Gera as ilustrações do README.")
     parser.add_argument("--saida", default="reports/ilustracoes")
     args = parser.parse_args()
@@ -128,6 +129,7 @@ def _animacao(path: Path, intervalo_h: int = 2) -> None:
     fig, ax = plt.subplots(figsize=(7.5, 5), layout="constrained")
 
     def quadro(i: int) -> None:
+        """Desenha o quadro ``i`` do GIF: a quadrilha até aquele instante."""
         agora = instantes[i]
         ate_agora = fraude[fraude["timestamp"] <= agora]
         ax.clear()

@@ -90,9 +90,11 @@ def blocking_accounts(graph: nx.DiGraph, sources, sink) -> list | None:
         return None
 
     def tail(v):
+        """Nó de saída de uma conta dividida (as fixas não se dividem)."""
         return v if v in fixed else (v, "saida")
 
     def head(v):
+        """Nó de entrada de uma conta dividida (as fixas não se dividem)."""
         return v if v in fixed else (v, "entrada")
 
     aux = nx.DiGraph()
@@ -107,6 +109,7 @@ def blocking_accounts(graph: nx.DiGraph, sources, sink) -> list | None:
 
 
 def _as_list(sources) -> list:
+    """Uma conta ou uma coleção de contas, sempre como lista."""
     if isinstance(sources, (str, bytes)) or not isinstance(sources, Iterable):
         return [sources]
     return list(sources)
@@ -123,6 +126,7 @@ def relevant_accounts(graph: nx.DiGraph, sources: list, sink) -> set | None:
 
 
 def _flow_network(graph: nx.DiGraph, sources: list, sink, capacity: str) -> nx.DiGraph | None:
+    """Rede de fluxo só com as contas entre as origens e o destino, com uma super-origem."""
     relevant = relevant_accounts(graph, sources, sink)
     if relevant is None:
         return None

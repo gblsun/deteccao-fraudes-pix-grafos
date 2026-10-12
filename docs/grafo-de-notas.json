@@ -21,6 +21,489 @@
    ]
   },
   {
+   "caminho": "docs/codigo/app.md",
+   "titulo": "`app/explorador.py`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/diretorios.md",
+   "titulo": "Diretórios",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/mapa-do-codigo.md",
+   "titulo": "Mapa do código",
+   "tags": [
+    "mapa"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.algorithms.md",
+   "titulo": "`pixfraud.algorithms`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.anomaly.md",
+   "titulo": "`pixfraud.anomaly`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.bcb.md",
+   "titulo": "`pixfraud.bcb`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.communities.md",
+   "titulo": "`pixfraud.communities`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.evaluation.md",
+   "titulo": "`pixfraud.evaluation`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.experiment.md",
+   "titulo": "`pixfraud.experiment`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.exploration.md",
+   "titulo": "`pixfraud.exploration`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.explorer.md",
+   "titulo": "`pixfraud.explorer`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.external.md",
+   "titulo": "`pixfraud.external`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.features.md",
+   "titulo": "`pixfraud.features`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.flow.md",
+   "titulo": "`pixfraud.flow`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.gnn.md",
+   "titulo": "`pixfraud.gnn`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.graph.md",
+   "titulo": "`pixfraud.graph`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.graph_models.md",
+   "titulo": "`pixfraud.graph_models`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.md",
+   "titulo": "`pixfraud`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.base.md",
+   "titulo": "`pixfraud.models.base`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.md",
+   "titulo": "`pixfraud.models`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.semi_supervised.label_spreading.md",
+   "titulo": "`pixfraud.models.semi_supervised.label_spreading`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "titulo": "`pixfraud.models.semi_supervised`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.semi_supervised.personalized_pagerank.md",
+   "titulo": "`pixfraud.models.semi_supervised.personalized_pagerank`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.supervised.cross_validation.md",
+   "titulo": "`pixfraud.models.supervised.cross_validation`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.supervised.md",
+   "titulo": "`pixfraud.models.supervised`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "titulo": "`pixfraud.models.supervised.neural.graphsage`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.supervised.neural.graphsage_directed.md",
+   "titulo": "`pixfraud.models.supervised.neural.graphsage_directed`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.supervised.neural.md",
+   "titulo": "`pixfraud.models.supervised.neural`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.supervised.trees.gradient_boosting.md",
+   "titulo": "`pixfraud.models.supervised.trees.gradient_boosting`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.supervised.trees.md",
+   "titulo": "`pixfraud.models.supervised.trees`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.supervised.trees.random_forest.md",
+   "titulo": "`pixfraud.models.supervised.trees.random_forest`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.torch_utils.md",
+   "titulo": "`pixfraud.models.torch_utils`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.boundary.md",
+   "titulo": "`pixfraud.models.unsupervised.boundary`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.boundary.one_class_svm.md",
+   "titulo": "`pixfraud.models.unsupervised.boundary.one_class_svm`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "titulo": "`pixfraud.models.unsupervised.graph.fraudar`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.graph.md",
+   "titulo": "`pixfraud.models.unsupervised.graph`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.graph.node2vec.md",
+   "titulo": "`pixfraud.models.unsupervised.graph.node2vec`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.isolation.isolation_forest.md",
+   "titulo": "`pixfraud.models.unsupervised.isolation.isolation_forest`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.isolation.md",
+   "titulo": "`pixfraud.models.unsupervised.isolation`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.md",
+   "titulo": "`pixfraud.models.unsupervised`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.neural.autoencoder.md",
+   "titulo": "`pixfraud.models.unsupervised.neural.autoencoder`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "titulo": "`pixfraud.models.unsupervised.neural.dominant`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.neural.md",
+   "titulo": "`pixfraud.models.unsupervised.neural`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.proximity.dbscan.md",
+   "titulo": "`pixfraud.models.unsupervised.proximity.dbscan`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.proximity.kmeans.md",
+   "titulo": "`pixfraud.models.unsupervised.proximity.kmeans`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.proximity.knn.md",
+   "titulo": "`pixfraud.models.unsupervised.proximity.knn`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.proximity.local_outlier_factor.md",
+   "titulo": "`pixfraud.models.unsupervised.proximity.local_outlier_factor`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "titulo": "`pixfraud.models.unsupervised.proximity`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.statistical.ecod.md",
+   "titulo": "`pixfraud.models.unsupervised.statistical.ecod`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.statistical.md",
+   "titulo": "`pixfraud.models.unsupervised.statistical`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.models.unsupervised.statistical.pca.md",
+   "titulo": "`pixfraud.models.unsupervised.statistical.pca`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.network.md",
+   "titulo": "`pixfraud.network`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.online.md",
+   "titulo": "`pixfraud.online`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.patterns.md",
+   "titulo": "`pixfraud.patterns`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.simulation.md",
+   "titulo": "`pixfraud.simulation`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.stats.md",
+   "titulo": "`pixfraud.stats`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.temporal.md",
+   "titulo": "`pixfraud.temporal`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.tuning.md",
+   "titulo": "`pixfraud.tuning`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.tuning.search.md",
+   "titulo": "`pixfraud.tuning.search`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.tuning.search_space.md",
+   "titulo": "`pixfraud.tuning.search_space`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/pixfraud.visualization.md",
+   "titulo": "`pixfraud.visualization`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/scripts.01_dados.md",
+   "titulo": "`scripts/01_dados/`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/scripts.02_exploracao.md",
+   "titulo": "`scripts/02_exploracao/`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/scripts.03_modelos.md",
+   "titulo": "`scripts/03_modelos/`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/scripts.04_avaliacao.md",
+   "titulo": "`scripts/04_avaliacao/`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/scripts.05_interpretacao.md",
+   "titulo": "`scripts/05_interpretacao/`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/scripts.ferramentas.md",
+   "titulo": "`scripts/ferramentas/`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/scripts.raiz.md",
+   "titulo": "`scripts/ (raiz)`",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
+   "caminho": "docs/codigo/testes.md",
+   "titulo": "Testes",
+   "tags": [
+    "codigo"
+   ]
+  },
+  {
    "caminho": "docs/cronograma.md",
    "titulo": "Cronograma",
    "tags": [
@@ -886,6 +1369,2806 @@
   {
    "de": "configs/parametros-dos-experimentos.md",
    "para": "src/pixfraud/models/mapa-dos-modelos.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/app.md",
+   "para": "app/guia-do-explorador.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/app.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/app.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "app/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "configs/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "data/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "docs/diario/diario-de-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "docs/futuro/ideias-futuras.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "docs/glossario/glossario.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "docs/leituras/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "docs/mapa-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "docs/reunioes/atas-de-reuniao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "estudos/trilha-de-estudos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "notebooks/mapa-dos-notebooks.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "relatorio/mapa-do-relatorio.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "reports/01_dados/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "reports/02_exploracao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "reports/03_modelos/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "reports/04_avaliacao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "reports/05_interpretacao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "reports/ilustracoes/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "reports/mapa-dos-resultados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "scripts/01_dados/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "scripts/02_exploracao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "scripts/03_modelos/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "scripts/04_avaliacao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "scripts/05_interpretacao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "scripts/ferramentas/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "src/pixfraud/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "src/pixfraud/models/mapa-dos-modelos.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/diretorios.md",
+   "para": "tests/mapa-dos-testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/diretorios.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.algorithms.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.anomaly.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.bcb.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.communities.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.evaluation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.explorer.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.external.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.features.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.flow.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.gnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.graph_models.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.base.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.semi_supervised.label_spreading.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.semi_supervised.personalized_pagerank.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.supervised.cross_validation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.supervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.graphsage_directed.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.supervised.trees.gradient_boosting.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.supervised.trees.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.supervised.trees.random_forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.torch_utils.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.boundary.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.boundary.one_class_svm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.graph.node2vec.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.isolation.isolation_forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.isolation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.autoencoder.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.dbscan.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.kmeans.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.knn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.local_outlier_factor.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.statistical.ecod.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.statistical.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.statistical.pca.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.network.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.online.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.patterns.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.simulation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.stats.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.temporal.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.tuning.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.tuning.search.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.tuning.search_space.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/pixfraud.visualization.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/scripts.01_dados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/scripts.05_interpretacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/scripts.raiz.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "docs/fluxo-da-pesquisa.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/mapa-do-codigo.md",
+   "para": "src/pixfraud/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.algorithms.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.algorithms.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.algorithms.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.algorithms.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.algorithms.md",
+   "para": "src/pixfraud/algorithms.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.anomaly.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.anomaly.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.anomaly.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.anomaly.md",
+   "para": "docs/codigo/scripts.05_interpretacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.anomaly.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.anomaly.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.anomaly.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.anomaly.md",
+   "para": "src/pixfraud/anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.bcb.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.bcb.md",
+   "para": "docs/codigo/scripts.01_dados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.bcb.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.bcb.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.bcb.md",
+   "para": "src/pixfraud/bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "docs/codigo/pixfraud.explorer.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "docs/codigo/pixfraud.features.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "docs/codigo/pixfraud.models.torch_utils.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.communities.md",
+   "para": "src/pixfraud/communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.evaluation.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.evaluation.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.evaluation.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.evaluation.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.evaluation.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.evaluation.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.evaluation.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.evaluation.md",
+   "para": "src/pixfraud/evaluation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/pixfraud.online.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/scripts.01_dados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/scripts.05_interpretacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.experiment.md",
+   "para": "src/pixfraud/experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.exploration.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.exploration.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.exploration.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.exploration.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.exploration.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.exploration.md",
+   "para": "src/pixfraud/exploration.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.explorer.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.explorer.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.explorer.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.explorer.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.explorer.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.explorer.md",
+   "para": "src/pixfraud/explorer.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.external.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.external.md",
+   "para": "docs/codigo/scripts.01_dados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.external.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.external.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.external.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.external.md",
+   "para": "src/pixfraud/external.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/pixfraud.online.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/scripts.05_interpretacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.features.md",
+   "para": "src/pixfraud/features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.flow.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.flow.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.flow.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.flow.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.flow.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.flow.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.flow.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.flow.md",
+   "para": "src/pixfraud/flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "docs/codigo/scripts.raiz.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.gnn.md",
+   "para": "src/pixfraud/gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "docs/codigo/pixfraud.temporal.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "docs/codigo/scripts.01_dados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph.md",
+   "para": "src/pixfraud/graph.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph_models.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph_models.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph_models.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph_models.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.graph_models.md",
+   "para": "src/pixfraud/graph_models.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "docs/codigo/scripts.raiz.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.md",
+   "para": "src/pixfraud/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.anomaly.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.graphsage_directed.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.boundary.one_class_svm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.graph.node2vec.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.isolation.isolation_forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.autoencoder.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.dbscan.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.kmeans.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.knn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.local_outlier_factor.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.statistical.ecod.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.statistical.pca.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.base.md",
+   "para": "src/pixfraud/models/base.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/pixfraud.evaluation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/pixfraud.online.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/pixfraud.tuning.search.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/pixfraud.tuning.search_space.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.md",
+   "para": "src/pixfraud/models/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.label_spreading.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.label_spreading.md",
+   "para": "docs/codigo/pixfraud.flow.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.label_spreading.md",
+   "para": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.label_spreading.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.label_spreading.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.label_spreading.md",
+   "para": "src/pixfraud/models/semi_supervised/label_spreading.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "para": "docs/codigo/pixfraud.flow.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "para": "src/pixfraud/models/semi_supervised/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.personalized_pagerank.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.personalized_pagerank.md",
+   "para": "docs/codigo/pixfraud.models.semi_supervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.personalized_pagerank.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.semi_supervised.personalized_pagerank.md",
+   "para": "src/pixfraud/models/semi_supervised/personalized_pagerank.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.cross_validation.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.cross_validation.md",
+   "para": "docs/codigo/pixfraud.models.supervised.trees.gradient_boosting.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.cross_validation.md",
+   "para": "docs/codigo/pixfraud.models.supervised.trees.random_forest.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.cross_validation.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.cross_validation.md",
+   "para": "src/pixfraud/models/supervised/cross_validation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.md",
+   "para": "docs/codigo/pixfraud.models.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.md",
+   "para": "src/pixfraud/models/supervised/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "para": "docs/codigo/pixfraud.gnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "para": "src/pixfraud/models/supervised/neural/graphsage.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage_directed.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage_directed.md",
+   "para": "docs/codigo/pixfraud.gnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage_directed.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage_directed.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.graphsage_directed.md",
+   "para": "src/pixfraud/models/supervised/neural/graphsage_directed.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.neural.md",
+   "para": "src/pixfraud/models/supervised/neural/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.gradient_boosting.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.gradient_boosting.md",
+   "para": "docs/codigo/pixfraud.models.supervised.trees.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.gradient_boosting.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.gradient_boosting.md",
+   "para": "src/pixfraud/models/supervised/trees/gradient_boosting.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.md",
+   "para": "docs/codigo/pixfraud.models.supervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.md",
+   "para": "src/pixfraud/models/supervised/trees/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.random_forest.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.random_forest.md",
+   "para": "docs/codigo/pixfraud.models.supervised.trees.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.random_forest.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.supervised.trees.random_forest.md",
+   "para": "src/pixfraud/models/supervised/trees/random_forest.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.torch_utils.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.torch_utils.md",
+   "para": "docs/codigo/pixfraud.gnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.torch_utils.md",
+   "para": "docs/codigo/pixfraud.models.supervised.neural.graphsage.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.torch_utils.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.torch_utils.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.torch_utils.md",
+   "para": "src/pixfraud/models/torch_utils.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.md",
+   "para": "src/pixfraud/models/unsupervised/boundary/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.one_class_svm.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.one_class_svm.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.boundary.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.one_class_svm.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.one_class_svm.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.boundary.one_class_svm.md",
+   "para": "src/pixfraud/models/unsupervised/boundary/one_class_svm.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.fraudar.md",
+   "para": "src/pixfraud/models/unsupervised/graph/fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.md",
+   "para": "src/pixfraud/models/unsupervised/graph/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.node2vec.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.node2vec.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.graph.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.node2vec.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.graph.node2vec.md",
+   "para": "src/pixfraud/models/unsupervised/graph/node2vec.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.isolation_forest.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.isolation_forest.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.isolation.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.isolation_forest.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.isolation_forest.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.isolation_forest.md",
+   "para": "src/pixfraud/models/unsupervised/isolation/isolation_forest.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.isolation.md",
+   "para": "src/pixfraud/models/unsupervised/isolation/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.md",
+   "para": "docs/codigo/pixfraud.anomaly.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.md",
+   "para": "docs/codigo/pixfraud.graph_models.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.md",
+   "para": "docs/codigo/pixfraud.models.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.md",
+   "para": "src/pixfraud/models/unsupervised/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.autoencoder.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.autoencoder.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.autoencoder.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.autoencoder.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.autoencoder.md",
+   "para": "src/pixfraud/models/unsupervised/neural/autoencoder.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "para": "docs/codigo/pixfraud.gnn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.neural.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.dominant.md",
+   "para": "src/pixfraud/models/unsupervised/neural/dominant.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.neural.md",
+   "para": "src/pixfraud/models/unsupervised/neural/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.dbscan.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.dbscan.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.dbscan.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.dbscan.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.dbscan.md",
+   "para": "src/pixfraud/models/unsupervised/proximity/dbscan.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.kmeans.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.kmeans.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.kmeans.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.kmeans.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.kmeans.md",
+   "para": "src/pixfraud/models/unsupervised/proximity/kmeans.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.knn.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.knn.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.knn.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.knn.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.knn.md",
+   "para": "src/pixfraud/models/unsupervised/proximity/knn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.local_outlier_factor.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.local_outlier_factor.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.local_outlier_factor.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.local_outlier_factor.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.local_outlier_factor.md",
+   "para": "src/pixfraud/models/unsupervised/proximity/local_outlier_factor.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.proximity.md",
+   "para": "src/pixfraud/models/unsupervised/proximity/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.ecod.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.ecod.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.ecod.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.statistical.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.ecod.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.ecod.md",
+   "para": "src/pixfraud/models/unsupervised/statistical/ecod.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.md",
+   "para": "src/pixfraud/models/unsupervised/statistical/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.pca.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.pca.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.pca.md",
+   "para": "docs/codigo/pixfraud.models.unsupervised.statistical.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.pca.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.models.unsupervised.statistical.pca.md",
+   "para": "src/pixfraud/models/unsupervised/statistical/pca.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.network.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.network.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.network.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.network.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.network.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.network.md",
+   "para": "src/pixfraud/network.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.online.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.online.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.online.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.online.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.online.md",
+   "para": "src/pixfraud/online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.patterns.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.patterns.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.patterns.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.patterns.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.patterns.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.patterns.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.patterns.md",
+   "para": "src/pixfraud/patterns.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/pixfraud.experiment.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/pixfraud.patterns.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/scripts.01_dados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/scripts.05_interpretacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.simulation.md",
+   "para": "src/pixfraud/simulation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/scripts.01_dados.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/scripts.05_interpretacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.stats.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.temporal.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.temporal.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.temporal.md",
+   "para": "docs/codigo/pixfraud.features.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.temporal.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.temporal.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.temporal.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.temporal.md",
+   "para": "src/pixfraud/temporal.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.md",
+   "para": "src/pixfraud/tuning/__init__.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search.md",
+   "para": "docs/codigo/pixfraud.tuning.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search.md",
+   "para": "src/pixfraud/tuning/search.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search_space.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search_space.md",
+   "para": "docs/codigo/pixfraud.tuning.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search_space.md",
+   "para": "docs/codigo/pixfraud.tuning.search.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search_space.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.tuning.search_space.md",
+   "para": "src/pixfraud/tuning/search_space.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/app.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/pixfraud.exploration.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/scripts.02_exploracao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/scripts.03_modelos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/scripts.04_avaliacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/scripts.05_interpretacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/scripts.ferramentas.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "docs/codigo/testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/pixfraud.visualization.md",
+   "para": "src/pixfraud/visualization.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.01_dados.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/scripts.01_dados.md",
+   "para": "scripts/01_dados/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.01_dados.md",
+   "para": "scripts/01_dados/auditar_papeis.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.01_dados.md",
+   "para": "scripts/01_dados/baixar_dados_bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.01_dados.md",
+   "para": "scripts/01_dados/gerar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.01_dados.md",
+   "para": "scripts/01_dados/importar_dataset.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.01_dados.md",
+   "para": "scripts/01_dados/validar_realismo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.01_dados.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.02_exploracao.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/scripts.02_exploracao.md",
+   "para": "scripts/02_exploracao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.02_exploracao.md",
+   "para": "scripts/02_exploracao/analisar_tipo_de_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.02_exploracao.md",
+   "para": "scripts/02_exploracao/criar_grafo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.02_exploracao.md",
+   "para": "scripts/02_exploracao/inferencia_atributos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.02_exploracao.md",
+   "para": "scripts/02_exploracao/visualizar_rede.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.02_exploracao.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.03_modelos.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/scripts.03_modelos.md",
+   "para": "scripts/03_modelos/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.03_modelos.md",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.03_modelos.md",
+   "para": "scripts/03_modelos/otimizar_hiperparametros.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.03_modelos.md",
+   "para": "scripts/03_modelos/rodar_experimento.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.03_modelos.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_atributos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_cenarios.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_deteccao_online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_externo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_fraudar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_gnn_rotulos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_propagacao.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_robustez.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/04_avaliacao/avaliar_sementes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.04_avaliacao.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.05_interpretacao.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/scripts.05_interpretacao.md",
+   "para": "scripts/05_interpretacao/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.05_interpretacao.md",
+   "para": "scripts/05_interpretacao/investigar_falsos_positivos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.05_interpretacao.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "scripts/ferramentas/README.md",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "scripts/ferramentas/buscar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "scripts/ferramentas/exportar_grafo_de_notas.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "scripts/ferramentas/gerar_ilustracoes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "scripts/ferramentas/gerar_relatorio.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "scripts/ferramentas/ilustrar_grafos_de_conhecimento.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.ferramentas.md",
+   "para": "scripts/ferramentas/ilustrar_testes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.raiz.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/scripts.raiz.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/scripts.raiz.md",
+   "para": "scripts/mapa-dos-scripts.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/scripts.raiz.md",
+   "para": "scripts/reproduzir_tudo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/mapa-dos-testes.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_algorithms.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_anomaly.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_app.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_bcb.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_buscar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_communities.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_docs.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_evaluation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_experiment.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_exploration.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_explorer.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_external.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_features.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_flow.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_gnn.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_gnn_direcionada.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_graph_models.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_graph_tools.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_network.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_online.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_patterns.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_pipeline.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_scripts.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_simulation.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_temporal.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/codigo/testes.md",
+   "para": "tests/test_tuning.py",
    "tipo": "arquivo"
   },
   {
@@ -3740,6 +7023,11 @@
   },
   {
    "de": "docs/mapa-da-pesquisa.md",
+   "para": "docs/codigo/mapa-do-codigo.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/mapa-da-pesquisa.md",
    "para": "docs/cronograma.md",
    "tipo": "nota"
   },
@@ -5416,6 +8704,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/ferramentas/buscar.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/ferramentas/documentar_codigo.py",
    "tipo": "arquivo"
   },
   {

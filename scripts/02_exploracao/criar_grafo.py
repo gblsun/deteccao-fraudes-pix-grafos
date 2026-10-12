@@ -46,6 +46,7 @@ MAX_NODES_IMAGE = 300
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Cria, resume e salva grafos de transações.")
     sub = parser.add_subparsers(dest="fonte", required=True)
 
@@ -140,6 +141,7 @@ def main() -> None:
 
 
 def _attach_roles(graph: nx.DiGraph, accounts_path: str | None, transactions_path: Path) -> None:
+    """Copia o papel de cada conta (de accounts.csv) para os vértices do grafo, se houver."""
     path = Path(accounts_path) if accounts_path else transactions_path.with_name("accounts.csv")
     if not path.exists():
         return

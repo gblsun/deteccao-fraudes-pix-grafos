@@ -32,6 +32,7 @@ class Param:
 
     @property
     def expandable(self) -> bool:
+        """A grade pode ser ampliada (há limites inferior e superior definidos)?"""
         return self.low is not None and self.high is not None
 
     def numeric(self) -> list[float]:
@@ -61,6 +62,7 @@ class Param:
         return None
 
     def with_value(self, value) -> Param:
+        """Cópia do parâmetro com mais um valor na grade."""
         return replace(self, values=(*self.values, _tidy(value)))
 
 

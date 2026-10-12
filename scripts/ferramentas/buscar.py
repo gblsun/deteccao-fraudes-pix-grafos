@@ -56,10 +56,12 @@ def termos_da_busca(texto: str) -> tuple[list[str], str]:
 
 
 def _casa(termos: list[str], texto: str) -> bool:
+    """Todos os termos aparecem no texto?"""
     return all(t in texto for t in termos)
 
 
 def _carregar_exportador():
+    """Importa ``exportar_grafo_de_notas.py`` como módulo (ele não é um pacote)."""
     spec = importlib.util.spec_from_file_location(
         "exportar", ROOT / "scripts" / "ferramentas" / "exportar_grafo_de_notas.py"
     )
@@ -122,6 +124,7 @@ def buscar_codigo(termos: list[str], grafo: dict, limite: int = 8, com_vizinhos:
     achados.sort(key=lambda n: (not n.get("_callable"), -grau[n["id"]], n["label"]))
 
     def nomes(ids: set) -> list[str]:  # só o que é do repositório: bibliotecas não têm source_file
+        """Nomes dos nós do repositório (bibliotecas não têm arquivo de origem)."""
         return sorted({nos[i]["label"] for i in ids if i in nos and nos[i].get("source_file")})
 
     resultados = []
@@ -161,11 +164,13 @@ def grafo_velho(grafo: dict, root: Path = ROOT) -> list[str]:
 
 
 def _lista(nomes: list[str]) -> str:
+    """Os primeiros nomes separados por vírgula, com quantos ficaram de fora."""
     resto = len(nomes) - VIZINHOS
     return ", ".join(nomes[:VIZINHOS]) + (f" (+{resto})" if resto > 0 else "")
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("termos", nargs="+", help="palavras procuradas (todas precisam aparecer)")
     parser.add_argument("--so", choices=["codigo", "notas"], help="procura só no código ou só nas notas")

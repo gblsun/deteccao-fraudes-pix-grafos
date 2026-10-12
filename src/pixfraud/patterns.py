@@ -17,6 +17,7 @@ from pixfraud.simulation import FRAUD_ROLES
 
 
 def _add(graph: nx.DiGraph, u: str, v: str, amount: float) -> None:
+    """Acrescenta um Pix ao padrão, com o valor arredondado em centavos."""
     graph.add_edge(u, v, amount=round(float(amount), 2), count=1)
 
 
@@ -177,6 +178,7 @@ def fraud_nodes(graph: nx.Graph) -> list:
 
 
 def _merge_edge(graph: nx.DiGraph, u, v, amount: float, count: int) -> None:
+    """Soma valor e contagem numa ligação que já existe, ou cria a ligação."""
     if graph.has_edge(u, v):
         graph[u][v]["amount"] = graph[u][v].get("amount", 0.0) + amount
         graph[u][v]["count"] = graph[u][v].get("count", 0) + count

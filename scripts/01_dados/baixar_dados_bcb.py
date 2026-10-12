@@ -16,6 +16,7 @@ from pixfraud.bcb import RESOURCES, fetch
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Baixa estatísticas do PIX (dados abertos do BCB).")
     parser.add_argument("recurso", choices=sorted(RESOURCES))
     parser.add_argument("database", help="parâmetro obrigatório da API, ex.: 202506")

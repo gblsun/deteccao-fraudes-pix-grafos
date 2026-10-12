@@ -27,6 +27,7 @@ from pixfraud.visualization import plot_heat_graph, plot_risk_heatmap  # noqa: E
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Executa o experimento de detecção de fraudes.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--dados", default="data/synthetic")

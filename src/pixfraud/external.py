@@ -181,20 +181,24 @@ def _account(bank: pd.Series, number: pd.Series) -> pd.Series:
 
 
 def _account_id(bank: str, number: str) -> str:
+    """Identificador único de conta externa: banco (sem zeros à esquerda) e número."""
     return f"{bank.lstrip('0') or '0'}_{number}"
 
 
 def _parties(tx: pd.DataFrame) -> set:
+    """Todas as contas que pagam ou recebem em ``tx``."""
     return set(tx["sender"]) | set(tx["receiver"])
 
 
 def _project_format(tx: pd.DataFrame, fraud_accounts: set, victims: set) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Ordena as transações, numera os ``tx_id`` e monta as duas tabelas no formato do projeto."""
     tx = tx.sort_values("timestamp", kind="stable").reset_index(drop=True)
     tx.insert(0, "tx_id", [f"T{i:08d}" for i in range(len(tx))])
     return _accounts_table(tx, fraud_accounts, victims), tx[TRANSACTION_COLUMNS]
 
 
 def _accounts_table(tx: pd.DataFrame, fraud_accounts: set, victims: set) -> pd.DataFrame:
+    """Tabela de contas de um dataset externo: tipo e idade desconhecidos, papel só fraude/normal."""
     ids = sorted(_parties(tx))
     accounts = pd.DataFrame({"account_id": ids})
     accounts["account_type"] = "?"

@@ -131,6 +131,7 @@ def run_seeds(
 
 
 def _run_one_seed(simulation, config, seed, feature_sets, models):
+    """Gera a rede de uma semente, prepara os atributos e roda os detectores nela."""
     accounts, transactions = generate_dataset(replace(simulation, seed=seed))
     prepared = prepare(accounts, transactions, config)
     metrics, _ = run_detectors(prepared.features, prepared.labels, seeded_models(config["modelos"], seed),
@@ -248,6 +249,7 @@ def all_model_scores(
     index = prepared.labels.index if rank_index is None else rank_index
 
     def percentile(model):
+        """Percentil do escore de ``model`` entre as contas de ``index`` (para combinar modelos)."""
         return scores[model].reindex(index).rank(pct=True)
 
     scores["combinado"] = (percentile("propagacao_relativa") + percentile(reference)) / 2

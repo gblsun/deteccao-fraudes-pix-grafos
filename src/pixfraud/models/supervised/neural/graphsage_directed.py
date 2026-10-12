@@ -101,13 +101,16 @@ def directed_sage(in_dim: int, hidden: int, dropout: float):
     from torch_geometric.nn import SAGEConv
 
     class DirectedSAGE(torch.nn.Module):
+        """GraphSAGE direcionada: agrega separado quem pagou a conta e a quem ela pagou."""
         def __init__(self):
+            """Duas camadas para cada sentido do dinheiro e a saída de um escore por conta."""
             super().__init__()
             self.paid_by = torch.nn.ModuleList([SAGEConv(in_dim, hidden), SAGEConv(hidden, hidden)])
             self.paid_to = torch.nn.ModuleList([SAGEConv(in_dim, hidden), SAGEConv(hidden, hidden)])
             self.head = torch.nn.Linear(hidden, 1)
 
         def forward(self, x, edges, reverse):
+            """Escore de cada conta somando as mensagens de entrada e de saída a cada camada."""
             h = x
             for incoming, outgoing in zip(self.paid_by, self.paid_to):
                 h = torch.relu(incoming(h, edges) + outgoing(h, reverse))

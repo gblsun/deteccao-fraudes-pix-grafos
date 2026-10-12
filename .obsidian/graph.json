@@ -76,6 +76,13 @@
         "a": 1,
         "rgb": 14725168
       }
+    },
+    {
+      "query": "tag:codigo",
+      "color": {
+        "a": 1,
+        "rgb": 9159498
+      }
     }
   ],
   "collapse-display": false,

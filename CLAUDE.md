@@ -55,6 +55,8 @@ nº 105/2001), que protege os dados de transações Pix.
 - Toda nota nova tem frontmatter `tags: [...]` com uma das tags de
   [docs/obsidian.md](docs/obsidian.md); pasta nova com documentação segue o padrão
   nota-mapa + `README.md`, e entra no `llms.txt`.
+- Depois de mudar uma função ou um script, rode `python scripts/ferramentas/documentar_codigo.py`
+  (a documentação do código em `docs/codigo/` sai das docstrings; o `test_docs.py` acusa se ficar velha).
 - Depois de criar, renomear ou religar notas, rode
   `python scripts/ferramentas/exportar_grafo_de_notas.py` e `pytest tests/test_docs.py`.
 

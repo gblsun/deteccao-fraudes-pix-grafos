@@ -91,6 +91,7 @@ def como_json(grafo: dict) -> str:
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--saida", type=Path, default=SAIDA, help="arquivo JSON de saída")
     parser.add_argument("--verificar", action="store_true", help="não grava; sai com erro se o arquivo estiver velho")

@@ -62,6 +62,7 @@ o grafo por ela:
 | `meta` | cinza | documentação sobre o próprio cofre (esta nota) |
 | `relatorio` | marrom | os capítulos de `relatorio/capitulos/` |
 | `ideia` | dourado | as notas de `docs/futuro/` |
+| `codigo` | verde-limão | a documentação do código em `docs/codigo/`, gerada das docstrings por `scripts/ferramentas/documentar_codigo.py` |
 | (por caminho) | ciano | tudo em `estudos/` |
 
 Os modelos de `docs/modelos/` já colocam a tag certa em cada nota nova. Se criar uma nota

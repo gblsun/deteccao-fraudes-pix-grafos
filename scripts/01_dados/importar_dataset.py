@@ -24,6 +24,7 @@ from pixfraud.simulation import save_dataset
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Importa um dataset público para o formato do projeto.")
     parser.add_argument("fonte", choices=["amlworld", "paysim"])
     parser.add_argument("arquivo", help="CSV original baixado do Kaggle")

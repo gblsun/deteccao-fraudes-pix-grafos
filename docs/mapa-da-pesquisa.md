@@ -38,6 +38,7 @@ não o grafo das notas) sem sair do cofre: [rede-pix.md](rede-pix.md).
 | Onde | O que explica |
 |------|---------------|
 | [`src/pixfraud/`](../src/pixfraud/README.md) | os módulos do pacote e como eles se encaixam |
+| [`docs/codigo/`](codigo/mapa-do-codigo.md) | uma nota por módulo, função, pasta de scripts e diretório, gerada das docstrings |
 | [`scripts/`](../scripts/mapa-dos-scripts.md) | cada script, o que lê e grava, e a ordem para reproduzir tudo |
 | [`configs/`](../configs/parametros-dos-experimentos.md) | parâmetros dos experimentos e cenários |
 | [`data/`](../data/README.md) | esquema dos dados, limitações do gerador, BCB e datasets externos |

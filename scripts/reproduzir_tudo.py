@@ -35,7 +35,7 @@ ROOT = Path(__file__).parents[1]
 RESULTADOS = ("dataset", "realismo", "inferencia", "otimizacao", "modelos", "experimento", "robustez", "cenarios",
               "online", "atributos", "propagacao", "fraudar", "auditoria", "falsos_positivos", "gnn", "gnn_rotulos",
               "externo")
-EXTRAS = ("rede", "ilustracoes", "testes", "notas", "graphify", "relatorio")
+EXTRAS = ("rede", "ilustracoes", "testes", "codigo", "notas", "graphify", "relatorio")
 AMLWORLD = ("amlworld_pix", "amlworld")
 HISTORICO = ROOT / "data" / "tempos_reproduzir.csv"
 # *_meta.json de cada etapa, relativo à pasta de saída (uma subpasta por etapa da pesquisa):
@@ -59,7 +59,7 @@ META = {
 }
 # tempo aproximado do modo completo (scripts/mapa-dos-scripts.md), para etapas sem *_meta.json nem histórico
 APROXIMADO = {"dataset": 10, "online": 30 * 60, "fraudar": 17 * 60, "gnn": 25 * 60, "gnn_rotulos": 40 * 60,
-              "rede": 60, "ilustracoes": 60, "testes": 60, "notas": 5, "graphify": 30, "relatorio": 20}
+              "rede": 60, "ilustracoes": 60, "testes": 60, "codigo": 5, "notas": 5, "graphify": 30, "relatorio": 20}
 
 
 def gnn_disponivel() -> bool:
@@ -151,6 +151,7 @@ def plano(rapido: bool, refazer: bool, saida: str, dados: str) -> list[tuple[str
         ("testes", "figuras didáticas dos testes de hipótese, uma por etapa",
          [py, "scripts/ferramentas/ilustrar_testes.py", "--saida", saida,
           "--execucoes", f"{modelos}/results/modelos_execucoes.csv"]),
+        ("codigo", "documentação do código (docs/codigo/)", [py, "scripts/ferramentas/documentar_codigo.py"]),
         ("notas", "grafo de notas do Obsidian", [py, "scripts/ferramentas/exportar_grafo_de_notas.py"]),
     ]
     exe = graphify()
@@ -180,6 +181,7 @@ def tempos_medios(modo: str, saida: str) -> dict[str, float]:
 
 
 def formatar(segundos: float | None) -> str:
+    """Duração legível: segundos, minutos ou horas e minutos."""
     if segundos is None:
         return "?"
     if segundos < 60:
@@ -218,6 +220,7 @@ def para_abrir(saida: str) -> list[str]:
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Refaz todos os resultados da pesquisa, na ordem certa.")
     parser.add_argument("--rapido", action="store_true", help="poucas sementes, em reports_teste/, sem AMLworld")
     parser.add_argument("--refazer", action="store_true", help="recalcula o progresso salvo das avaliações longas")

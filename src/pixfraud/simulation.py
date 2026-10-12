@@ -121,6 +121,7 @@ class SimulationConfig:
     estrutura_aleatoria: bool = False
 
     def __post_init__(self):
+        """Valida as opções de texto e normaliza as tipologias de lavagem para tupla."""
         if self.fraud_hours not in FRAUD_HOURS:
             raise ValueError(f"fraud_hours deve ser um de {FRAUD_HOURS}")
         if self.calendar not in CALENDARS:
@@ -238,6 +239,7 @@ def _negative_binomial(rng, mean: float, dispersion: float = DISPERSION) -> int:
 
 
 def _chain_slots(cfg: SimulationConfig) -> int:
+    """Quantas posições de intermediário a quadrilha tem, conforme as tipologias de lavagem."""
     return cfg.chain_length if cfg.laundering_typologies == ("cadeia",) else max(cfg.chain_length, 2)
 
 
@@ -318,6 +320,7 @@ def audit_roles(accounts: pd.DataFrame, transactions: pd.DataFrame) -> pd.DataFr
     legit_out = tx["scenario"].isin(("salario", "fornecedor"))
 
     def accounts_with(mask, column):
+        """Contas de ``column`` nas transações selecionadas por ``mask``."""
         return set(tx.loc[mask, column])
 
     sent_scam, got_scam = accounts_with(scam, "sender"), accounts_with(scam, "receiver")
@@ -419,6 +422,7 @@ def _amounts(rng, cfg, to_merchant: np.ndarray) -> np.ndarray:
 
 
 def _or(value, default):
+    """``value``, ou ``default`` se ``value`` for ``None``."""
     return default if value is None else value
 
 
@@ -532,6 +536,7 @@ def _recruit(rng, people, recruited: set, avoid=frozenset()) -> str:
 
 
 def _pick_person(rng, people, excluded: set) -> str:
+    """Sorteia uma pessoa que não esteja em ``excluded``."""
     person = people[rng.integers(len(people))]
     while person in excluded:  # só acontece com laranjas recrutadas
         person = people[rng.integers(len(people))]
@@ -583,6 +588,7 @@ def _hops(rng, cfg, t, amount, path, scenario):
 
 
 def _later(cfg, t, delay):
+    """Instante ``delay`` depois de ``t``, empurrado para o horário de atividade se for o caso."""
     return t + delay if cfg.fraud_hours == "uniforme" else _after_activity(t, delay)
 
 
@@ -623,6 +629,7 @@ def _camouflage_transactions(rng, cfg, accounts, people, merchants, day_p=None) 
 
 
 def _has_look_alikes(cfg) -> bool:
+    """O cenário tem contas legítimas parecidas com fraude (salários, vaquinhas, repasses)?"""
     return (cfg.employees_per_merchant > 0 or cfg.supplier_tx_per_week > 0 or cfg.p_organizer > 0
             or cfg.p_fast_forwarder > 0)
 
@@ -723,6 +730,7 @@ def _contestations(rng, cfg, tx: pd.DataFrame) -> pd.DataFrame:
 
 
 def _accounts_table(rng, people, merchants, roles, victims, p_new_fraud_account) -> pd.DataFrame:
+    """Tabela de contas: tipo, idade (contas de fraude tendem a ser novas), papel e se é vítima."""
     person_ids = set(people)
     created = [a for a in roles if a not in person_ids]  # contas abertas para a fraude
     n_fraud = len(created)

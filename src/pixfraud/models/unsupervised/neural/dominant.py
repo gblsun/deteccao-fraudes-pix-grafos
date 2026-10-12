@@ -52,6 +52,7 @@ def dominant_scores(
     optimizer = torch.optim.Adam(parameters, lr=learning_rate)
 
     def forward():
+        """Reconstrói atributos e ligações e devolve o erro de cada conta (o escore do DOMINANT)."""
         h = torch.relu(torch.sparse.mm(gcn, encoder[0](X)))
         z = torch.relu(torch.sparse.mm(gcn, encoder[1](h)))
         x_hat = torch.sparse.mm(gcn, attribute_decoder[1](torch.relu(torch.sparse.mm(gcn, attribute_decoder[0](z)))))

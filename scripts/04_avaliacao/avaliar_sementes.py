@@ -64,6 +64,7 @@ MODEL_COLORS = {"dbscan": "#2a78d6", "isolation_forest": "#eb6834", "local_outli
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Convergência da AP média com o número de sementes.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
@@ -165,6 +166,7 @@ def _seeds_for_power(effect: float, power: float, alpha: float, minimum: int = 6
 
 
 def _suffix(scenario: str) -> str:
+    """Sufixo dos arquivos de saída: vazio no cenário ``base``."""
     return "" if scenario == "base" else f"_{scenario}"
 
 
@@ -179,6 +181,7 @@ def _run(simulation, config, seeds: list[int], processes: int, models: list[str]
     began = time.time()
 
     def save(metrics: pd.DataFrame, i: int) -> None:
+        """Acrescenta as métricas de uma semente ao CSV de progresso e mostra o tempo restante."""
         metrics.to_csv(path, mode="a", header=not path.exists(), index=False)
         per_seed = (time.time() - began) / i
         eta = per_seed * (len(seeds) - i) / 60

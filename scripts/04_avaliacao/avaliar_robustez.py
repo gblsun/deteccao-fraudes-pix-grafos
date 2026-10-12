@@ -44,6 +44,7 @@ from pixfraud.visualization import model_color  # noqa: E402
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Repete o experimento com várias sementes.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--sementes", type=int, default=20, help="nº de repetições (sementes 1, 2, ...)")
@@ -85,6 +86,7 @@ def main() -> None:
 
 
 def _plot(summary: pd.DataFrame, path: Path, n: int) -> None:
+    """AP média e IC 95% de cada detector em cada conjunto de atributos."""
     table = summary.reset_index()
     order = table.groupby("atributos")["mean"].max().sort_values().index
     models = [m for m in DETECTORS if m in set(table["modelo"])]

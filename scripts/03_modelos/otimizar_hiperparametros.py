@@ -69,6 +69,7 @@ HEADER = """\
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Otimiza os hiperparâmetros de cada modelo em redes de validação.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--grades", default=str(DEFAULT_PATH), help="valores testados de cada hiperparâmetro")
@@ -161,6 +162,7 @@ def main() -> None:
 
 
 def _score_star(job):
+    """Avalia os candidatos de hiperparâmetros numa rede de validação (para o pool de processos)."""
     simulation, name, seed, config, conjunto, todo, current = job
     accounts, tx = generate_dataset(replace(simulation, seed=seed))
     prepared = prepare(accounts, tx, config)
@@ -169,6 +171,7 @@ def _score_star(job):
 
 
 def _write_config(source: str, target: str, best: dict, scenarios: list, seeds: list, rounds: int) -> None:
+    """Grava a configuração com os hiperparâmetros escolhidos e um cabeçalho de como foram escolhidos."""
     with open(source, encoding="utf-8") as f:
         config = yaml.safe_load(f)
     for model, params in best.items():

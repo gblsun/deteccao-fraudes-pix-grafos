@@ -22,6 +22,7 @@ REPORT = ROOT / "relatorio"
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Gera o relatório com o Pandoc.")
     parser.add_argument("--formato", choices=["docx", "html", "pdf"], default="docx")
     parser.add_argument("--saida", help="arquivo de saída (padrão: relatorio/saida/relatorio.<formato>)")

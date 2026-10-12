@@ -105,6 +105,7 @@ PERMUTATIONS = 200  # por (semente, modelo): o menor p possível é 1/201
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Compara todos os modelos nas mesmas contas.")
     parser.add_argument("--config", default="configs/experimento.yaml")
     parser.add_argument("--arquivo-cenarios", default="configs/cenarios.yaml")
@@ -187,6 +188,7 @@ def main() -> None:
 
 
 def _evaluate_star(job):
+    """``_evaluate`` com os argumentos numa tupla (para o pool de processos)."""
     return _evaluate(*job)
 
 

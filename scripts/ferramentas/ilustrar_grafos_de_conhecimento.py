@@ -39,6 +39,7 @@ PASTAS_DO_CODIGO = {"src/pixfraud": "#2a78d6", "scripts": "#eb6834", "app": "#1b
 
 
 def main() -> None:
+    """Ponto de entrada: lê os argumentos da linha de comando e roda o script (ver a docstring do módulo)."""
     parser = argparse.ArgumentParser(description="Desenha o grafo de notas e o mapa do código para o README.")
     parser.add_argument("--saida", type=Path, default=ROOT / "reports" / "ilustracoes")
     args = parser.parse_args()
@@ -69,6 +70,7 @@ def _cor_da_nota(no: dict, grupos) -> str:
 
 
 def _grafo_de_notas(destino: Path) -> None:
+    """Desenha o grafo de notas do Obsidian, com as cores dos grupos do cofre."""
     dados = json.loads((ROOT / "docs" / "grafo-de-notas.json").read_text(encoding="utf-8"))
     grafo = nx.Graph()
     grafo.add_nodes_from(n["caminho"] for n in dados["nos"])
@@ -98,12 +100,14 @@ def _grafo_de_notas(destino: Path) -> None:
 
 
 def _pasta(arquivo: str) -> str | None:
+    """A pasta de código de um arquivo .py (ou ``None`` fora delas)."""
     if not arquivo.endswith(".py"):
         return None
     return next((p for p in PASTAS_DO_CODIGO if arquivo.startswith(p + "/")), None)
 
 
 def _grafo_do_codigo(destino: Path) -> None:
+    """Desenha o mapa do código: arquivos e as ligações entre pastas, pelo Graphify."""
     dados = json.loads((ROOT / "graphify-out" / "graph.json").read_text(encoding="utf-8"))
     arquivo_do_no = {n["id"]: n.get("source_file") or "" for n in dados["nodes"]}
     pesos = Counter()

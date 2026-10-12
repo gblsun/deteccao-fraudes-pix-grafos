@@ -35,6 +35,9 @@ agregados e públicos. Detalhes em `CLAUDE.md`.
   cada modelo (um arquivo `.py` por modelo, separados em não supervisionados e
   supervisionados), seus hiperparâmetros, a otimização em redes de validação e a AP de
   todos nos cenários realistas.
+- [docs/codigo/mapa-do-codigo.md](docs/codigo/mapa-do-codigo.md): a documentação do código, gerada das
+  docstrings: uma nota por módulo (cada função, assinatura e quem usa), por pasta de scripts
+  (opções de linha de comando) e por diretório.
 - [scripts/mapa-dos-scripts.md](scripts/mapa-dos-scripts.md): cada script, o que lê e
   grava, e a ordem para reproduzir os resultados do zero.
 - [configs/parametros-dos-experimentos.md](configs/parametros-dos-experimentos.md):

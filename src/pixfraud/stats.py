@@ -99,6 +99,7 @@ def compare_groups(features: pd.DataFrame, labels: pd.Series) -> pd.DataFrame:
 
 
 def _precision_at_k(y: np.ndarray, scores: np.ndarray, k: int | None = None) -> float:
+    """Fração de fraudes entre as ``k`` contas de maior escore (``k`` padrão: nº de fraudes)."""
     k = int(y.sum()) if k is None else k
     return float(y[np.argsort(-scores)[:k]].mean()) if k else 0.0
 
