@@ -138,7 +138,7 @@ def main() -> None:
                   sementes=seeds, alfa=ALPHA, duracao_s=round(time.time() - began))
     _plot_roles(summaries["papeis"], args.cenarios, len(seeds), figures / "inferencia_papeis.png")
 
-    print("\natributos que mais separam os papéis (ε² médio):")
+    print("\natributos que mais separam os papéis (épsilon² médio do Kruskal-Wallis):")
     top = summaries["papeis"].sort_values("efeito_medio", ascending=False).groupby("cenario", sort=False).head(5)
     print(top[["cenario", "atributo", "efeito_medio", "rotulo", "sementes_significativas", "maior_mediana"]]
           .round(3).to_string(index=False))
