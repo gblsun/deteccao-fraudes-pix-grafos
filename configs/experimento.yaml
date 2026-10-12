@@ -112,5 +112,5 @@ modelos:
     learning_rate: 0.05
     min_samples_leaf: 5      # folhas pequenas: com poucas fraudes, 20 (o padrão) não isola nenhuma
     max_leaf_nodes: 31
-# Os hiperparâmetros acima são os escolhidos à mão. scripts/otimizar_hiperparametros.py
+# Os hiperparâmetros acima são os escolhidos à mão. scripts/03_modelos/otimizar_hiperparametros.py
 # procura os melhores em redes de validação e grava configs/experimento_otimizado.yaml.

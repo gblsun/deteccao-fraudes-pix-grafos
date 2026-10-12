@@ -9,11 +9,49 @@ partir da configuração e das sementes. Os arquivos são pequenos e ficam versi
 para os resultados aparecerem no GitHub e poderem ser citados por commit. A interpretação
 está em [`docs/resultados.md`](../docs/resultados.md).
 
-## `results/`: tabelas
+## Por etapa
 
-| Arquivo | Script | Uma linha por... |
+Cada etapa da pesquisa (ver [fluxo da pesquisa](../docs/fluxo-da-pesquisa.md)) tem a sua pasta, com
+`results/` (tabelas) e `figures/` (figuras), gravadas pelos scripts da pasta de mesmo nome em
+[`scripts/`](../scripts/mapa-dos-scripts.md). Todo script de avaliação grava também um `*_meta.json`
+(commit, configuração, sementes, duração e versões).
+
+### 1. Dados: [`01_dados/`](01_dados/)
+
+| Tabela (`results/`) | Script | Uma linha por... |
+|---------|--------|------------------|
+| `auditoria_papeis.csv` | `auditar_papeis.py` | conta cujo comportamento não bate com o papel (regra violada) |
+| `auditoria_resumo.csv`, `auditoria_perfis.csv` | `auditar_papeis.py` | (cenário, semente): contas por papel e violações; mediana do que cada papel faz |
+
+### 2. Exploração: [`02_exploracao/`](02_exploracao/)
+
+| Tabela (`results/`) | Script | Uma linha por... |
+|---------|--------|------------------|
+| `tipo_de_rede_execucoes.csv`, `tipo_de_rede_resumo.csv` | `analisar_tipo_de_rede.py` | (cenário, semente): componentes, lei de potência, passeios e cosseno × Jaccard |
+| `tipo_de_rede_modelos.csv` | `analisar_tipo_de_rede.py` | rede × Erdős–Rényi × Barabási–Albert |
+| `tipo_de_rede_passeios.csv` | `analisar_tipo_de_rede.py` | (cenário, papel): onde terminam os passeios que saem das vítimas |
+
+| Figura (`figures/`) | Script | Mostra |
+|---------|--------|--------|
+| `tipo_de_rede_graus.png` | `analisar_tipo_de_rede.py` | distribuição de graus: rede × modelos clássicos; entrada × saída |
+
+### 3. Modelos: [`03_modelos/`](03_modelos/)
+
+| Tabela (`results/`) | Script | Uma linha por... |
 |---------|--------|------------------|
 | `metricas.csv` | `rodar_experimento.py` | (conjunto de atributos, modelo), numa semente |
+| `modelos_execucoes.csv`, `modelos_resumo.csv`, `modelos_comparacoes.csv` | `avaliar_modelos.py` | (cenário, semente, modelo): AP, precision@k e ROC-AUC de todos os modelos, nas mesmas contas |
+
+| Figura (`figures/`) | Script | Mostra |
+|---------|--------|--------|
+| `grafo_de_calor_<modelo>_<atributos>.png` | `rodar_experimento.py` | as contas mais suspeitas e sua vizinhança, coloridas pelo risco |
+| `heatmap_risco_<modelo>_<atributos>.png` | `rodar_experimento.py` | os atributos que explicam o risco de cada conta suspeita |
+| `modelos_average_precision.png`, `modelos_comparacoes.png` | `avaliar_modelos.py` | AP média e IC 95% de todos os modelos por cenário; diferenças pareadas |
+
+### 4. Avaliação: [`04_avaliacao/`](04_avaliacao/)
+
+| Tabela (`results/`) | Script | Uma linha por... |
+|---------|--------|------------------|
 | `robustez_execucoes.csv` | `avaliar_robustez.py` | (semente, atributos, modelo) |
 | `robustez_resumo.csv` | `avaliar_robustez.py` | (métrica, atributos, modelo): média e IC 95% |
 | `robustez_comparacoes.csv` | `avaliar_robustez.py` | (métrica, modelo, par de conjuntos): teste pareado |
@@ -31,17 +69,39 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `sementes_execucoes.csv` | `avaliar_sementes.py` | (semente, atributos, modelo), até 1000 sementes; também é o progresso salvo |
 | `sementes_convergencia.csv` | `avaliar_sementes.py` | (nº de sementes, atributos, modelo): AP média, desvio e IC 95% usando as sementes 1..n |
 | `sementes_sorteios.csv` | `avaliar_sementes.py` | (atributos, modelo): faixa de 95% da média de 10 sementes sorteadas |
-| `tipo_de_rede_execucoes.csv`, `tipo_de_rede_resumo.csv` | `analisar_tipo_de_rede.py` | (cenário, semente): componentes, lei de potência, passeios e cosseno × Jaccard |
-| `tipo_de_rede_modelos.csv` | `analisar_tipo_de_rede.py` | rede × Erdős–Rényi × Barabási–Albert |
-| `tipo_de_rede_passeios.csv` | `analisar_tipo_de_rede.py` | (cenário, papel): onde terminam os passeios que saem das vítimas |
-| `modelos_execucoes.csv`, `modelos_resumo.csv`, `modelos_comparacoes.csv` | `avaliar_modelos.py` | (cenário, semente, modelo): AP, precision@k e ROC-AUC de todos os modelos, nas mesmas contas |
+
+| Figura (`figures/`) | Script | Mostra |
+|---------|--------|--------|
+| `robustez_average_precision.png` | `avaliar_robustez.py` | AP média e IC 95% por conjunto e modelo |
+| `cenarios_average_precision.png` | `avaliar_cenarios.py` | AP média por conjunto × cenário |
+| `cenarios_efeitos.png` | `avaliar_cenarios.py` | delta de Cliff de cada atributo × cenário |
+| `online_deteccao.png` | `avaliar_deteccao_online.py` | detectadas em 72 h e dinheiro recuperado |
+| `atributos_ablacao.png` | `avaliar_atributos.py` | queda de AP ao tirar cada atributo |
+| `atributos_teto.png` | `avaliar_atributos.py` | detectores não supervisionados × Random Forest com os rótulos |
+| `propagacao_average_precision.png` | `avaliar_propagacao.py` | AP da propagação de risco, dos detectores e da combinação |
+| `fraudar_average_precision.png` | `avaliar_fraudar.py` | AP do FRAUDAR, do DBSCAN e da combinação por cenário |
+| `gnn_average_precision.png` | `avaliar_gnn.py` | AP das GNN e das referências por cenário |
+| `sementes_convergencia.png` | `avaliar_sementes.py` | AP média e meia-largura do IC 95% contra o nº de sementes |
+
+### 5. Interpretação: [`05_interpretacao/`](05_interpretacao/)
+
+| Tabela (`results/`) | Script | Uma linha por... |
+|---------|--------|------------------|
 | `falsos_positivos_papeis.csv` | `investigar_falsos_positivos.py` | (cenário, semente, modelo): papel real das k contas de maior risco (k = nº de fraudes) |
 | `falsos_positivos_top.csv`, `falsos_positivos_atributos.csv` | `investigar_falsos_positivos.py` | (cenário, modelo, posição): as contas de maior risco na semente 42, o papel real e o percentil de cada atributo |
-| `auditoria_papeis.csv` | `auditar_papeis.py` | conta cujo comportamento não bate com o papel (regra violada) |
-| `auditoria_resumo.csv`, `auditoria_perfis.csv` | `auditar_papeis.py` | (cenário, semente): contas por papel e violações; mediana do que cada papel faz |
-| `*_meta.json` | todos os scripts de avaliação | como o resultado foi gerado: commit, configuração, sementes, duração e versões |
 
-### Colunas
+| Figura (`figures/`) | Script | Mostra |
+|---------|--------|--------|
+| `falsos_positivos_comercio.png` | `investigar_falsos_positivos.py` | fração das k contas de maior risco que são comércios, por modelo e cenário |
+
+### Ilustrações do README: [`ilustracoes/`](ilustracoes/)
+
+| Figura | Script | Mostra |
+|---------|--------|--------|
+| `padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | `gerar_ilustracoes.py` | ilustrações do README: os padrões injetados, o dinheiro percorrendo a quadrilha e a fraude dentro do movimento normal |
+| `grafo_de_notas.png`, `grafo_do_codigo.png` | `ilustrar_grafos_de_conhecimento.py` | ilustrações do README: o grafo de notas do Obsidian e o mapa do código pelo Graphify (não são resultados da pesquisa) |
+
+## Colunas das tabelas
 
 | Coluna | Significado |
 |--------|-------------|
@@ -63,28 +123,6 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `metodo`, `conhecidas` | método de pontuação (propagação, detector ou combinação) e fração das fraudes tratadas como já conhecidas |
 | `fraudes_conhecidas`, `fraudes_restantes` | contas fraudulentas usadas como ponto de partida e as que ficaram para ser encontradas |
 
-## `figures/`: figuras
-
-| Arquivo | Script | Mostra |
-|---------|--------|--------|
-| `grafo_de_calor_<modelo>_<atributos>.png` | `rodar_experimento.py` | as contas mais suspeitas e sua vizinhança, coloridas pelo risco |
-| `heatmap_risco_<modelo>_<atributos>.png` | `rodar_experimento.py` | os atributos que explicam o risco de cada conta suspeita |
-| `robustez_average_precision.png` | `avaliar_robustez.py` | AP média e IC 95% por conjunto e modelo |
-| `cenarios_average_precision.png` | `avaliar_cenarios.py` | AP média por conjunto × cenário |
-| `cenarios_efeitos.png` | `avaliar_cenarios.py` | delta de Cliff de cada atributo × cenário |
-| `online_deteccao.png` | `avaliar_deteccao_online.py` | detectadas em 72 h e dinheiro recuperado |
-| `atributos_ablacao.png` | `avaliar_atributos.py` | queda de AP ao tirar cada atributo |
-| `atributos_teto.png` | `avaliar_atributos.py` | detectores não supervisionados × Random Forest com os rótulos |
-| `propagacao_average_precision.png` | `avaliar_propagacao.py` | AP da propagação de risco, dos detectores e da combinação |
-| `fraudar_average_precision.png` | `avaliar_fraudar.py` | AP do FRAUDAR, do DBSCAN e da combinação por cenário |
-| `gnn_average_precision.png` | `avaliar_gnn.py` | AP das GNN e das referências por cenário |
-| `sementes_convergencia.png` | `avaliar_sementes.py` | AP média e meia-largura do IC 95% contra o nº de sementes |
-| `tipo_de_rede_graus.png` | `analisar_tipo_de_rede.py` | distribuição de graus: rede × modelos clássicos; entrada × saída |
-| `modelos_average_precision.png`, `modelos_comparacoes.png` | `avaliar_modelos.py` | AP média e IC 95% de todos os modelos por cenário; diferenças pareadas |
-| `falsos_positivos_comercio.png` | `investigar_falsos_positivos.py` | fração das k contas de maior risco que são comércios, por modelo e cenário |
-| `padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | `gerar_ilustracoes.py` | ilustrações do README: os padrões injetados, o dinheiro percorrendo a quadrilha e a fraude dentro do movimento normal |
-| `grafo_de_notas.png`, `grafo_do_codigo.png` | `ilustrar_grafos_de_conhecimento.py` | ilustrações do README: o grafo de notas do Obsidian e o mapa do código pelo Graphify (não são resultados da pesquisa) |
-
 ## `amlworld/`: validação externa
 
 Saída de `avaliar_externo.py` sobre o AMLworld (ver [`data/README.md`](../data/README.md)):
@@ -97,7 +135,7 @@ Saída de `avaliar_externo.py` sobre o AMLworld (ver [`data/README.md`](../data/
 
 Saída de `avaliar_cenarios.py --cenarios realista coletor_ativo --sementes 10 --saida reports/coletor_ativo`
 (pedido da reunião de 24/09): as mesmas tabelas e figuras de `cenarios_*`, só com esses dois
-cenários, para não misturar com a rodada completa dos cenários em `results/`.
+cenários, para não misturar com a rodada completa dos cenários em `04_avaliacao/results/`.
 
 ## `estudos/`: grafos dos estudos
 
@@ -107,66 +145,66 @@ inteira; abra no navegador). São material de estudo, não resultados da pesquis
 ## Lista de figuras
 
 Galeria na ordem em que a pesquisa é contada, no estilo de uma lista de figuras de TCC.
-Os arquivos ficam versionados em `figures/` e `amlworld/figures/`, e podem ser refeitos a
+Os arquivos ficam versionados nas pastas `figures/` de cada etapa e em `amlworld/figures/`, e podem ser refeitos a
 partir da configuração e das sementes (ver o `*_meta.json` de cada script, na tabela
 acima). A interpretação de cada uma está em [`docs/resultados.md`](../docs/resultados.md).
 
 **Figura 1** — Os padrões de fraude injetados pelo simulador (conta laranja,
 intermediário, coletora), separados por papel.
 *Fonte: `gerar_ilustracoes.py`.*
-![Padrões de fraude](figures/padroes_de_fraude.png)
+![Padrões de fraude](ilustracoes/padroes_de_fraude.png)
 
 **Figura 2** — Uma quadrilha dentro do movimento normal: o que a denuncia não é o que
 cada conta faz sozinha, e sim o formato que desenha na rede.
 *Fonte: `gerar_ilustracoes.py`.*
-![Quadrilha dentro do movimento normal](figures/rede_exemplo.png)
+![Quadrilha dentro do movimento normal](ilustracoes/rede_exemplo.png)
 
 **Figura 3** — Average precision média e intervalo de confiança de 95%, por conjunto de
 atributos e modelo, em 10 sementes.
 *Fonte: `avaliar_robustez.py`.*
-![Robustez: average precision](figures/robustez_average_precision.png)
+![Robustez: average precision](04_avaliacao/figures/robustez_average_precision.png)
 
 **Figura 4** — Average precision média por conjunto de atributos × cenário (fácil, base,
 difícil, realista).
 *Fonte: `avaliar_cenarios.py`.*
-![Cenários: average precision](figures/cenarios_average_precision.png)
+![Cenários: average precision](04_avaliacao/figures/cenarios_average_precision.png)
 
 **Figura 5** — Delta de Cliff de cada atributo, fraude × normal, em cada cenário: o
 tamanho do efeito que separa as duas classes.
 *Fonte: `avaliar_cenarios.py`.*
-![Cenários: efeitos](figures/cenarios_efeitos.png)
+![Cenários: efeitos](04_avaliacao/figures/cenarios_efeitos.png)
 
 **Figura 6** — Queda de average precision ao remover cada atributo, um de cada vez
 (ablação).
 *Fonte: `avaliar_atributos.py`.*
-![Ablação de atributos](figures/atributos_ablacao.png)
+![Ablação de atributos](04_avaliacao/figures/atributos_ablacao.png)
 
 **Figura 7** — Os detectores não supervisionados contra o teto do Random Forest treinado
 com os rótulos: a distância entre os dois é o custo de não ter rótulos.
 *Fonte: `avaliar_atributos.py`.*
-![Teto supervisionado](figures/atributos_teto.png)
+![Teto supervisionado](04_avaliacao/figures/atributos_teto.png)
 
 **Figura 8** — Average precision da propagação de risco (PageRank personalizado a partir
 de fraudes já conhecidas), dos detectores sozinhos e da combinação dos dois.
 *Fonte: `avaliar_propagacao.py`.*
-![Propagação de risco](figures/propagacao_average_precision.png)
+![Propagação de risco](04_avaliacao/figures/propagacao_average_precision.png)
 
 **Figura 9** — Fração das contas fraudulentas detectadas até 72 h após o primeiro golpe e
 fração do dinheiro roubado retida, simulando o bloqueio cautelar (MED).
 *Fonte: `avaliar_deteccao_online.py`.*
-![Detecção em tempo](figures/online_deteccao.png)
+![Detecção em tempo](04_avaliacao/figures/online_deteccao.png)
 
 **Figura 10** — Grafo de calor: as contas mais suspeitas e sua vizinhança, coloridas pelo
 risco (DBSCAN, conjunto de atributos completo). As demais combinações de modelo ×
 conjunto de atributos seguem o mesmo padrão e ficam em `grafo_de_calor_<modelo>_<atributos>.png`.
 *Fonte: `rodar_experimento.py`.*
-![Grafo de calor](figures/grafo_de_calor_dbscan_completo.png)
+![Grafo de calor](03_modelos/figures/grafo_de_calor_dbscan_completo.png)
 
 **Figura 11** — Heatmap de risco: os atributos que explicam o risco de cada conta
 suspeita (DBSCAN, conjunto completo). As demais combinações ficam em
 `heatmap_risco_<modelo>_<atributos>.png`.
 *Fonte: `rodar_experimento.py`.*
-![Heatmap de risco](figures/heatmap_risco_dbscan_completo.png)
+![Heatmap de risco](03_modelos/figures/heatmap_risco_dbscan_completo.png)
 
 **Figura 12** — Recall@k por tipologia de lavagem de dinheiro, na validação externa com o
 AMLworld (versão só com ACH e Wire, mais próxima do Pix).
@@ -176,40 +214,40 @@ AMLworld (versão só com ACH e Wire, mais próxima do Pix).
 **Figura 13** — Average precision do FRAUDAR (blocos densos, só estrutura), do melhor
 detector de atributos e da combinação dos dois, do cenário mais fácil ao mais realista.
 *Fonte: `avaliar_fraudar.py`.*
-![FRAUDAR](figures/fraudar_average_precision.png)
+![FRAUDAR](04_avaliacao/figures/fraudar_average_precision.png)
 
 **Figura 14** — Average precision das redes neurais para grafos (DOMINANT, sem rótulos;
 GraphSAGE, com rótulos) ao lado do DBSCAN e do Random Forest.
 *Fonte: `avaliar_gnn.py`.*
-![Redes neurais para grafos](figures/gnn_average_precision.png)
+![Redes neurais para grafos](04_avaliacao/figures/gnn_average_precision.png)
 
 **Figura 15** — Quantas sementes bastam: average precision média (com IC 95%) e
 meia-largura do IC com 10, 100, 500 e 1000 sementes (conjunto completo).
 *Fonte: `avaliar_sementes.py`.*
-![Convergência da AP média](figures/sementes_convergencia.png)
+![Convergência da AP média](04_avaliacao/figures/sementes_convergencia.png)
 
 **Figura 16** — Distribuição de graus da rede Pix sintética: (a) ao lado de um
 Erdős–Rényi e de um Barabási–Albert do mesmo tamanho; (b) grau de entrada, com cauda
 de lei de potência, e grau de saída, sem ela.
 *Fonte: `analisar_tipo_de_rede.py`.*
-![Tipo de rede](figures/tipo_de_rede_graus.png)
+![Tipo de rede](02_exploracao/figures/tipo_de_rede_graus.png)
 
 **Figura 17** — Todos os modelos nas mesmas contas (não supervisionados, incluindo KNN,
 K-Means e PCA; estrutura do grafo; semi-supervisionados; tetos supervisionados): average
 precision média e IC 95% por cenário.
 *Fonte: `avaliar_modelos.py`.*
-![Todos os modelos](figures/modelos_average_precision.png)
+![Todos os modelos](03_modelos/figures/modelos_average_precision.png)
 
 **Figura 18** — Fração das k contas de maior risco (k = nº de fraudes) que são comércios,
 por modelo e cenário: os falsos positivos da reunião de 01/10.
 *Fonte: `investigar_falsos_positivos.py`.*
-![Comércios no topo do risco](figures/falsos_positivos_comercio.png)
+![Comércios no topo do risco](05_interpretacao/figures/falsos_positivos_comercio.png)
 
 ## Material interativo
 
 Não são figuras estáticas, então ficam fora da lista numerada acima:
 
-- [`quadrilha.gif`](figures/quadrilha.gif): o dinheiro percorrendo a quadrilha, do golpe
+- [`quadrilha.gif`](ilustracoes/quadrilha.gif): o dinheiro percorrendo a quadrilha, do golpe
   ao saque.
 - [`estudos/rede_completa.html`](estudos/rede_completa.html): toda a rede sintética, com
   busca, filtro por papel, cor por papel/risco/comunidade, setas no sentido do dinheiro

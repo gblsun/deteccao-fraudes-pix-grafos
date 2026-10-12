@@ -39,7 +39,7 @@ def generate_network(scenario: str, seed: int, config: dict, config_path: str | 
                      scenarios_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame, Prepared]:
     """Contas, Pix e a rede preparada (grafo, atributos, rótulos) de ``seed`` no ``scenario``.
 
-    O mesmo caminho dos estudos (``scripts/avaliar_modelos.py``): o gerador de
+    O mesmo caminho dos estudos (``scripts/03_modelos/avaliar_modelos.py``): o gerador de
     ``config_path`` com os parâmetros do cenário trocados, e a semente trocada.
     """
     scenarios = load_scenarios(scenarios_path)

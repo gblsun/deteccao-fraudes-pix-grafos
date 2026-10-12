@@ -37,13 +37,21 @@ RESULTADOS = ("dataset", "experimento", "robustez", "cenarios", "online", "atrib
 EXTRAS = ("rede", "ilustracoes", "notas", "graphify", "relatorio")
 AMLWORLD = ("amlworld_pix", "amlworld")
 HISTORICO = ROOT / "data" / "tempos_reproduzir.csv"
-# *_meta.json de cada etapa, relativo à pasta de saída: dá o tempo quando ainda não há histórico
-META = {"experimento": "results/metricas_meta.json", "robustez": "results/robustez_meta.json",
-        "cenarios": "results/cenarios_meta.json", "online": "results/online_meta.json",
-        "atributos": "results/atributos_meta.json", "propagacao": "results/propagacao_meta.json",
-        "fraudar": "results/fraudar_meta.json", "gnn": "results/gnn_meta.json",
-        "gnn_rotulos": "results/gnn_rotulos_meta.json", "auditoria": "results/auditoria_meta.json",
-        "falsos_positivos": "results/falsos_positivos_meta.json"}
+# *_meta.json de cada etapa, relativo à pasta de saída (uma subpasta por etapa da pesquisa):
+# dá o tempo quando ainda não há histórico
+META = {
+    "experimento": "03_modelos/results/metricas_meta.json",
+    "robustez": "04_avaliacao/results/robustez_meta.json",
+    "cenarios": "04_avaliacao/results/cenarios_meta.json",
+    "online": "04_avaliacao/results/online_meta.json",
+    "atributos": "04_avaliacao/results/atributos_meta.json",
+    "propagacao": "04_avaliacao/results/propagacao_meta.json",
+    "fraudar": "04_avaliacao/results/fraudar_meta.json",
+    "gnn": "04_avaliacao/results/gnn_meta.json",
+    "gnn_rotulos": "04_avaliacao/results/gnn_rotulos_meta.json",
+    "auditoria": "01_dados/results/auditoria_meta.json",
+    "falsos_positivos": "05_interpretacao/results/falsos_positivos_meta.json",
+}
 # tempo aproximado do modo completo (scripts/mapa-dos-scripts.md), para etapas sem *_meta.json nem histórico
 APROXIMADO = {"dataset": 10, "online": 30 * 60, "fraudar": 17 * 60, "gnn": 25 * 60, "gnn_rotulos": 40 * 60,
               "rede": 60, "ilustracoes": 60, "notas": 5, "graphify": 30, "relatorio": 20}
@@ -72,50 +80,57 @@ def plano(rapido: bool, refazer: bool, saida: str, dados: str) -> list[tuple[str
     online = ["--cenarios", "realista", "--sementes", "1"] if rapido else ["--sementes", "3"]
     opcao_refazer = ["--refazer"] if refazer else []
     atributos = (Path(dados).parent / "processed" / "features.csv").as_posix()
+    # cada etapa da pesquisa grava na sua pasta (reports/01_dados, 03_modelos...)
+    dados_, modelos, avaliacao, interpretacao = (f"{saida}/{etapa}" for etapa in
+                                                 ("01_dados", "03_modelos", "04_avaliacao", "05_interpretacao"))
     etapas = [
         ("dataset", "dataset sintético (semente 42)",
-         [py, "scripts/gerar_dataset.py", "--seed", "42", "--saida", dados]),
+         [py, "scripts/01_dados/gerar_dataset.py", "--seed", "42", "--saida", dados]),
         ("experimento", "uma rodada completa",
-         [py, "scripts/rodar_experimento.py", "--dados", dados, "--atributos", atributos, "--saida", saida]),
+         [py, "scripts/03_modelos/rodar_experimento.py", "--dados", dados, "--atributos", atributos,
+          "--saida", modelos]),
         ("robustez", f"robustez ({sementes} sementes)",
-         [py, "scripts/avaliar_robustez.py", "--sementes", sementes, "--saida", saida]),
+         [py, "scripts/04_avaliacao/avaliar_robustez.py", "--sementes", sementes, "--saida", avaliacao]),
         ("cenarios", "cenários de dificuldade",
-         [py, "scripts/avaliar_cenarios.py", "--sementes", sementes, "--saida", saida]),
+         [py, "scripts/04_avaliacao/avaliar_cenarios.py", "--sementes", sementes, "--saida", avaliacao]),
         ("online", "detecção a tempo",
-         [py, "scripts/avaliar_deteccao_online.py", *online, "--saida", saida, *opcao_refazer]),
+         [py, "scripts/04_avaliacao/avaliar_deteccao_online.py", *online, "--saida", avaliacao, *opcao_refazer]),
         ("atributos", "ablação e teto supervisionado",
-         [py, "scripts/avaliar_atributos.py", "--sementes", poucas, "--saida", saida]),
+         [py, "scripts/04_avaliacao/avaliar_atributos.py", "--sementes", poucas, "--saida", avaliacao]),
         ("propagacao", "culpa por associação",
-         [py, "scripts/avaliar_propagacao.py", "--sementes", sementes, "--saida", saida]),
+         [py, "scripts/04_avaliacao/avaliar_propagacao.py", "--sementes", sementes, "--saida", avaliacao]),
         ("fraudar", "FRAUDAR (blocos densos)",
-         [py, "scripts/avaliar_fraudar.py", "--sementes", sementes, "--saida", saida]),
+         [py, "scripts/04_avaliacao/avaliar_fraudar.py", "--sementes", sementes, "--saida", avaliacao]),
         ("auditoria", "o papel de cada conta confere com o que ela fez?",
-         [py, "scripts/auditar_papeis.py", "--sementes", sementes, "--dados", dados, "--saida", saida]),
+         [py, "scripts/01_dados/auditar_papeis.py", "--sementes", sementes, "--dados", dados, "--saida", dados_]),
         ("falsos_positivos", "quem são os falsos positivos no topo do risco",
-         [py, "scripts/investigar_falsos_positivos.py", "--sementes", poucas, "--dados", dados, "--saida", saida]),
+         [py, "scripts/05_interpretacao/investigar_falsos_positivos.py", "--sementes", poucas, "--dados", dados,
+          "--saida", interpretacao]),
     ]
     if gnn_disponivel():  # dependência opcional: pip install -e ".[gnn]"
         etapas.append(("gnn", "redes neurais para grafos (DOMINANT e GraphSAGE)",
-                       [py, "scripts/avaliar_gnn.py", "--sementes", poucas, "--saida", saida]))
+                       [py, "scripts/04_avaliacao/avaliar_gnn.py", "--sementes", poucas, "--saida", avaliacao]))
         etapas.append(("gnn_rotulos", "GraphSAGE com poucos rótulos",
-                       [py, "scripts/avaliar_gnn_rotulos.py", "--sementes", sementes, "--saida", saida]))
+                       [py, "scripts/04_avaliacao/avaliar_gnn_rotulos.py", "--sementes", sementes,
+                        "--saida", avaliacao]))
     if not rapido:  # cada janela do AMLworld leva minutos
         for nome in AMLWORLD:
             if (ROOT / "data" / "external" / nome).exists():
                 etapas.append(("externo", f"AMLworld ({nome})",
-                               [py, "scripts/avaliar_externo.py", "--dados", f"data/external/{nome}",
+                               [py, "scripts/04_avaliacao/avaliar_externo.py", "--dados", f"data/external/{nome}",
                                 "--saida", f"{saida}/amlworld", *opcao_refazer]))
     etapas += [
         ("rede", "página HTML da rede inteira",
-         [py, "scripts/visualizar_rede.py", "--dados", dados, "--saida", f"{saida}/estudos/rede_completa.html"]),
+         [py, "scripts/02_exploracao/visualizar_rede.py", "--dados", dados,
+          "--saida", f"{saida}/estudos/rede_completa.html"]),
         ("ilustracoes", "ilustrações do README",
-         [py, "scripts/gerar_ilustracoes.py", "--saida", f"{saida}/figures"]),
-        ("notas", "grafo de notas do Obsidian", [py, "scripts/exportar_grafo_de_notas.py"]),
+         [py, "scripts/ferramentas/gerar_ilustracoes.py", "--saida", f"{saida}/ilustracoes"]),
+        ("notas", "grafo de notas do Obsidian", [py, "scripts/ferramentas/exportar_grafo_de_notas.py"]),
     ]
     exe = graphify()
     if exe:
         etapas.append(("graphify", "grafo do código (Graphify)", [exe, "update", "."]))
-    etapas.append(("relatorio", "relatório (docx em relatorio/saida/)", [py, "scripts/gerar_relatorio.py"]))
+    etapas.append(("relatorio", "relatório (docx em relatorio/saida/)", [py, "scripts/ferramentas/gerar_relatorio.py"]))
     return etapas
 
 

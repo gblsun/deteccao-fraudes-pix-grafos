@@ -1,9 +1,11 @@
-"""Testes de `pixfraud.stats`: tamanho de efeito, correções, bootstrap, testes pareados e modelo nulo."""
+"""Testes de `pixfraud.stats`: efeito, correções, bootstrap, testes pareados, modelo nulo, Kruskal-Wallis,
+Dunn, Friedman e testes contra o acaso."""
 
 import networkx as nx
 import numpy as np
 import pandas as pd
 import pytest
+from scipy import stats
 
 from pixfraud.stats import (
     bootstrap_metric,
@@ -11,11 +13,16 @@ from pixfraud.stats import (
     compare_groups,
     compare_runs,
     contingency_test,
+    dunn_posthoc,
     effect_size_label,
+    friedman_models,
     holm_correction,
+    kruskal_groups,
     null_model_test,
     paired_comparison,
+    permutation_test_metric,
     summarize_runs,
+    topk_hypergeom,
 )
 
 
@@ -114,3 +121,63 @@ def test_contingency_test():
     result = contingency_test(fraud, night)
     assert result["p-valor"] < 1e-6 and result["V de Cramér"] > 0.5
     assert result["tabela"].loc[True, True] == 30
+    # 2×2: Fisher exato e razão de chances = (30 × 150) / (10 × 10)
+    assert result["razão de chances"] == pytest.approx(45.0) and result["p Fisher"] < 1e-10
+
+
+def _roles_sample():
+    rng = np.random.default_rng(1)
+    roles = pd.Series(["normal"] * 200 + ["laranja"] * 30 + ["coletor"] * 10)
+    features = pd.DataFrame({
+        "separa": np.r_[rng.normal(0, 1, 200), rng.normal(3, 1, 30), rng.normal(6, 1, 10)],
+        "ruido": rng.normal(0, 1, 240),
+    })
+    return features, roles
+
+
+def test_kruskal_groups_matches_scipy_and_ranks_by_effect():
+    features, roles = _roles_sample()
+    table = kruskal_groups(features, roles)
+    expected = stats.kruskal(*[features.loc[roles == r, "separa"] for r in ("normal", "laranja", "coletor")])
+    assert table.loc["separa", "H"] == pytest.approx(expected.statistic)
+    assert table.loc["separa", "ε²"] == pytest.approx(expected.statistic / 239)
+    assert table.index[0] == "separa" and table.loc["separa", "efeito"] == "grande"
+    assert table.loc["separa", "maior mediana"] == "coletor"
+    assert table.loc["ruido", "p ajustado (Holm)"] > 0.01
+
+
+def test_dunn_posthoc_finds_the_pairs_that_differ():
+    rng = np.random.default_rng(2)
+    roles = pd.Series(["a"] * 50 + ["b"] * 50 + ["c"] * 50)
+    values = pd.Series(np.r_[rng.normal(0, 1, 50), rng.normal(0, 1, 50), rng.normal(3, 1, 50)])
+    table = dunn_posthoc(values, roles).set_index(["grupo a", "grupo b"])
+    assert len(table) == 3
+    assert table.loc[("a", "b"), "p ajustado (Holm)"] > 0.05
+    assert table.loc[("a", "c"), "p ajustado (Holm)"] < 1e-6 and table.loc[("a", "c"), "postos médios a - b"] < 0
+
+
+def test_friedman_models_matches_scipy_and_gives_the_critical_difference():
+    rng = np.random.default_rng(3)
+    rows = [{"cenario": "base", "semente": s, "modelo": m, "average_precision": base + rng.normal(0, 0.02)}
+            for s in range(10) for m, base in (("bom", 0.8), ("medio", 0.5), ("ruim", 0.2), ("ruim2", 0.21))]
+    runs = pd.DataFrame(rows)
+    tests, ranks = friedman_models(runs, "average_precision", by=["cenario"])
+    wide = runs.pivot(index="semente", columns="modelo", values="average_precision")
+    expected = stats.friedmanchisquare(*(wide[c] for c in wide.columns))
+    row = tests.iloc[0]
+    assert row["qui-quadrado"] == pytest.approx(expected.statistic) and row["p-valor"] < 1e-4
+    assert (row["k"], row["N"]) == (4, 10)
+    assert row["diferença crítica"] == pytest.approx(2.569 * np.sqrt(4 * 5 / 60), abs=1e-3)  # q(0,05; k=4) de Demšar
+    assert ranks["modelo"].iloc[0] == "bom" and ranks["posto médio"].iloc[0] == 1.0
+
+
+def test_permutation_and_hypergeometric_tests_against_chance():
+    labels = pd.Series([True] * 10 + [False] * 190)
+    perfect = pd.Series(np.r_[np.ones(10), np.zeros(190)] + np.linspace(0, 0.1, 200))
+    result = permutation_test_metric(labels, perfect, n_perm=199)
+    assert result["estimativa"] == 1.0 and result["p permutação"] == pytest.approx(1 / 200)
+    noise = pd.Series(np.random.default_rng(4).random(200))
+    assert permutation_test_metric(labels, noise, n_perm=199)["p permutação"] > 0.05
+    top = topk_hypergeom(labels, perfect)
+    assert top["fraudes no top-k"] == 10 and top["esperado ao acaso"] == pytest.approx(0.5)
+    assert top["p hipergeométrico"] == pytest.approx(stats.hypergeom.pmf(10, 200, 10, 10))

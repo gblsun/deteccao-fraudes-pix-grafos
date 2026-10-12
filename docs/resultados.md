@@ -5,7 +5,7 @@ tags: [resultado]
 # Resultados
 
 Resultados **preliminares**, obtidos só com o dataset sintético (`pixfraud.simulation`).
-Todos os números abaixo saem dos arquivos de `reports/results/` e podem ser refeitos com:
+Todos os números abaixo saem dos arquivos de `reports/*/results/` e podem ser refeitos com:
 
 ```powershell
 python scripts/reproduzir_tudo.py   # refaz tudo na ordem certa (ver scripts/mapa-dos-scripts.md)
@@ -32,7 +32,7 @@ e [`configs/cenarios.yaml`](../configs/cenarios.yaml).
 
 ## 1. Cenário base: o tabular parece bastar
 
-Average precision média em 10 sementes, com IC 95% ([`robustez_resumo.csv`](../reports/results/robustez_resumo.csv)):
+Average precision média em 10 sementes, com IC 95% ([`robustez_resumo.csv`](../reports/04_avaliacao/results/robustez_resumo.csv)):
 
 | Atributos        | Isolation Forest     | DBSCAN               |
 |------------------|----------------------|----------------------|
@@ -83,7 +83,7 @@ O gerador embute sinais "fáceis" por construção (ver "Limitações conhecidas
 Com os golpes no horário comercial, os repasses também seguem o perfil horário: o atraso
 de cada repasse é contado num "relógio de atividade", que anda devagar de madrugada.
 
-![Average precision por cenário](../reports/figures/cenarios_average_precision.png)
+![Average precision por cenário](../reports/04_avaliacao/figures/cenarios_average_precision.png)
 
 **2.1. O desempenho do tabular desaba quando os atalhos somem.** Com o DBSCAN, a AP do
 tabular cai de 0,76 (`base`) para 0,45 sem o horário, 0,59 sem a idade, 0,25 sem os dois,
@@ -92,7 +92,7 @@ nos quatro primeiros cenários (0,43 a 0,44). Em `sem_idade` eles são **idênti
 do `base`, porque só a idade das contas muda e os Pix são os mesmos.
 
 **2.2. A comparação tabular × grafo se inverte.** Diferença de AP `grafo − tabular`
-([`cenarios_comparacoes.csv`](../reports/results/cenarios_comparacoes.csv)):
+([`cenarios_comparacoes.csv`](../reports/04_avaliacao/results/cenarios_comparacoes.csv)):
 
 | Cenário         | Isolation Forest        | DBSCAN                  |
 |-----------------|-------------------------|-------------------------|
@@ -138,9 +138,9 @@ intermediação (`betweenness`) deixa de separar os grupos (de −0,31 para ~0).
 ### Quais atributos separam fraude de normal em cada cenário
 
 [Delta de Cliff](glossario/delta-de-cliff.md) médio (fraude × normal) de cada atributo
-([`cenarios_efeitos.csv`](../reports/results/cenarios_efeitos.csv)):
+([`cenarios_efeitos.csv`](../reports/04_avaliacao/results/cenarios_efeitos.csv)):
 
-![Delta de Cliff por cenário](../reports/figures/cenarios_efeitos.png)
+![Delta de Cliff por cenário](../reports/04_avaliacao/figures/cenarios_efeitos.png)
 
 * `night_ratio` (0,63 → −0,09) e `account_age_days` (−0,72 → 0,02) perdem o efeito
   exatamente nos cenários que desligam o atalho correspondente. Isso confirma que esses
@@ -205,11 +205,11 @@ Fração de cada papel entre as *k* contas mais suspeitas (*k* = nº de fraudes)
 
 Rodando os detectores a cada 6 horas (só com os Pix feitos até ali) e bloqueando cada
 conta no corte em que ela é sinalizada
-([`avaliar_deteccao_online.py`](../scripts/avaliar_deteccao_online.py), 3 sementes por
+([`avaliar_deteccao_online.py`](../scripts/04_avaliacao/avaliar_deteccao_online.py), 3 sementes por
 cenário). O "oráculo" sinaliza toda conta fraudulenta no primeiro corte depois do golpe:
 é o teto imposto pela frequência dos cortes.
 
-![Detecção a tempo](../reports/figures/online_deteccao.png)
+![Detecção a tempo](../reports/04_avaliacao/figures/online_deteccao.png)
 
 No cenário `sem_atalhos` (43 contas fraudulentas e ~R$ 70 mil roubados por semente):
 
@@ -239,7 +239,7 @@ Se parte das contas fraudulentas já é conhecida (por contestações no MED), a
 [propagação de risco](glossario/propagacao-de-risco.md) a partir delas
 ([`flow.propagate_risk`](../src/pixfraud/flow.py)) encontra as
 demais? Avaliação **só nas contas ainda desconhecidas**, 10 sementes
-([`avaliar_propagacao.py`](../scripts/avaliar_propagacao.py)):
+([`avaliar_propagacao.py`](../scripts/04_avaliacao/avaliar_propagacao.py)):
 
 | Cenário | Conhecidas | Propagação | `completo`/DBSCAN | Propagação + detector |
 |---|:---:|:---:|:---:|:---:|
@@ -259,9 +259,9 @@ pelo resto da quadrilha, sem precisar de rótulos novos.
 ## 7. Contribuição de cada atributo e o teto supervisionado
 
 Tirando um atributo de cada vez do conjunto `completo`
-([`avaliar_atributos.py`](../scripts/avaliar_atributos.py), 5 sementes):
+([`avaliar_atributos.py`](../scripts/04_avaliacao/avaliar_atributos.py), 5 sementes):
 
-![Ablação por atributo](../reports/figures/atributos_ablacao.png)
+![Ablação por atributo](../reports/04_avaliacao/figures/atributos_ablacao.png)
 
 * os que mais fazem falta: **tempo de permanência** (queda de até 0,11 de AP),
   **k-núcleo** (0,09) e **OddBall de valor** (0,09);
@@ -281,7 +281,7 @@ Mesmo supervisionado, o grafo supera o tabular (0,78 contra 0,66 no `realista`).
 
 Mesma configuração, sem reajuste, sobre o AMLworld (HI-Small, só pagamentos em dólar e
 transferências ACH/Wire, as mais parecidas com Pix), em 4 janelas de 3 dias
-([`avaliar_externo.py`](../scripts/avaliar_externo.py)). A taxa de contas envolvidas em
+([`avaliar_externo.py`](../scripts/04_avaliacao/avaliar_externo.py)). A taxa de contas envolvidas em
 lavagem é de 1,6% por janela.
 
 | Conjunto e modelo | AP média | vezes o acaso |
@@ -319,7 +319,7 @@ ACH/Wire como a comparação principal com o Pix.
 
 O [FRAUDAR](glossario/fraudar.md) procura, um depois do outro, os subgrafos mais densos,
 com pesos que ignoram pagamentos a contas muito procuradas (camuflagem). Não usa rótulos
-nem atributos, só a estrutura ([`avaliar_fraudar.py`](../scripts/avaliar_fraudar.py), 10
+nem atributos, só a estrutura ([`avaliar_fraudar.py`](../scripts/04_avaliacao/avaliar_fraudar.py), 10
 sementes). Cada conta recebe a densidade do bloco em que está; blocos com mais de 5% das
 contas não pontuam, porque no Pix o primeiro "bloco" é quase a rede legítima inteira.
 
@@ -343,7 +343,7 @@ contas não pontuam, porque no Pix o primeiro "bloco" é quase a rede legítima 
 ## 10. Redes neurais para grafos (GNN)
 
 Primeira avaliação de GNN, decidida na [reunião de 24/09](reunioes/2026-09-24.md)
-([`avaliar_gnn.py`](../scripts/avaliar_gnn.py), 5 sementes; ver
+([`avaliar_gnn.py`](../scripts/04_avaliacao/avaliar_gnn.py), 5 sementes; ver
 [redes neurais para grafos](glossario/redes-neurais-para-grafos.md)). Duas perguntas
 diferentes:
 
@@ -379,7 +379,7 @@ fraudes vira conhecida (as contestações do MED) e todo o resto aparece como "n
 Aqui, como na culpa por associação (seção 6),
 10% ou 25% das contas fraudulentas são sorteadas como conhecidas; os modelos treinam só com
 elas e a AP é medida **só nas contas restantes**
-([`avaliar_gnn_rotulos.py`](../scripts/avaliar_gnn_rotulos.py), 10 sementes;
+([`avaliar_gnn_rotulos.py`](../scripts/04_avaliacao/avaliar_gnn_rotulos.py), 10 sementes;
 [`gnn.sage_known_fraud_scores`](../src/pixfraud/gnn.py) e
 [`experiment.known_fraud_scores`](../src/pixfraud/experiment.py)).
 
@@ -414,10 +414,10 @@ elas e a AP é medida **só nas contas restantes**
 
 Pedido da [reunião de 24/09](reunioes/2026-09-24.md): as seções 1 e 2 usam 10 sementes por
 chave (atributos, modelo). O cenário `base` foi repetido com **1000 sementes**
-([`avaliar_sementes.py`](../scripts/avaliar_sementes.py), 4 processos, ~2 h;
-[`sementes_convergencia.csv`](../reports/results/sementes_convergencia.csv),
-[`sementes_sorteios.csv`](../reports/results/sementes_sorteios.csv) e
-[`sementes_pareadas.csv`](../reports/results/sementes_pareadas.csv); Figura 15).
+([`avaliar_sementes.py`](../scripts/04_avaliacao/avaliar_sementes.py), 4 processos, ~2 h;
+[`sementes_convergencia.csv`](../reports/04_avaliacao/results/sementes_convergencia.csv),
+[`sementes_sorteios.csv`](../reports/04_avaliacao/results/sementes_sorteios.csv) e
+[`sementes_pareadas.csv`](../reports/04_avaliacao/results/sementes_pareadas.csv); Figura 15).
 
 | AP média (IC 95%) | 10 sementes | 100 | 1000 |
 |---|:---:|:---:|:---:|
@@ -474,7 +474,7 @@ potência, o Barabási–Albert, a componente gigante, o passeio aleatório e a 
 cosseno, e depois implementar; e aumentar a movimentação do vértice do coletor. Estudo no
 [notebook 06](../estudos/06_tipo_de_rede.ipynb); código em
 [`pixfraud.network`](../src/pixfraud/network.py) e [`algorithms`](../src/pixfraud/algorithms.py);
-números de [`analisar_tipo_de_rede.py`](../scripts/analisar_tipo_de_rede.py) (5 sementes por
+números de [`analisar_tipo_de_rede.py`](../scripts/02_exploracao/analisar_tipo_de_rede.py) (5 sementes por
 cenário) e de `avaliar_cenarios.py --cenarios realista coletor_ativo --sementes 10`
 (em `reports/coletor_ativo/`).
 

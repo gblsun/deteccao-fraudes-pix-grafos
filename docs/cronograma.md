@@ -18,10 +18,10 @@ Duração: 12 meses, conforme a [proposta](proposta.md)
 | [ ]    | Modelagem das transações em grafos                              | 5–6     | `src/pixfraud/graph.py`                                   |
 | [ ]    | Extração de métricas estruturais dos grafos                     | 6–7     | `src/pixfraud/features.py`                                |
 | [ ]    | Aplicação de técnicas de machine learning                       | 7–8     | `src/pixfraud/anomaly.py`, [`docs/modelos.md`](modelos.md) |
-| [ ]    | Desenvolvimento de visualizações em grafos e heatmaps           | 8–9     | `src/pixfraud/visualization.py`, `reports/figures/`       |
+| [ ]    | Desenvolvimento de visualizações em grafos e heatmaps           | 8–9     | `src/pixfraud/visualization.py`, `reports/*/figures/`       |
 | [ ]    | Análise de perfis de fraude e interpretação dos resultados      | 9–10    | notebooks, `reports/amlworld/` (recall por tipologia)     |
-| [ ]    | Comparação entre abordagem tabular e grafos                     | 10–11   | `reports/results/metricas.csv`, `cenarios_*.csv`, `docs/resultados.md` |
-| [ ]    | Avaliação dos modelos e métricas de desempenho                  | 11–12   | `src/pixfraud/evaluation.py`, `src/pixfraud/stats.py`, `src/pixfraud/online.py`, `reports/results/robustez_*.csv` |
+| [ ]    | Comparação entre abordagem tabular e grafos                     | 10–11   | `reports/03_modelos/results/metricas.csv`, `cenarios_*.csv`, `docs/resultados.md` |
+| [ ]    | Avaliação dos modelos e métricas de desempenho                  | 11–12   | `src/pixfraud/evaluation.py`, `src/pixfraud/stats.py`, `src/pixfraud/online.py`, `reports/04_avaliacao/results/robustez_*.csv` |
 | [ ]    | Escrita, revisão e finalização do relatório científico          | 11–12   | relatório final                                           |
 
 ```mermaid

@@ -27,5 +27,5 @@ como as vítimas são pessoas comuns, a quadrilha fica ligada ao componente giga
 esconde dentro da rede principal; se ficasse isolada, seria fácil de achar.
 
 **No projeto.** [`network.component_summary`](../../src/pixfraud/network.py), usado em
-`scripts/analisar_tipo_de_rede.py` e na aba Resumo do
+`scripts/02_exploracao/analisar_tipo_de_rede.py` e na aba Resumo do
 [explorador](../../app/guia-do-explorador.md).

@@ -97,7 +97,7 @@ Três peças deixam o cofre legível para um agente:
 | [`llms.txt`](../llms.txt) | resumo e pontos de entrada, para qualquer ferramenta de IA |
 | [`grafo-de-notas.json`](grafo-de-notas.json) | o grafo do Obsidian em JSON: cada nota (título, tags) e cada link dela, para outra nota ou para um arquivo de código |
 
-O JSON é gerado por `python scripts/exportar_grafo_de_notas.py`, com as mesmas regras de
+O JSON é gerado por `python scripts/ferramentas/exportar_grafo_de_notas.py`, com as mesmas regras de
 exclusão do cofre. Rode de novo depois de criar, renomear ou religar notas; o teste
 `tests/test_docs.py::test_notes_graph_json_is_up_to_date` avisa se esquecer.
 
@@ -122,7 +122,7 @@ graphify explain "propagate_risk"
 
 ### Busca única nos dois grafos
 
-`python scripts/buscar.py termo` procura ao mesmo tempo no grafo do código (nome das
+`python scripts/ferramentas/buscar.py termo` procura ao mesmo tempo no grafo do código (nome das
 funções, com quem chama e o que chamam) e no **texto** de todas as notas do cofre,
 inclusive as que o Graphify deixa de fora (leituras, diário, atas). Ignora acentos,
 maiúsculas e `_`/`-`, descarta palavras como "de" e "para" e põe na frente a nota cujo
@@ -130,7 +130,7 @@ título tem os termos. No fim lista os `.py` citados nas notas achadas: é a pon
 português das notas e o inglês do código.
 
 ```text
-> python scripts/buscar.py "propagação de risco" --limite 3
+> python scripts/ferramentas/buscar.py "propagação de risco" --limite 3
 ## Código (0)
 ## Notas (3)
 - docs/glossario/propagacao-de-risco.md  "Propagação de risco (culpa por associação)"
@@ -154,10 +154,10 @@ docs (conceitos e relações extraídos do texto) exigiria mandar o texto para u
 fica de fora de propósito: as notas já estão ligadas pelo grafo de notas. Se um dia
 quiser, rode `/graphify .` dentro do Claude Code, depois de conferir o `.graphifyignore`.
 
-A figura [`grafo_do_codigo.png`](../reports/figures/grafo_do_codigo.png) resume esse grafo
-por arquivo, e [`grafo_de_notas.png`](../reports/figures/grafo_de_notas.png) desenha o
+A figura [`grafo_do_codigo.png`](../reports/ilustracoes/grafo_do_codigo.png) resume esse grafo
+por arquivo, e [`grafo_de_notas.png`](../reports/ilustracoes/grafo_de_notas.png) desenha o
 grafo de notas com as cores do Obsidian; as duas saem de
-`python scripts/ilustrar_grafos_de_conhecimento.py`.
+`python scripts/ferramentas/ilustrar_grafos_de_conhecimento.py`.
 
 | Papel | Ferramenta |
 |-------|-----------|

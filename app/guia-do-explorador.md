@@ -27,7 +27,7 @@ Na barra lateral, em **Rede**:
   `negativos_dificeis`, `quadrilhas_realistas`, `calibrado`); a legenda mostra o que cada
   um muda (ver [`configs/cenarios.yaml`](../configs/cenarios.yaml)).
 - **Hiperparâmetros**: `padrão` ou `otimizada`, esta quando existir
-  `configs/experimento_otimizado.yaml` (gerado por `scripts/otimizar_hiperparametros.py`).
+  `configs/experimento_otimizado.yaml` (gerado por `scripts/03_modelos/otimizar_hiperparametros.py`).
 - **Gerar rede**: gera a rede e roda todos os modelos. A primeira vez de cada rede leva
   cerca de 1 minuto; depois fica guardada enquanto o app estiver aberto.
 

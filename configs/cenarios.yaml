@@ -1,4 +1,4 @@
-# Cenários de dificuldade para scripts/avaliar_cenarios.py.
+# Cenários de dificuldade para scripts/04_avaliacao/avaliar_cenarios.py.
 #
 # Cada cenário troca alguns parâmetros da seção `simulacao` de
 # configs/experimento.yaml (o resto fica igual). A pergunta é: a vantagem de um

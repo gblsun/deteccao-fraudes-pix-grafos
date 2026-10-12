@@ -10,8 +10,8 @@ as citações de [`docs/referencias.bib`](../docs/referencias.bib) no estilo ABN
 
 ```powershell
 pip install -e ".[relatorio]"            # traz o Pandoc dentro do .venv; nada a instalar no sistema
-python scripts/gerar_relatorio.py        # relatorio/saida/relatorio.docx
-python scripts/gerar_relatorio.py --formato html
+python scripts/ferramentas/gerar_relatorio.py        # relatorio/saida/relatorio.docx
+python scripts/ferramentas/gerar_relatorio.py --formato html
 ```
 
 O PDF (`--formato pdf`) precisa de uma instalação de LaTeX; o DOCX abre no Word e pode ser
@@ -35,7 +35,7 @@ ajustado ao modelo exigido pela instituição.
 - Cite pela chave do `.bib`: `[@liu2008isolation]` vira "(LIU; TING; ZHOU, 2008)", e
   `@liu2008isolation` sem colchetes vira "Liu, Ting e Zhou (2008)". As referências usadas
   aparecem sozinhas no fim.
-- Figuras: `![Legenda](../../reports/figures/arquivo.png)`, com o caminho relativo ao
+- Figuras: `![Legenda](../../reports/04_avaliacao/figures/arquivo.png)`, com o caminho relativo ao
   capítulo. Assim elas também aparecem no GitHub e no Obsidian.
 - Os rascunhos existem para não começar da página em branco: o texto final é seu.
 - Autor e orientador podem constar no relatório; dados pessoais reais de usuários do Pix

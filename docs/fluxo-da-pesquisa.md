@@ -90,13 +90,45 @@ comércios no topo do risco) vira cenário novo no gerador e volta ao começo.
 
 | Etapa | O que responde | Onde está | Termos |
 |-------|----------------|-----------|--------|
-| 1. Dataset | que rede Pix estudar, com que fraudes | [`gerar_dataset.py`](../scripts/gerar_dataset.py), [`auditar_papeis.py`](../scripts/auditar_papeis.py), [`importar_dataset.py`](../scripts/importar_dataset.py), [`baixar_dados_bcb.py`](../scripts/baixar_dados_bcb.py), [`configs/cenarios.yaml`](../configs/cenarios.yaml) | [semente](glossario/semente.md), [conta laranja](glossario/conta-laranja.md), [MED](glossario/med.md) |
-| 2. Exploração e atributos | que forma a rede tem e o que se mede de cada conta | [`analisar_tipo_de_rede.py`](../scripts/analisar_tipo_de_rede.py), [`features.py`](../src/pixfraud/features.py), [`graph.py`](../src/pixfraud/graph.py) | [grau](glossario/grau.md), [PageRank](glossario/pagerank.md), [componente gigante](glossario/componente-gigante.md), [comunidades](glossario/comunidades-e-modularidade.md) |
-| 3. Separação | o que é ajuste e o que é prova | sementes de validação em [`otimizar_hiperparametros.py`](../scripts/otimizar_hiperparametros.py); sementes de teste nos `avaliar_*.py` | [validação cruzada](glossario/validacao-cruzada.md) |
-| 4. Inferência antes | que atributos diferem entre fraude e legítima | `compare_groups` em [`stats.py`](../src/pixfraud/stats.py), usado por [`avaliar_cenarios.py`](../scripts/avaliar_cenarios.py) | [Mann-Whitney](glossario/mann-whitney.md), [delta de Cliff](glossario/delta-de-cliff.md), [correção de Holm](glossario/correcao-de-holm.md) |
-| 5. Modelos | que contas são mais suspeitas | [`models/`](../src/pixfraud/models/), [`experiment.py`](../src/pixfraud/experiment.py), [`tuning/`](../src/pixfraud/tuning/), [`otimizar_hiperparametros.py`](../scripts/otimizar_hiperparametros.py) | [supervisionado e não supervisionado](glossario/supervisionado-e-nao-supervisionado.md), [otimização de hiperparâmetros](glossario/otimizacao-de-hiperparametros.md) |
-| 6. Avaliação e inferência depois | que modelo é melhor, e com que certeza | [`avaliar_modelos.py`](../scripts/avaliar_modelos.py), [`avaliar_robustez.py`](../scripts/avaliar_robustez.py), `compare_runs` em [`stats.py`](../src/pixfraud/stats.py) | [average precision](glossario/average-precision.md), [precision@k](glossario/precision-at-k.md), [IC](glossario/intervalo-de-confianca.md), [Wilcoxon pareado](glossario/teste-de-wilcoxon-pareado.md), [testes para classificadores](glossario/testes-para-classificadores.md) |
-| 7. Interpretação | por que o modelo erra e o que isso diz da fraude | [`investigar_falsos_positivos.py`](../scripts/investigar_falsos_positivos.py), [`avaliar_deteccao_online.py`](../scripts/avaliar_deteccao_online.py), [resultados](resultados.md) | [classes raras](glossario/classes-raras.md) |
+| 1. Dataset | que rede Pix estudar, com que fraudes | [`gerar_dataset.py`](../scripts/01_dados/gerar_dataset.py), [`auditar_papeis.py`](../scripts/01_dados/auditar_papeis.py), [`importar_dataset.py`](../scripts/01_dados/importar_dataset.py), [`baixar_dados_bcb.py`](../scripts/01_dados/baixar_dados_bcb.py), [`configs/cenarios.yaml`](../configs/cenarios.yaml) | [semente](glossario/semente.md), [conta laranja](glossario/conta-laranja.md), [MED](glossario/med.md) |
+| 2. Exploração e atributos | que forma a rede tem e o que se mede de cada conta | [`analisar_tipo_de_rede.py`](../scripts/02_exploracao/analisar_tipo_de_rede.py), [`features.py`](../src/pixfraud/features.py), [`graph.py`](../src/pixfraud/graph.py) | [grau](glossario/grau.md), [PageRank](glossario/pagerank.md), [componente gigante](glossario/componente-gigante.md), [comunidades](glossario/comunidades-e-modularidade.md) |
+| 3. Separação | o que é ajuste e o que é prova | sementes de validação em [`otimizar_hiperparametros.py`](../scripts/03_modelos/otimizar_hiperparametros.py); sementes de teste nos `avaliar_*.py` | [validação cruzada](glossario/validacao-cruzada.md) |
+| 4. Inferência antes | que atributos diferem entre fraude e legítima | `compare_groups` em [`stats.py`](../src/pixfraud/stats.py), usado por [`avaliar_cenarios.py`](../scripts/04_avaliacao/avaliar_cenarios.py) | [Mann-Whitney](glossario/mann-whitney.md), [delta de Cliff](glossario/delta-de-cliff.md), [correção de Holm](glossario/correcao-de-holm.md) |
+| 5. Modelos | que contas são mais suspeitas | [`models/`](../src/pixfraud/models/), [`experiment.py`](../src/pixfraud/experiment.py), [`tuning/`](../src/pixfraud/tuning/), [`otimizar_hiperparametros.py`](../scripts/03_modelos/otimizar_hiperparametros.py) | [supervisionado e não supervisionado](glossario/supervisionado-e-nao-supervisionado.md), [otimização de hiperparâmetros](glossario/otimizacao-de-hiperparametros.md) |
+| 6. Avaliação e inferência depois | que modelo é melhor, e com que certeza | [`avaliar_modelos.py`](../scripts/03_modelos/avaliar_modelos.py), [`avaliar_robustez.py`](../scripts/04_avaliacao/avaliar_robustez.py), `compare_runs` em [`stats.py`](../src/pixfraud/stats.py) | [average precision](glossario/average-precision.md), [precision@k](glossario/precision-at-k.md), [IC](glossario/intervalo-de-confianca.md), [Wilcoxon pareado](glossario/teste-de-wilcoxon-pareado.md), [testes para classificadores](glossario/testes-para-classificadores.md) |
+| 7. Interpretação | por que o modelo erra e o que isso diz da fraude | [`investigar_falsos_positivos.py`](../scripts/05_interpretacao/investigar_falsos_positivos.py), [`avaliar_deteccao_online.py`](../scripts/04_avaliacao/avaliar_deteccao_online.py), [resultados](resultados.md) | [classes raras](glossario/classes-raras.md) |
+
+## As pastas seguem as etapas
+
+Os scripts e os resultados ficam numa pasta por etapa, numerada na ordem do fluxo:
+
+| Etapa | Scripts | Resultados (`results/` e `figures/`) |
+|-------|---------|--------------------------------------|
+| 1. Dados | [`scripts/01_dados/`](../scripts/01_dados/) | [`reports/01_dados/`](../reports/01_dados/) |
+| 2. Exploração e inferência sobre atributos | [`scripts/02_exploracao/`](../scripts/02_exploracao/) | [`reports/02_exploracao/`](../reports/02_exploracao/) |
+| 3. Modelos (ajuste e otimização) | [`scripts/03_modelos/`](../scripts/03_modelos/) | [`reports/03_modelos/`](../reports/03_modelos/) |
+| 4. Avaliação e inferência entre modelos | [`scripts/04_avaliacao/`](../scripts/04_avaliacao/) | [`reports/04_avaliacao/`](../reports/04_avaliacao/) |
+| 5. Interpretação | [`scripts/05_interpretacao/`](../scripts/05_interpretacao/) | [`reports/05_interpretacao/`](../reports/05_interpretacao/) |
+| Ferramentas (busca, notas, ilustrações, relatório) | [`scripts/ferramentas/`](../scripts/ferramentas/) | [`reports/ilustracoes/`](../reports/ilustracoes/) |
+
+A biblioteca [`src/pixfraud/`](../src/pixfraud/README.md) fica de fora: ela é organizada por
+função, e cada etapa usa várias partes dela. Os mapas de cada lado são o
+[mapa dos scripts](../scripts/mapa-dos-scripts.md) e o [mapa dos resultados](../reports/mapa-dos-resultados.md).
+
+## Como está hoje × o ideal
+
+| Etapa | Hoje | O que falta |
+|-------|------|-------------|
+| Dados | dataset sintético com gabarito; cenários calibrados pelas médias do BCB | conferir o realismo com teste (IC entre sementes × BCB) |
+| Inferência sobre atributos | Mann-Whitney + delta de Cliff + Holm, rodando junto com os cenários; não guia a escolha dos atributos (que vem da teoria) | Kruskal-Wallis + Dunn por papel; contingência nas categóricas; rodar nas sementes de validação |
+| Separação | validação (1001, 1002) e teste (1 a 10) já separados | deixar a separação explícita no texto |
+| Modelos | todos os modelos, com otimização em grade | a otimização e a vitrine entrarem no `reproduzir_tudo.py`; teste contra o acaso |
+| Avaliação | IC 95% e Wilcoxon pareado + Holm contra uma referência | Friedman + Nemenyi para a comparação global; Kruskal-Wallis entre cenários |
+| Interpretação | falsos positivos e detecção a tempo | Fisher top-k × comércio; escore por papel |
+| Validação externa | AMLworld por janelas | os mesmos testes da avaliação |
+
+Que teste entra em cada etapa, e por quê, está no
+[plano de testes estatísticos](plano-de-testes-estatisticos.md).
 
 ## Por que esta ordem
 

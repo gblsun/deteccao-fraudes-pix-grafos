@@ -172,7 +172,7 @@ else:
 config_options = [name for name, path in CONFIGS.items() if path.exists()]
 config_name = st.sidebar.radio("Hiperparâmetros", config_options, horizontal=True,
                                help="'otimizada' usa configs/experimento_otimizado.yaml, escolhida em redes de "
-                                    "validação por scripts/otimizar_hiperparametros.py.")
+                                    "validação por scripts/03_modelos/otimizar_hiperparametros.py.")
 wanted = {"source": source, "scenario": scenario, "seed": int(st.session_state["seed"]), "config": config_name}
 if st.sidebar.button("Gerar rede", type="primary", use_container_width=True):
     st.session_state["active"] = wanted
@@ -363,7 +363,7 @@ with tab_flow:
 with tab_results:
     studies = {
         "Todos os modelos, configuração padrão (10 sementes por cenário)":
-            ROOT / "reports" / "results" / "modelos_resumo.csv",
+            ROOT / "reports" / "03_modelos" / "results" / "modelos_resumo.csv",
         "Todos os modelos, hiperparâmetros otimizados (10 sementes por cenário)":
             ROOT / "reports" / "otimizado" / "results" / "modelos_resumo.csv",
     }
@@ -373,7 +373,7 @@ with tab_results:
             summary_csv = pd.read_csv(path, index_col=[0, 1, 2, 3])
             ap = summary_csv.loc["average_precision", "mean"].droplevel("atributos").unstack("cenario")
             st.dataframe(ap.sort_values(ap.columns[0], ascending=False).round(3), use_container_width=True)
-    robust = ROOT / "reports" / "results" / "robustez_resumo.csv"
+    robust = ROOT / "reports" / "04_avaliacao" / "results" / "robustez_resumo.csv"
     if robust.exists():
         st.subheader("Robustez dos conjuntos de atributos (várias sementes)")
         st.dataframe(pd.read_csv(robust).round(3))

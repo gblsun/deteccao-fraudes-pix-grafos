@@ -32,7 +32,7 @@ nº 105/2001), que protege os dados de transações Pix.
   este resultado?"), consulte [docs/grafo-de-notas.json](docs/grafo-de-notas.json): cada
   nota com título e tags, e cada link dela para outra nota ou para um arquivo de código.
   É o grafo do Obsidian em JSON; leia as notas encontradas depois.
-- **Comece qualquer busca por** `python scripts/buscar.py termo [--so codigo|notas]`: uma
+- **Comece qualquer busca por** `python scripts/ferramentas/buscar.py termo [--so codigo|notas]`: uma
   consulta só no código (Graphify) e no texto de todas as notas, sem acentos, com número
   da linha e os .py citados nas notas (~300-600 tokens). Use grep só se ela não achar.
 - Para perguntas sobre o **código** (quem chama esta função, o que quebra se eu mudar
@@ -43,7 +43,7 @@ nº 105/2001), que protege os dados de transações Pix.
   (até `## Communities`, ~900 tokens); o resto é a lista de comunidades. Nunca abra o
   `graph.json` (~430 mil tokens). Depois de mudar o código, `graphify update .` (local,
   sem LLM). Detalhes em [docs/obsidian.md](docs/obsidian.md).
-- Arquivos grandes que não se leem inteiros: `reports/results/*.csv` (use `head` ou pandas),
+- Arquivos grandes que não se leem inteiros: `reports/*/results/*.csv` (use `head` ou pandas),
   notebooks (`*.ipynb`) e `reports/estudos/rede_completa.html`. O
   [.claude/settings.json](.claude/settings.json) bloqueia a leitura dos piores.
 - Ao ler a documentação de uma pasta, abra a **nota-mapa** (`scripts/mapa-dos-scripts.md`,
@@ -56,7 +56,15 @@ nº 105/2001), que protege os dados de transações Pix.
   [docs/obsidian.md](docs/obsidian.md); pasta nova com documentação segue o padrão
   nota-mapa + `README.md`, e entra no `llms.txt`.
 - Depois de criar, renomear ou religar notas, rode
-  `python scripts/exportar_grafo_de_notas.py` e `pytest tests/test_docs.py`.
+  `python scripts/ferramentas/exportar_grafo_de_notas.py` e `pytest tests/test_docs.py`.
+
+## Git
+
+- **Commit automático, sem PR.** Neste repositório o autor autorizou commitar sem pedir
+  confirmação: ao terminar cada mudança, com `ruff check .` e os testes afetados passando,
+  faça o commit direto no branch atual (de preferência o `main`). Não abra branch nem pull
+  request, a menos que o autor peça.
+- `git push` só quando o autor pedir.
 
 ## Código
 

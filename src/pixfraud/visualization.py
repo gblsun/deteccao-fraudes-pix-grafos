@@ -639,6 +639,38 @@ def plot_model_intervals(
         ax.spines[spine].set_visible(False)
 
 
+def plot_critical_difference(ranks: pd.DataFrame, critical: float, ax: plt.Axes, between: str = "modelo") -> None:
+    """Postos médios do teste de Friedman com a diferença crítica de Nemenyi.
+
+    ``ranks`` é a tabela de postos de ``stats.friedman_models`` (um grupo).
+    Cada modelo é um ponto no seu posto médio (1 = melhor), com uma barra de
+    ± CD/2: **dois modelos cujas barras não se tocam diferem**; os que se tocam
+    não se distinguem com estas sementes. Ganham cor os modelos que não se
+    distinguem do primeiro colocado.
+    """
+    table = ranks.sort_values("posto médio").reset_index(drop=True)
+    best = table["posto médio"].iloc[0]
+    y = np.arange(len(table))[::-1]
+    for yi, (_, row) in zip(y, table.iterrows()):
+        rank = row["posto médio"]
+        tied = rank - best < critical
+        color = model_color(row[between]) if tied else "#c4cbc9"
+        ax.plot([rank - critical / 2, rank + critical / 2], [yi, yi], color=color, linewidth=3, alpha=0.45,
+                solid_capstyle="round", zorder=2)
+        ax.plot(rank, yi, "o", ms=6, color=color if tied else "#9aa7a4", zorder=3)
+        ax.text(1.01, yi, f"posto {format_number(rank, 2)}", transform=ax.get_yaxis_transform(), va="center",
+                fontsize=7, color=INK_SECONDARY)
+    ax.axvspan(best, best + critical, color="#2e8540", alpha=0.06, zorder=1)
+    ax.set_yticks(y, [model_label(m) for m in table[between]], fontsize=8)
+    ax.set_ylim(-0.6, len(table) - 0.4)
+    ax.set_xlabel(f"posto médio (1 = melhor); barra = diferença crítica {format_number(critical, 2)}",
+                  fontsize=8, color=INK_SECONDARY)
+    ax.grid(axis="x", alpha=0.3)
+    ax.tick_params(colors=INK_SECONDARY, labelsize=8)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+
+
 def plot_differences(
     comparisons: pd.DataFrame,
     ax: plt.Axes,

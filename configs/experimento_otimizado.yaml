@@ -1,8 +1,8 @@
-# Gerado por scripts/otimizar_hiperparametros.py: cópia de configs/experimento.yaml com a seção
+# Gerado por scripts/03_modelos/otimizar_hiperparametros.py: cópia de configs/experimento.yaml com a seção
 # `modelos` trocada pelos hiperparâmetros de maior average precision nas redes de
 # validação (cenários realista, negativos_dificeis, quadrilhas_realistas; sementes 1001, 1002; 4 rodadas de busca).
 # Não edite à mão: rode o script de novo. Cada candidato testado está em
-# reports/results/otimizacao_resumo.csv.
+# reports/03_modelos/results/otimizacao_resumo.csv.
 
 simulacao:
   seed: 42

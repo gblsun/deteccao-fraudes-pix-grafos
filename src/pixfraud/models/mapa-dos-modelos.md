@@ -115,7 +115,7 @@ cenário, todos os modelos avaliados nas mesmas contas, com a configuração esc
 ([`configs/experimento.yaml`](../../../configs/experimento.yaml)). Os semi-supervisionados
 conhecem 25% das fraudes (ou as contestadas, no `calibrado`); essas contas, e 25% das
 legítimas, ficam fora da nota de **todos** os modelos. Gerado por
-`scripts/avaliar_modelos.py`; dados em `reports/results/modelos_resumo.csv`. Ordenado pela
+`scripts/03_modelos/avaliar_modelos.py`; dados em `reports/03_modelos/results/modelos_resumo.csv`. Ordenado pela
 AP no cenário `realista`.
 
 | Modelo | base | realista | negativos_dificeis | quadrilhas_realistas | calibrado |
@@ -163,7 +163,7 @@ A fração de fraudes, que é a AP de um sorteio ao acaso, é de 1,8% no `base`,
 
 As grades estão em
 [`configs/busca_hiperparametros.yaml`](../../../configs/busca_hiperparametros.yaml). A
-busca ([`tuning/`](../tuning/__init__.py), `scripts/otimizar_hiperparametros.py`) usa 6
+busca ([`tuning/`](../tuning/__init__.py), `scripts/03_modelos/otimizar_hiperparametros.py`) usa 6
 redes de **validação** (sementes 1001 e 1002 dos cenários `realista`, `negativos_dificeis`
 e `quadrilhas_realistas`), nunca as de teste. Ela roda em rodadas: quando o vencedor cai
 na ponta da grade, a grade cresce naquela direção, até o vencedor ficar no meio ou bater num
@@ -188,7 +188,7 @@ Alguns vencedores pararam num **limite** que não faz sentido passar, e não no 
 grade: `large_fraction` 0,99 (quase todos os grupos contam como "grandes"), `max_samples`
 1,0 (todas as contas) e o gradient boosting com árvores de um corte só e passo 1,0. Esses
 são o melhor dentro do possível. Detalhes de cada candidato em
-`reports/results/otimizacao_resumo.csv`.
+`reports/03_modelos/results/otimizacao_resumo.csv`.
 
 ### O ganho de verdade: nas redes de teste
 
@@ -237,9 +237,9 @@ otimizado, e `*` quando a diferença pareada por semente é significativa (Wilco
 ## Como reproduzir
 
 ```powershell
-python scripts/avaliar_modelos.py --cenarios base realista negativos_dificeis quadrilhas_realistas calibrado --sementes 10 --processos 4
-python scripts/otimizar_hiperparametros.py --processos 4
-python scripts/avaliar_modelos.py --config configs/experimento_otimizado.yaml --saida reports/otimizado --cenarios base realista negativos_dificeis quadrilhas_realistas calibrado --sementes 10 --processos 4
+python scripts/03_modelos/avaliar_modelos.py --cenarios base realista negativos_dificeis quadrilhas_realistas calibrado --sementes 10 --processos 4
+python scripts/03_modelos/otimizar_hiperparametros.py --processos 4
+python scripts/03_modelos/avaliar_modelos.py --config configs/experimento_otimizado.yaml --saida reports/otimizado --cenarios base realista negativos_dificeis quadrilhas_realistas calibrado --sementes 10 --processos 4
 ```
 
 Cerca de 40 min, 1 h e 40 min, com 4 processos.

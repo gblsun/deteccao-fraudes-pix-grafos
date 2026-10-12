@@ -31,8 +31,8 @@ dificil: {fraud_hours: comercial, p_new_fraud_account: 0.0, quiet_fraction: 0.3}
 
 def _run(script: str, *args: str) -> str:
     env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
-    done = subprocess.run([sys.executable, str(ROOT / "scripts" / script), *args], check=True, capture_output=True,
-                          env=env)
+    path = next((ROOT / "scripts").rglob(script))  # os scripts ficam em scripts/<etapa>/
+    done = subprocess.run([sys.executable, str(path), *args], check=True, capture_output=True, env=env)
     return done.stdout.decode("utf-8")
 
 

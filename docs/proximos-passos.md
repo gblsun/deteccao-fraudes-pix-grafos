@@ -20,7 +20,7 @@ Volta para o [índice da documentação](mapa-da-pesquisa.md).
   ([resultados, seção 11](resultados.md)). Testar uma perda própria para contas sem rótulo
   (em vez de tratá-las como normais) e a GraphSAGE partindo do escore de
   [`flow.propagate_risk`](../src/pixfraud/flow.py).
-- [ ] Rodar [`avaliar_gnn.py`](../scripts/avaliar_gnn.py) com **10 sementes** (hoje 5; o
+- [ ] Rodar [`avaliar_gnn.py`](../scripts/04_avaliacao/avaliar_gnn.py) com **10 sementes** (hoje 5; o
   Wilcoxon com 5 não chega a p < 0,05 por construção).
 - [ ] FRAUDAR com pesos que levem o tempo em conta, e um critério de parada melhor que
   "5% das contas" ([resultados, seção 9](resultados.md)).
@@ -40,7 +40,7 @@ Volta para o [índice da documentação](mapa-da-pesquisa.md).
 
 - [ ] **Quantas sementes usar** (pedido de 24/09): 1000 sementes serviram uma vez, como
   referência. Proposta: 10 para explorar, **100 nos números do relatório**, e o número
-  exato pela análise de poder (`reports/results/sementes_pareadas.csv`). Com sementes
+  exato pela análise de poder (`reports/04_avaliacao/results/sementes_pareadas.csv`). Com sementes
   demais, diferenças irrelevantes (0,006 de AP) viram "significativas", e mais sementes não
   corrigem o viés do gerador. Argumento completo no [diário de 29/09](diario/2026-09-29.md)
   e em [resultados, seção 12](resultados.md).
@@ -69,7 +69,7 @@ Volta para o [índice da documentação](mapa-da-pesquisa.md).
 
 - [x] Integrar o branch local `local-2026-09-24` (29/09; ver [modelos, seção 10](modelos.md)
   e o [diário](diario/2026-09-29.md)).
-- [ ] Rodar [`avaliar_modelos.py`](../scripts/avaliar_modelos.py) pela primeira vez e
+- [ ] Rodar [`avaliar_modelos.py`](../scripts/03_modelos/avaliar_modelos.py) pela primeira vez e
   levar ECOD, One-Class SVM, autoencoder, node2vec, label spreading e gradient boosting para
   os resultados.
 - [ ] Rodar os cenários novos do branch integrado (`negativos_dificeis`,

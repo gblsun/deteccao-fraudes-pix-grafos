@@ -3,7 +3,7 @@
 O gabarito é usado para dar nota a cada combinação de hiperparâmetros, então a
 escolha não pode ser feita nas mesmas redes em que os modelos são avaliados
 depois: a nota sairia inflada, como estudar com a prova que vai cair. Por
-isso ``scripts/otimizar_hiperparametros.py`` gera redes com sementes próprias
+isso ``scripts/03_modelos/otimizar_hiperparametros.py`` gera redes com sementes próprias
 (a partir de ``VALIDATION_SEED``), escolhe os hiperparâmetros nelas e grava a
 configuração; os estudos de avaliação usam as sementes 1, 2, 3..., que nunca
 entram na escolha.
