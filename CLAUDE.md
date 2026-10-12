@@ -58,6 +58,14 @@ nº 105/2001), que protege os dados de transações Pix.
 - Depois de criar, renomear ou religar notas, rode
   `python scripts/ferramentas/exportar_grafo_de_notas.py` e `pytest tests/test_docs.py`.
 
+## Git
+
+- **Commit automático, sem PR.** Neste repositório o autor autorizou commitar sem pedir
+  confirmação: ao terminar cada mudança, com `ruff check .` e os testes afetados passando,
+  faça o commit direto no branch atual (de preferência o `main`). Não abra branch nem pull
+  request, a menos que o autor peça.
+- `git push` só quando o autor pedir.
+
 ## Código
 
 - Python ≥ 3.10; `pip install -e ".[dev]"`; `pytest -m "not lento"` para o ciclo rápido;
