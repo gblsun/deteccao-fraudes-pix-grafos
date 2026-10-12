@@ -125,8 +125,60 @@ def test_reproduzir_tudo_roda_so_as_etapas_pedidas(tmp_path):
          "--dados", str(tmp_path / "synthetic"), "--saida", str(tmp_path / "reports"))
     assert (tmp_path / "synthetic" / "dataset_meta.json").exists()
     assert (tmp_path / "processed" / "features.csv").exists()
-    assert (tmp_path / "reports" / "results" / "metricas.csv").exists()
-    assert not (tmp_path / "reports" / "results" / "robustez_resumo.csv").exists()
+    assert (tmp_path / "reports" / "03_modelos" / "results" / "metricas.csv").exists()
+    assert not (tmp_path / "reports" / "04_avaliacao" / "results" / "robustez_resumo.csv").exists()
+
+
+def test_validar_realismo(tmp_path):
+    bcb = tmp_path / "bcb"
+    bcb.mkdir()
+    # agregados no formato dos dados abertos do Pix (ver pixfraud.bcb), com números redondos
+    pd.DataFrame({"AnoMes": 202506, "PAG_PFPJ": ["PF", "PF", "PJ"], "REC_PFPJ": ["PF", "PJ", "PF"],
+                  "NATUREZA": ["P2P", "P2B", "B2P"], "VALOR": [2000.0, 500.0, 900.0],
+                  "QUANTIDADE": [10, 5, 3]}).to_csv(bcb / "transacoes_202506.csv", index=False)
+    pd.DataFrame({"AnoMes": [202506], "Qtdecontestacoesaceitasacada100mil": [5.0],
+                  "ValorPixcontestadosaceitos": [2000.0], "Qtdecontestacoesaceitas": [1]}).to_csv(
+        bcb / "fraudes_202506.csv", index=False)
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("validar_realismo.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "base", "--sementes", "2", "--amostras-nulas", "3",
+         "--bcb", str(bcb), "--saida", str(tmp_path))
+    comparison = pd.read_csv(tmp_path / "results" / "realismo_comparacao.csv").set_index("estatistica")
+    assert comparison.loc["fracao_p2b", "bcb"] == pytest.approx(1 / 3)
+    assert comparison.loc["ticket_p2p", "bcb"] == pytest.approx(200.0)
+    structure = pd.read_csv(tmp_path / "results" / "realismo_estrutura.csv")
+    assert set(structure["estatistica"]) == {"reciprocidade", "transitividade"}
+    _check_metadata(tmp_path / "results" / "realismo_meta.json", cenarios={"base"})
+
+
+def test_inferencia_atributos(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    _run("inferencia_atributos.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenarios", "base", "dificil", "--sementes", "2", "--saida", str(tmp_path))
+    runs = pd.read_csv(tmp_path / "results" / "inferencia_execucoes.csv")
+    assert set(runs["semente"]) == {1001, 1002}  # só as sementes de validação
+    assert set(runs["teste"]) == {"fraude", "papeis", "categorica"}
+    roles = pd.read_csv(tmp_path / "results" / "inferencia_papeis.csv")
+    assert roles["efeito_medio"].between(0, 1).all() and roles["sementes_significativas"].between(0, 2).all()
+    assert (tmp_path / "results" / "inferencia_dunn.csv").exists()
+    assert (tmp_path / "figures" / "inferencia_papeis.png").stat().st_size > 0
+    _check_metadata(tmp_path / "results" / "inferencia_meta.json", cenarios={"base", "dificil"})
+
+
+def test_ilustrar_testes(tmp_path):
+    (tmp_path / "config.yaml").write_text(CONFIG, encoding="utf-8")
+    (tmp_path / "cenarios.yaml").write_text(SCENARIOS, encoding="utf-8")
+    # AP de 4 modelos em 5 sementes, como em modelos_execucoes.csv
+    rows = [{"cenario": "base", "semente": s, "modelo": m, "average_precision": ap + 0.01 * s}
+            for s in range(1, 6) for m, ap in (("dbscan", 0.2), ("random_forest", 0.6), ("ecod", 0.3), ("pca", 0.25))]
+    pd.DataFrame(rows).to_csv(tmp_path / "execucoes.csv", index=False)
+    _run("ilustrar_testes.py", "--config", str(tmp_path / "config.yaml"), "--arquivo-cenarios",
+         str(tmp_path / "cenarios.yaml"), "--cenario", "base", "--execucoes", str(tmp_path / "execucoes.csv"),
+         "--saida", str(tmp_path))
+    for stage in ("01_dados", "02_exploracao", "03_modelos", "04_avaliacao"):
+        assert (tmp_path / stage / "figures" / f"testes_{stage}.png").stat().st_size > 0
 
 
 def test_avaliar_externo(tmp_path):
@@ -229,8 +281,14 @@ def test_avaliar_modelos(tmp_path):
     comparisons = pd.read_csv(tmp_path / "results" / "modelos_comparacoes.csv")
     assert "ecod - dbscan" in set(comparisons["comparação"])
     _check_metadata(tmp_path / "results" / "modelos_meta.json", cenarios={"base", "dificil"})
-    for figure in ("modelos_average_precision.png", "modelos_comparacoes.png"):
+    for figure in ("modelos_average_precision.png", "modelos_comparacoes.png", "modelos_diferenca_critica.png"):
         assert (tmp_path / "figures" / figure).stat().st_size > 0
+    # Friedman por cenário, testes contra o acaso e Kruskal-Wallis entre os cenários
+    friedman = pd.read_csv(tmp_path / "results" / "modelos_friedman.csv")
+    assert set(friedman["cenario"]) == {"base", "dificil"} and (friedman["diferença crítica"] > 0).all()
+    assert {"p_permutacao", "p_hipergeometrico"} <= set(runs.columns) and runs["p_permutacao"].between(0, 1).all()
+    assert len(pd.read_csv(tmp_path / "results" / "modelos_acaso.csv")) == runs.groupby(["cenario", "modelo"]).ngroups
+    assert (tmp_path / "results" / "modelos_cenarios_kw.csv").exists()
     _run("avaliar_modelos.py", "--so-figuras", "--saida", str(tmp_path))  # redesenha só a partir dos CSVs
 
 

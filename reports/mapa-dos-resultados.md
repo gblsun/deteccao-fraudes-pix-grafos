@@ -22,6 +22,13 @@ Cada etapa da pesquisa (ver [fluxo da pesquisa](../docs/fluxo-da-pesquisa.md)) t
 |---------|--------|------------------|
 | `auditoria_papeis.csv` | `auditar_papeis.py` | conta cujo comportamento não bate com o papel (regra violada) |
 | `auditoria_resumo.csv`, `auditoria_perfis.csv` | `auditar_papeis.py` | (cenário, semente): contas por papel e violações; mediana do que cada papel faz |
+| `realismo_execucoes.csv` | `validar_realismo.py` | (cenário, semente): fração P2B, tickets médios, golpes a cada 100 mil Pix e valor médio do golpe no gerador |
+| `realismo_comparacao.csv` | `validar_realismo.py` | (cenário, estatística): valor do BCB, média do gerador com IC 95%, erro relativo, se o BCB cai no IC e se o erro fica na tolerância |
+| `realismo_estrutura.csv` | `validar_realismo.py` | (cenário, estatística): reciprocidade e transitividade observadas × modelo nulo de graus preservados (z e p empírico) |
+
+| Figura (`figures/`) | Script | Mostra |
+|---------|--------|--------|
+| `testes_01_dados.png` | `ilustrar_testes.py` | o z do modelo nulo da reciprocidade sob H₀, com a zona crítica, e o grau de entrada contra a normal |
 
 ### 2. Exploração: [`02_exploracao/`](02_exploracao/)
 
@@ -30,10 +37,17 @@ Cada etapa da pesquisa (ver [fluxo da pesquisa](../docs/fluxo-da-pesquisa.md)) t
 | `tipo_de_rede_execucoes.csv`, `tipo_de_rede_resumo.csv` | `analisar_tipo_de_rede.py` | (cenário, semente): componentes, lei de potência, passeios e cosseno × Jaccard |
 | `tipo_de_rede_modelos.csv` | `analisar_tipo_de_rede.py` | rede × Erdős–Rényi × Barabási–Albert |
 | `tipo_de_rede_passeios.csv` | `analisar_tipo_de_rede.py` | (cenário, papel): onde terminam os passeios que saem das vítimas |
+| `inferencia_fraude.csv` | `inferencia_atributos.py` | (cenário, atributo): delta de Cliff médio (fraude × legítima), IC 95% e em quantas sementes de validação o p de Holm < 0,05 |
+| `inferencia_papeis.csv` | `inferencia_atributos.py` | (cenário, atributo): ε² médio do Kruskal-Wallis entre os 6 papéis, IC 95%, sementes significativas e o papel de maior mediana |
+| `inferencia_dunn.csv` | `inferencia_atributos.py` | (cenário, atributo, par de papéis): teste de Dunn com p de Holm, na primeira semente de validação |
+| `inferencia_categoricas.csv` | `inferencia_atributos.py` | (cenário, variável): V de Cramér e razão de chances de conta de empresa, conta nova e Pix de madrugada × fraude |
+| `inferencia_execucoes.csv` | `inferencia_atributos.py` | (cenário, semente, teste, atributo): tudo o que foi calculado |
 
 | Figura (`figures/`) | Script | Mostra |
 |---------|--------|--------|
 | `tipo_de_rede_graus.png` | `analisar_tipo_de_rede.py` | distribuição de graus: rede × modelos clássicos; entrada × saída |
+| `inferencia_papeis.png` | `inferencia_atributos.py` | ε² médio de cada atributo × cenário: quanto ele separa os 6 papéis |
+| `testes_02_exploracao.png` | `ilustrar_testes.py` | o z do Mann-Whitney e o H do Kruskal-Wallis sob H₀, com a zona crítica, e o atributo de maior efeito contra a normal |
 
 ### 3. Modelos: [`03_modelos/`](03_modelos/)
 
@@ -41,12 +55,17 @@ Cada etapa da pesquisa (ver [fluxo da pesquisa](../docs/fluxo-da-pesquisa.md)) t
 |---------|--------|------------------|
 | `metricas.csv` | `rodar_experimento.py` | (conjunto de atributos, modelo), numa semente |
 | `modelos_execucoes.csv`, `modelos_resumo.csv`, `modelos_comparacoes.csv` | `avaliar_modelos.py` | (cenário, semente, modelo): AP, precision@k e ROC-AUC de todos os modelos, nas mesmas contas |
+| `modelos_friedman.csv`, `modelos_postos.csv` | `avaliar_modelos.py` | (cenário): teste de Friedman, W de Kendall e diferença crítica de Nemenyi; (cenário, modelo): posto médio |
+| `modelos_acaso.csv` | `avaliar_modelos.py` | (cenário, modelo): em quantas sementes o modelo foi melhor que o acaso (permutação da AP e hipergeométrico no top-k) |
+| `modelos_cenarios_kw.csv` | `avaliar_modelos.py` | modelo: Kruskal-Wallis da AP entre os cenários (a dificuldade muda o resultado?) |
 
 | Figura (`figures/`) | Script | Mostra |
 |---------|--------|--------|
 | `grafo_de_calor_<modelo>_<atributos>.png` | `rodar_experimento.py` | as contas mais suspeitas e sua vizinhança, coloridas pelo risco |
 | `heatmap_risco_<modelo>_<atributos>.png` | `rodar_experimento.py` | os atributos que explicam o risco de cada conta suspeita |
 | `modelos_average_precision.png`, `modelos_comparacoes.png` | `avaliar_modelos.py` | AP média e IC 95% de todos os modelos por cenário; diferenças pareadas |
+| `modelos_diferenca_critica.png` | `avaliar_modelos.py` | postos médios do Friedman com a diferença crítica: barras que não se tocam = modelos que diferem |
+| `testes_03_modelos.png` | `ilustrar_testes.py` | a AP do DBSCAN contra o nulo da permutação do gabarito, e o escore contra a normal |
 
 ### 4. Avaliação: [`04_avaliacao/`](04_avaliacao/)
 
@@ -82,6 +101,7 @@ Cada etapa da pesquisa (ver [fluxo da pesquisa](../docs/fluxo-da-pesquisa.md)) t
 | `fraudar_average_precision.png` | `avaliar_fraudar.py` | AP do FRAUDAR, do DBSCAN e da combinação por cenário |
 | `gnn_average_precision.png` | `avaliar_gnn.py` | AP das GNN e das referências por cenário |
 | `sementes_convergencia.png` | `avaliar_sementes.py` | AP média e meia-largura do IC 95% contra o nº de sementes |
+| `testes_04_avaliacao.png` | `ilustrar_testes.py` | t pareado, z do Wilcoxon e χ² do Friedman sob H₀, com a zona crítica, e a diferença de AP por semente contra a normal |
 
 ### 5. Interpretação: [`05_interpretacao/`](05_interpretacao/)
 
@@ -89,6 +109,8 @@ Cada etapa da pesquisa (ver [fluxo da pesquisa](../docs/fluxo-da-pesquisa.md)) t
 |---------|--------|------------------|
 | `falsos_positivos_papeis.csv` | `investigar_falsos_positivos.py` | (cenário, semente, modelo): papel real das k contas de maior risco (k = nº de fraudes) |
 | `falsos_positivos_top.csv`, `falsos_positivos_atributos.csv` | `investigar_falsos_positivos.py` | (cenário, modelo, posição): as contas de maior risco na semente 42, o papel real e o percentil de cada atributo |
+| `falsos_positivos_testes.csv` | `investigar_falsos_positivos.py` | (cenário, modelo): razão de chances do comércio no top-k (Fisher, só legítimas) e ε² do escore entre os papéis |
+| `falsos_positivos_dunn.csv` | `investigar_falsos_positivos.py` | (cenário, modelo, par de papéis): teste de Dunn do escore de risco |
 
 | Figura (`figures/`) | Script | Mostra |
 |---------|--------|--------|

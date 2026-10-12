@@ -245,6 +245,13 @@
    ]
   },
   {
+   "caminho": "docs/glossario/friedman-e-nemenyi.md",
+   "titulo": "Teste de Friedman e diferença crítica de Nemenyi",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
    "caminho": "docs/glossario/glossario.md",
    "titulo": "Glossário",
    "tags": [
@@ -415,6 +422,20 @@
   {
    "caminho": "docs/glossario/tempo-de-permanencia.md",
    "titulo": "Tempo de permanência (dwell time)",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/teste-de-dunn.md",
+   "titulo": "Teste de Dunn",
+   "tags": [
+    "glossario"
+   ]
+  },
+  {
+   "caminho": "docs/glossario/teste-de-permutacao.md",
+   "titulo": "Teste de permutação",
    "tags": [
     "glossario"
    ]
@@ -1274,6 +1295,11 @@
   },
   {
    "de": "docs/fluxo-da-pesquisa.md",
+   "para": "reports/05_interpretacao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/fluxo-da-pesquisa.md",
    "para": "reports/ilustracoes",
    "tipo": "arquivo"
   },
@@ -1878,6 +1904,41 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/glossario/friedman-e-nemenyi.md",
+   "para": "docs/glossario/kruskal-wallis.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/friedman-e-nemenyi.md",
+   "para": "docs/glossario/mann-whitney.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/friedman-e-nemenyi.md",
+   "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/friedman-e-nemenyi.md",
+   "para": "docs/plano-de-testes-estatisticos.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/friedman-e-nemenyi.md",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/friedman-e-nemenyi.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/friedman-e-nemenyi.md",
+   "para": "src/pixfraud/visualization.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/average-precision.md",
    "tipo": "nota"
@@ -1955,6 +2016,11 @@
   {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/fraudar.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/friedman-e-nemenyi.md",
    "tipo": "nota"
   },
   {
@@ -2075,6 +2141,16 @@
   {
    "de": "docs/glossario/glossario.md",
    "para": "docs/glossario/tempo-de-permanencia.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/teste-de-dunn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/glossario.md",
+   "para": "docs/glossario/teste-de-permutacao.md",
    "tipo": "nota"
   },
   {
@@ -2244,6 +2320,11 @@
   },
   {
    "de": "docs/glossario/kruskal-wallis.md",
+   "para": "docs/glossario/friedman-e-nemenyi.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
    "para": "docs/glossario/mann-whitney.md",
    "tipo": "nota"
   },
@@ -2254,8 +2335,28 @@
   },
   {
    "de": "docs/glossario/kruskal-wallis.md",
+   "para": "docs/glossario/teste-de-dunn.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
    "para": "docs/glossario/testes-para-classificadores.md",
    "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "scripts/02_exploracao/inferencia_atributos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/kruskal-wallis.md",
+   "para": "scripts/05_interpretacao/investigar_falsos_positivos.py",
+   "tipo": "arquivo"
   },
   {
    "de": "docs/glossario/kruskal-wallis.md",
@@ -2543,6 +2644,56 @@
    "tipo": "arquivo"
   },
   {
+   "de": "docs/glossario/teste-de-dunn.md",
+   "para": "docs/glossario/correcao-de-holm.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/teste-de-dunn.md",
+   "para": "docs/glossario/kruskal-wallis.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/teste-de-dunn.md",
+   "para": "scripts/02_exploracao/inferencia_atributos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/teste-de-dunn.md",
+   "para": "scripts/05_interpretacao/investigar_falsos_positivos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/teste-de-dunn.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/teste-de-permutacao.md",
+   "para": "docs/glossario/average-precision.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/teste-de-permutacao.md",
+   "para": "docs/glossario/testes-para-classificadores.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/teste-de-permutacao.md",
+   "para": "scripts/03_modelos/avaliar_modelos.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/teste-de-permutacao.md",
+   "para": "scripts/ferramentas/ilustrar_testes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/glossario/teste-de-permutacao.md",
+   "para": "src/pixfraud/stats.py",
+   "tipo": "arquivo"
+  },
+  {
    "de": "docs/glossario/teste-de-wilcoxon-pareado.md",
    "para": "docs/glossario/correcao-de-holm.md",
    "tipo": "nota"
@@ -2574,6 +2725,11 @@
   },
   {
    "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/friedman-e-nemenyi.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
    "para": "docs/glossario/intervalo-de-confianca.md",
    "tipo": "nota"
   },
@@ -2589,8 +2745,18 @@
   },
   {
    "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "docs/glossario/teste-de-permutacao.md",
+   "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
    "para": "docs/glossario/teste-de-wilcoxon-pareado.md",
    "tipo": "nota"
+  },
+  {
+   "de": "docs/glossario/testes-para-classificadores.md",
+   "para": "scripts/05_interpretacao/investigar_falsos_positivos.py",
+   "tipo": "arquivo"
   },
   {
    "de": "docs/glossario/validacao-cruzada.md",
@@ -3944,6 +4110,11 @@
   },
   {
    "de": "docs/plano-de-testes-estatisticos.md",
+   "para": "scripts/ferramentas/ilustrar_testes.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "docs/plano-de-testes-estatisticos.md",
    "para": "scripts/reproduzir_tudo.py",
    "tipo": "arquivo"
   },
@@ -5034,6 +5205,11 @@
   },
   {
    "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/05_interpretacao",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
    "para": "reports/amlworld/figures/amlworld_pix_tipologias.png",
    "tipo": "arquivo"
   },
@@ -5119,6 +5295,11 @@
   },
   {
    "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/01_dados/validar_realismo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/02_exploracao",
    "tipo": "arquivo"
   },
@@ -5130,6 +5311,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/02_exploracao/criar_grafo.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/02_exploracao/inferencia_atributos.py",
    "tipo": "arquivo"
   },
   {
@@ -5245,6 +5431,11 @@
   {
    "de": "scripts/mapa-dos-scripts.md",
    "para": "scripts/ferramentas/ilustrar_grafos_de_conhecimento.py",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "scripts/mapa-dos-scripts.md",
+   "para": "scripts/ferramentas/ilustrar_testes.py",
    "tipo": "arquivo"
   },
   {

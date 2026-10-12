@@ -58,7 +58,7 @@ rodadas); `bcb.py` serve para calibrar e validar o gerador.
 | [`anomaly.py`](anomaly.py), [`graph_models.py`](graph_models.py), [`gnn.py`](gnn.py) | nomes antigos, mantidos para scripts, notebooks e notas que já os usam: só reexportam de `models/` (as funções de propagação também continuam em `flow.py`) | os mesmos de antes |
 | [`evaluation.py`](evaluation.py) | precision, recall, AP, precision@k; recall por grupo | `evaluate`, `recall_by_group` |
 | [`experiment.py`](experiment.py) | o pipeline inteiro, uma semente ou várias; cenários | `prepare`, `run_detectors`, `run_seeds`, `load_scenarios` |
-| [`stats.py`](stats.py) | Mann-Whitney com delta de Cliff, bootstrap, testes pareados, modelo nulo | `compare_groups`, `compare_runs`, `summarize_runs` |
+| [`stats.py`](stats.py) | Mann-Whitney com delta de Cliff, Kruskal-Wallis + Dunn, Friedman + Nemenyi, bootstrap, testes pareados, permutação e hipergeométrico contra o acaso, qui-quadrado/Fisher, modelo nulo | `compare_groups`, `kruskal_groups`, `friedman_models`, `compare_runs`, `permutation_test_metric` |
 | [`online.py`](online.py) | detecção ao longo do tempo e dinheiro recuperável (MED) | `checkpoint_flags`, `recovered_amount` |
 | [`flow.py`](flow.py) | fluxo máximo, corte mínimo ("onde bloquear"), propagação de risco | `max_money_flow`, `blocking_accounts`, `propagate_risk` |
 | [`algorithms.py`](algorithms.py) | algoritmos clássicos aplicados ao dinheiro (Edmonds, gargalo, VF2, HITS, Jaccard e cosseno...) | `widest_path`, `find_pattern`, `hubs_authorities`, `similar_accounts`, `cosine_similarity` |

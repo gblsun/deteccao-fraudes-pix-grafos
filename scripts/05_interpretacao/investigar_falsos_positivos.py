@@ -20,6 +20,10 @@ Saídas em reports/05_interpretacao/results/:
     falsos_positivos_papeis.csv     uma linha por (cenário, semente, modelo): papéis no top-k
     falsos_positivos_top.csv        as ``--top`` contas de maior risco de cada modelo (semente 42)
     falsos_positivos_atributos.csv  percentil de cada atributo dessas contas
+    falsos_positivos_testes.csv     (cenário, modelo): o modelo confunde comércio com fraude? (Fisher
+                                    "no top-k" × "é comércio", só nas legítimas) e o escore ordena os
+                                    papéis? (Kruskal-Wallis do escore por papel, com ε²)
+    falsos_positivos_dunn.csv       que pares de papéis o escore separa (teste de Dunn, semente do YAML)
     falsos_positivos_meta.json      como o resultado foi gerado
 e a figura reports/05_interpretacao/figures/falsos_positivos_comercio.png.
 
@@ -44,6 +48,7 @@ from pixfraud.anomaly import DETECTORS  # noqa: E402
 from pixfraud.experiment import load_experiment_config, load_scenarios, prepare, save_metadata  # noqa: E402
 from pixfraud.features import FEATURE_SETS  # noqa: E402
 from pixfraud.simulation import generate_dataset, load_config, load_dataset, with_overrides  # noqa: E402
+from pixfraud.stats import contingency_test, dunn_posthoc, kruskal_groups  # noqa: E402
 from pixfraud.visualization import INK, INK_SECONDARY, SEQUENTIAL_CMAP, SURFACE, model_label  # noqa: E402
 
 ROLES = ["laranja", "intermediario", "coletor", "comercio", "vitima", "normal"]
@@ -72,7 +77,7 @@ def main() -> None:
     seeds = [base.seed, *[s for s in range(1, args.sementes + 2) if s != base.seed]][: args.sementes]
     _check_saved_dataset(base, args.dados)
 
-    rows, tops, attributes = [], [], []
+    rows, tops, attributes, dunn = [], [], [], []
     for name in args.cenarios:
         for seed in seeds:
             accounts, tx = generate_dataset(replace(with_overrides(base, scenarios[name]), seed=seed))
@@ -85,9 +90,19 @@ def main() -> None:
                 risk = detect(features, **config["modelos"].get(model, {})).scores
                 order = risk.sort_values(ascending=False, kind="stable")
                 counts = roles[order.index[:k]].value_counts()
+                legit = roles[roles.isin(LEGIT)].index
+                in_top = pd.Series(legit.isin(order.index[:k]), index=legit)
+                merchant = pd.Series(roles[legit] == "comercio", index=legit)
+                fisher = contingency_test(in_top, merchant) if in_top.any() and merchant.any() else {}
+                by_role = kruskal_groups(risk.rename("risco").to_frame(), roles).iloc[0]
                 rows.append({"cenario": name, "semente": seed, "modelo": model, "k": k,
                              **{r: int(counts.get(r, 0)) for r in ROLES},
-                             "falsos_positivos": int(counts.reindex(LEGIT).fillna(0).sum())})
+                             "falsos_positivos": int(counts.reindex(LEGIT).fillna(0).sum()),
+                             "razao_chances_comercio": fisher.get("razão de chances", float("nan")),
+                             "p_fisher_comercio": fisher.get("p Fisher", float("nan")),
+                             "epsilon2_papeis": by_role["ε²"], "p_kruskal_papeis": by_role["p-valor"]})
+                if seed == base.seed:
+                    dunn.append(dunn_posthoc(risk, roles).assign(cenario=name, modelo=model))
                 if seed == base.seed:
                     top = order.index[: args.top]
                     tops.append(pd.DataFrame({
@@ -109,6 +124,9 @@ def main() -> None:
     pd.concat(tops).to_csv(results / "falsos_positivos_top.csv", index=False)
     attributes = pd.concat(attributes).rename(columns={"index": "account_id"})
     attributes.to_csv(results / "falsos_positivos_atributos.csv", index=False)
+    tests = _tests_table(runs)
+    tests.to_csv(results / "falsos_positivos_testes.csv", index=False)
+    pd.concat(dunn, ignore_index=True).to_csv(results / "falsos_positivos_dunn.csv", index=False)
     save_metadata(results / "falsos_positivos_meta.json", config, cenarios={n: scenarios[n] for n in args.cenarios},
                   sementes=seeds, conjunto=args.conjunto, top=args.top, duracao_s=round(time.time() - began))
 
@@ -120,10 +138,25 @@ def main() -> None:
     print(share.reindex(list(DETECTORS)).round(2).to_string())
     print("\nfalsos positivos no top-k, por papel (soma das sementes):")
     print(runs.groupby(["cenario", "modelo"])[LEGIT].sum().to_string())
+    print("\no modelo confunde comércio com fraude? (Fisher nas legítimas; o escore ordena os papéis?)")
+    print(tests.round(3).to_string(index=False))
     why = attributes[(attributes["modelo"] == "dbscan") & (attributes["cenario"] == args.cenarios[0])]
     print(f"\npercentil médio dos atributos no top-{args.top} do DBSCAN ({args.cenarios[0]}, semente {base.seed}):")
     columns = [c for c in FEATURE_SETS[args.conjunto] if c in why]
     print(why.groupby("papel_real")[columns].mean().T.round(2).to_string())
+
+
+def _tests_table(runs: pd.DataFrame, alpha: float = 0.05) -> pd.DataFrame:
+    """Por (cenário, modelo): razão de chances mediana do comércio no top-k, em quantas sementes o Fisher
+    deu p < alfa, e o ε² médio do Kruskal-Wallis do escore entre os papéis."""
+    grouped = runs.groupby(["cenario", "modelo"], sort=False)
+    return pd.DataFrame({
+        "sementes": grouped.size(),
+        "razao_chances_comercio_mediana": grouped["razao_chances_comercio"].median(),
+        "sementes_fisher_significativo": grouped["p_fisher_comercio"].apply(lambda p: int((p < alpha).sum())),
+        "epsilon2_papeis_medio": grouped["epsilon2_papeis"].mean(),
+        "sementes_kruskal_significativo": grouped["p_kruskal_papeis"].apply(lambda p: int((p < alpha).sum())),
+    }).reset_index()
 
 
 def _check_saved_dataset(base, data_dir: str) -> None:

@@ -32,14 +32,19 @@ from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
-RESULTADOS = ("dataset", "experimento", "robustez", "cenarios", "online", "atributos", "propagacao", "fraudar",
-              "auditoria", "falsos_positivos", "gnn", "gnn_rotulos", "externo")
-EXTRAS = ("rede", "ilustracoes", "notas", "graphify", "relatorio")
+RESULTADOS = ("dataset", "realismo", "inferencia", "otimizacao", "modelos", "experimento", "robustez", "cenarios",
+              "online", "atributos", "propagacao", "fraudar", "auditoria", "falsos_positivos", "gnn", "gnn_rotulos",
+              "externo")
+EXTRAS = ("rede", "ilustracoes", "testes", "notas", "graphify", "relatorio")
 AMLWORLD = ("amlworld_pix", "amlworld")
 HISTORICO = ROOT / "data" / "tempos_reproduzir.csv"
 # *_meta.json de cada etapa, relativo à pasta de saída (uma subpasta por etapa da pesquisa):
 # dá o tempo quando ainda não há histórico
 META = {
+    "realismo": "01_dados/results/realismo_meta.json",
+    "inferencia": "02_exploracao/results/inferencia_meta.json",
+    "otimizacao": "03_modelos/results/otimizacao_meta.json",
+    "modelos": "03_modelos/results/modelos_meta.json",
     "experimento": "03_modelos/results/metricas_meta.json",
     "robustez": "04_avaliacao/results/robustez_meta.json",
     "cenarios": "04_avaliacao/results/cenarios_meta.json",
@@ -54,7 +59,7 @@ META = {
 }
 # tempo aproximado do modo completo (scripts/mapa-dos-scripts.md), para etapas sem *_meta.json nem histórico
 APROXIMADO = {"dataset": 10, "online": 30 * 60, "fraudar": 17 * 60, "gnn": 25 * 60, "gnn_rotulos": 40 * 60,
-              "rede": 60, "ilustracoes": 60, "notas": 5, "graphify": 30, "relatorio": 20}
+              "rede": 60, "ilustracoes": 60, "testes": 60, "notas": 5, "graphify": 30, "relatorio": 20}
 
 
 def gnn_disponivel() -> bool:
@@ -81,11 +86,29 @@ def plano(rapido: bool, refazer: bool, saida: str, dados: str) -> list[tuple[str
     opcao_refazer = ["--refazer"] if refazer else []
     atributos = (Path(dados).parent / "processed" / "features.csv").as_posix()
     # cada etapa da pesquisa grava na sua pasta (reports/01_dados, 03_modelos...)
-    dados_, modelos, avaliacao, interpretacao = (f"{saida}/{etapa}" for etapa in
-                                                 ("01_dados", "03_modelos", "04_avaliacao", "05_interpretacao"))
+    dados_, exploracao, modelos, avaliacao, interpretacao = (
+        f"{saida}/{etapa}" for etapa in ("01_dados", "02_exploracao", "03_modelos", "04_avaliacao", "05_interpretacao"))
+    # no modo rápido, a otimização não sobrescreve a configuração versionada
+    otimizada = f"{saida}/experimento_otimizado.yaml" if rapido else "configs/experimento_otimizado.yaml"
+    pouca_busca = ["--cenarios", "realista", "--sementes", "1", "--rodadas", "1",
+                   "--modelos", "isolation_forest", "dbscan"] if rapido else []
+    vitrine = ["--cenarios", "realista", "--sem-gnn"] if rapido else []
     etapas = [
         ("dataset", "dataset sintético (semente 42)",
          [py, "scripts/01_dados/gerar_dataset.py", "--seed", "42", "--saida", dados]),
+    ]
+    if any((ROOT / "data" / "bcb").glob("transacoes_*.csv")):  # baixados por scripts/01_dados/baixar_dados_bcb.py
+        etapas.append(("realismo", "o gerador comparado com o BCB",
+                       [py, "scripts/01_dados/validar_realismo.py", "--sementes", sementes, "--saida", dados_]))
+    etapas += [
+        ("inferencia", "testes de hipótese sobre os atributos (sementes de validação)",
+         [py, "scripts/02_exploracao/inferencia_atributos.py", "--sementes", poucas, "--saida", exploracao,
+          *(["--cenarios", "realista"] if rapido else [])]),
+        ("otimizacao", "otimização dos hiperparâmetros (sementes de validação)",
+         [py, "scripts/03_modelos/otimizar_hiperparametros.py", *pouca_busca, "--saida", modelos,
+          "--config-saida", otimizada]),
+        ("modelos", "vitrine de todos os modelos, com Friedman e testes contra o acaso",
+         [py, "scripts/03_modelos/avaliar_modelos.py", "--sementes", sementes, *vitrine, "--saida", modelos]),
         ("experimento", "uma rodada completa",
          [py, "scripts/03_modelos/rodar_experimento.py", "--dados", dados, "--atributos", atributos,
           "--saida", modelos]),
@@ -125,6 +148,9 @@ def plano(rapido: bool, refazer: bool, saida: str, dados: str) -> list[tuple[str
           "--saida", f"{saida}/estudos/rede_completa.html"]),
         ("ilustracoes", "ilustrações do README",
          [py, "scripts/ferramentas/gerar_ilustracoes.py", "--saida", f"{saida}/ilustracoes"]),
+        ("testes", "figuras didáticas dos testes de hipótese, uma por etapa",
+         [py, "scripts/ferramentas/ilustrar_testes.py", "--saida", saida,
+          "--execucoes", f"{modelos}/results/modelos_execucoes.csv"]),
         ("notas", "grafo de notas do Obsidian", [py, "scripts/ferramentas/exportar_grafo_de_notas.py"]),
     ]
     exe = graphify()

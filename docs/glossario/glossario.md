@@ -23,6 +23,9 @@ ponta.
 - [Intervalo de confiança (IC 95%)](intervalo-de-confianca.md)
 - [Validação cruzada estratificada](validacao-cruzada.md)
 - [Teste de Kruskal-Wallis](kruskal-wallis.md) — compara grupos, não classifica contas
+- [Teste de Dunn](teste-de-dunn.md) — que pares de grupos diferem, depois do Kruskal-Wallis
+- [Teste de Friedman e diferença crítica de Nemenyi](friedman-e-nemenyi.md) — vários modelos nas mesmas sementes
+- [Teste de permutação](teste-de-permutacao.md) — o modelo é melhor que o acaso?
 - [Testes de hipótese para classificadores](testes-para-classificadores.md) — permutação, Fisher, DeLong, McNemar
 - [Detecção conformal](deteccao-conformal.md) — um p-valor por conta, com alarmes falsos controlados
 - [Semente (aleatória)](semente.md)

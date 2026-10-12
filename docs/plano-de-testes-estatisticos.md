@@ -30,18 +30,18 @@ A escolha depende de os grupos serem **independentes** ou **pareados**:
 
 | Etapa | Pergunta | Teste | Tamanho do efeito | No projeto |
 |---|---|---|---|---|
-| 1. Dados: realismo | o sintético bate com o BCB (ticket médio P2P e P2B, % P2B, golpe médio)? | IC 95% entre sementes contém o valor do BCB + erro relativo com tolerância (o BCB só publica agregados, então KS não se aplica) | erro relativo | a fazer |
-| 1. Dados: estrutura | a rede tem mais reciprocidade, triângulos ou ciclos que o acaso? | modelo nulo com graus preservados | escore z | `stats.null_model_test` (existe, sem uso) |
+| 1. Dados: realismo | o sintético bate com o BCB (ticket médio P2P e P2B, % P2B, golpe médio)? | IC 95% entre sementes contém o valor do BCB + erro relativo com tolerância (o BCB só publica agregados, então KS não se aplica) | erro relativo | feito |
+| 1. Dados: estrutura | a rede tem mais reciprocidade, triângulos ou ciclos que o acaso? | modelo nulo com graus preservados | escore z | `stats.null_model_test`, em `validar_realismo.py` |
 | 2. Exploração | o atributo difere entre fraude e legítima? | Mann-Whitney + [Holm](glossario/correcao-de-holm.md) | [delta de Cliff](glossario/delta-de-cliff.md) | `stats.compare_groups` |
-| 2. Exploração | o atributo difere entre os 6 papéis? | **Kruskal-Wallis** + Holm; post-hoc **Dunn** + Holm | ε² = H / (n − 1) | a fazer |
-| 2. Exploração | categórica (madrugada, conta nova, PJ) × fraude | qui-quadrado; Fisher exato se 2×2 | V de Cramér; razão de chances | `stats.contingency_test` (existe, sem uso; falta o Fisher) |
-| 2. Exploração | o efeito se repete entre sementes? | fração das sementes com p de Holm < 0,05 e IC do delta | delta médio ± IC | parcial (`cenarios_efeitos.csv`) |
-| 3. Modelos | o modelo é melhor que o acaso? | permutação da AP (embaralha o gabarito); hipergeométrico no top-k | AP − taxa de fraude | a fazer |
-| 4. Avaliação | algum modelo difere dos outros? | **Friedman** (blocos = sementes) + **Nemenyi**, com diagrama de diferença crítica | W de Kendall; posto médio | a fazer |
+| 2. Exploração | o atributo difere entre os 6 papéis? | **Kruskal-Wallis** + Holm; post-hoc **Dunn** + Holm | ε² = H / (n − 1) | feito |
+| 2. Exploração | categórica (madrugada, conta nova, PJ) × fraude | qui-quadrado; Fisher exato se 2×2 | V de Cramér; razão de chances | `stats.contingency_test` (com Fisher), em `inferencia_atributos.py` |
+| 2. Exploração | o efeito se repete entre sementes? | fração das sementes com p de Holm < 0,05 e IC do delta | delta médio ± IC | `inferencia_*.csv` (sementes significativas) |
+| 3. Modelos | o modelo é melhor que o acaso? | permutação da AP (embaralha o gabarito); hipergeométrico no top-k | AP − taxa de fraude | feito |
+| 4. Avaliação | algum modelo difere dos outros? | **Friedman** (blocos = sementes) + **Nemenyi**, com diagrama de diferença crítica | W de Kendall; posto médio | feito |
 | 4. Avaliação | o modelo A é melhor que o B? | Wilcoxon pareado + Holm, com IC t | diferença média de AP | `stats.compare_runs` |
-| 4. Avaliação | a dificuldade do cenário muda a AP de um modelo? | **Kruskal-Wallis** entre cenários + Dunn | ε² | a fazer |
-| 5. Interpretação | o modelo confunde comércio com fraude? | Fisher exato "está no top-k" × "é comércio", só nas contas legítimas | razão de chances | a fazer |
-| 5. Interpretação | o escore de risco ordena os papéis? | Kruskal-Wallis do escore por papel + Dunn | ε² | a fazer |
+| 4. Avaliação | a dificuldade do cenário muda a AP de um modelo? | **Kruskal-Wallis** entre cenários + Dunn | ε² | feito |
+| 5. Interpretação | o modelo confunde comércio com fraude? | Fisher exato "está no top-k" × "é comércio", só nas contas legítimas | razão de chances | feito |
+| 5. Interpretação | o escore de risco ordena os papéis? | Kruskal-Wallis do escore por papel + Dunn | ε² | feito |
 | Validação externa | os resultados valem no AMLworld? | os mesmos testes, com as janelas de tempo no lugar das sementes | idem | parcial (`compare_runs` com `unit="janela"`) |
 
 ## Regras gerais
@@ -61,30 +61,40 @@ A escolha depende de os grupos serem **independentes** ou **pareados**:
 
 ### Funções em [`stats.py`](../src/pixfraud/stats.py)
 
-- [ ] `kruskal_groups(features, groups)`: H, p, p de Holm e ε² por atributo.
-- [ ] `dunn_posthoc(values, groups)`: z dos postos médios (com correção de empates) e p de Holm por par.
-- [ ] `friedman_models(runs, metric, ...)`: χ², p, W de Kendall, postos médios e diferença crítica de Nemenyi.
-- [ ] `permutation_test_metric(labels, scores, metric, n_perm)`: p empírico (b + 1) / (n + 1).
-- [ ] `topk_hypergeom(labels, scores, k)`: fraudes no top-k e p hipergeométrico.
-- [ ] `contingency_test` com Fisher exato e razão de chances nas tabelas 2×2.
+- [x] `kruskal_groups(features, groups)`: H, p, p de Holm e ε² por atributo.
+- [x] `dunn_posthoc(values, groups)`: z dos postos médios (com correção de empates) e p de Holm por par.
+- [x] `friedman_models(runs, metric, ...)`: χ², p, W de Kendall, postos médios e diferença crítica de Nemenyi.
+- [x] `permutation_test_metric(labels, scores, metric, n_perm)`: p empírico (b + 1) / (n + 1).
+- [x] `topk_hypergeom(labels, scores, k)`: fraudes no top-k e p hipergeométrico.
+- [x] `contingency_test` com Fisher exato e razão de chances nas tabelas 2×2.
 
 ### Scripts
 
-- [ ] [`01_dados/validar_realismo.py`](../scripts/01_dados/): sintético × BCB e modelo nulo da estrutura.
-- [ ] [`02_exploracao/inferencia_atributos.py`](../scripts/02_exploracao/): Mann-Whitney, Kruskal-Wallis + Dunn
+- [x] [`01_dados/validar_realismo.py`](../scripts/01_dados/): sintético × BCB e modelo nulo da estrutura.
+- [x] [`02_exploracao/inferencia_atributos.py`](../scripts/02_exploracao/): Mann-Whitney, Kruskal-Wallis + Dunn
   por papel e contingência, nas sementes de validação.
-- [ ] [`03_modelos/avaliar_modelos.py`](../scripts/03_modelos/avaliar_modelos.py): Friedman + diagrama de diferença
+- [x] [`03_modelos/avaliar_modelos.py`](../scripts/03_modelos/avaliar_modelos.py): Friedman + diagrama de diferença
   crítica, teste contra o acaso e Kruskal-Wallis entre cenários.
-- [ ] [`05_interpretacao/investigar_falsos_positivos.py`](../scripts/05_interpretacao/investigar_falsos_positivos.py):
+- [x] [`05_interpretacao/investigar_falsos_positivos.py`](../scripts/05_interpretacao/investigar_falsos_positivos.py):
   Fisher top-k × comércio e Kruskal-Wallis do escore por papel.
-- [ ] [`reproduzir_tudo.py`](../scripts/reproduzir_tudo.py): etapas `realismo`, `inferencia`, `otimizacao` e
+- [x] [`reproduzir_tudo.py`](../scripts/reproduzir_tudo.py): etapas `realismo`, `inferencia`, `otimizacao` e
   `modelos` no pipeline oficial.
 
 ### Documentação
 
-- [ ] Glossário: Friedman e Nemenyi, teste de Dunn e teste de permutação; atualizar
+- [x] Glossário: Friedman e Nemenyi, teste de Dunn e teste de permutação; atualizar
   [Kruskal-Wallis](glossario/kruskal-wallis.md) e [testes para classificadores](glossario/testes-para-classificadores.md).
 - [ ] [Resultados](resultados.md): os números, depois das rodadas completas.
+
+## Como os testes aparecem nas figuras
+
+[`ilustrar_testes.py`](../scripts/ferramentas/ilustrar_testes.py) desenha uma figura por etapa
+(`reports/<etapa>/figures/testes_<etapa>.png`). Em cima, a estatística do teste sob a hipótese
+nula (normal, t, χ² ou o nulo da permutação), com as caudas de α = 5% sombreadas e o valor
+observado como linha vertical. Embaixo, os dados contra a curva normal: histograma, Q-Q plot e
+Shapiro-Wilk, que mostram a cauda pesada e justificam os testes não paramétricos. A ressalva
+vale para todas: com milhares de contas, quase tudo cai muito além da zona crítica, e por isso
+o tamanho do efeito importa mais que o p.
 
 ## Referências
 

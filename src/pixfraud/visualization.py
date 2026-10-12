@@ -639,6 +639,93 @@ def plot_model_intervals(
         ax.spines[spine].set_visible(False)
 
 
+def plot_test_statistic(
+    ax: plt.Axes,
+    dist,
+    observed: float,
+    name: str,
+    alpha: float = 0.05,
+    two_sided: bool = True,
+    null_sample: np.ndarray | None = None,
+) -> None:
+    """A distribuição da estatística sob a hipótese nula, com a zona crítica e o valor observado.
+
+    ``dist`` é uma distribuição do ``scipy.stats`` já congelada (normal, t, χ²);
+    com ``null_sample`` (o nulo de uma permutação), desenha o histograma dele e
+    a zona crítica sai dos quantis empíricos. As caudas de ``alpha`` ficam
+    sombreadas; o valor observado é a linha vertical. Um valor muito além da
+    escala vira uma seta na borda, com o número escrito.
+    """
+    critical_color, observed_color = "#c0392b", INK
+    if null_sample is not None:
+        cuts = np.quantile(null_sample, [alpha / 2, 1 - alpha / 2] if two_sided else [1 - alpha])
+        low, high = np.quantile(null_sample, [0.001, 0.999])
+        span = high - low or 1.0
+        lo, hi = low - 0.15 * span, high + 0.15 * span
+        ax.hist(null_sample, bins=40, range=(lo, hi), density=True, color="#9aa7a4", alpha=0.6)
+        upper = cuts[-1]
+        ax.axvspan(upper, hi, color=critical_color, alpha=0.12)
+        if two_sided:
+            ax.axvspan(lo, cuts[0], color=critical_color, alpha=0.12)
+    else:
+        lo, hi = dist.ppf(0.0005), dist.ppf(0.9995)
+        x = np.linspace(lo, hi, 400)
+        y = dist.pdf(x)
+        ax.plot(x, y, color=INK_SECONDARY, linewidth=1.2)
+        upper = dist.ppf(1 - alpha / 2) if two_sided else dist.ppf(1 - alpha)
+        ax.fill_between(x, y, where=x >= upper, color=critical_color, alpha=0.35)
+        if two_sided:
+            ax.fill_between(x, y, where=x <= dist.ppf(alpha / 2), color=critical_color, alpha=0.35)
+    if lo <= observed <= hi:
+        ax.axvline(observed, color=observed_color, linewidth=1.6)
+        ax.text(observed, ax.get_ylim()[1] * 0.92, f" observado\n {format_number(observed, 2)}", fontsize=7,
+                color=observed_color, va="top")
+    else:  # fora da escala: uma seta na borda, para a curva continuar legível
+        edge = hi if observed > hi else lo
+        ax.annotate(f"observado = {format_number(observed, 1)} →" if observed > hi
+                    else f"← observado = {format_number(observed, 1)}",
+                    xy=(edge, ax.get_ylim()[1] * 0.5), fontsize=7, color=observed_color,
+                    ha="right" if observed > hi else "left")
+    ax.set_xlim(lo, hi)
+    ax.set_yticks([])
+    ax.set_xlabel(f"{name} sob H₀; vermelho: zona crítica (α = {format_number(alpha, 2)})", fontsize=7,
+                  color=INK_SECONDARY)
+    ax.tick_params(colors=INK_SECONDARY, labelsize=7)
+    for spine in ("top", "right", "left"):
+        ax.spines[spine].set_visible(False)
+
+
+def plot_normality(ax_hist: plt.Axes, ax_qq: plt.Axes, values, name: str) -> float:
+    """Os dados contra a curva normal: histograma com a normal ajustada e o Q-Q plot.
+
+    Devolve o p do teste de Shapiro-Wilk (até 5 000 valores, sorteados se houver
+    mais). Cauda pesada aparece como pontos fugindo da reta no Q-Q plot, e é o
+    motivo de o projeto usar testes não paramétricos.
+    """
+    from scipy import stats as sps
+
+    values = np.asarray(values, dtype=float)
+    values = values[np.isfinite(values)]
+    sample = values if len(values) <= 5000 else np.random.default_rng(0).choice(values, 5000, replace=False)
+    p = float(sps.shapiro(sample).pvalue) if len(sample) >= 3 and np.ptp(sample) > 0 else float("nan")
+    ax_hist.hist(values, bins=int(np.clip(len(values) // 3, 5, 40)), density=True, color="#9aa7a4", alpha=0.7)
+    if np.std(values) > 0:
+        x = np.linspace(values.min(), values.max(), 300)
+        ax_hist.plot(x, sps.norm.pdf(x, values.mean(), values.std()), color="#c0392b", linewidth=1.2)
+    ax_hist.set_title(f"{name}: histograma e normal ajustada\nShapiro-Wilk p = {p:.2g}", fontsize=8, color=INK,
+                      loc="left")
+    (theory, ordered), (slope, intercept, _) = sps.probplot(sample, dist="norm")
+    ax_qq.plot(theory, ordered, "o", ms=2, color=INK_SECONDARY, alpha=0.6)
+    ax_qq.plot(theory, slope * np.asarray(theory) + intercept, color="#c0392b", linewidth=1)
+    ax_qq.set_title("Q-Q plot: fora da reta = longe da normal", fontsize=8, color=INK, loc="left")
+    ax_qq.set_xlabel("quantis da normal", fontsize=7, color=INK_SECONDARY)
+    for ax in (ax_hist, ax_qq):
+        ax.tick_params(colors=INK_SECONDARY, labelsize=7)
+        for spine in ("top", "right"):
+            ax.spines[spine].set_visible(False)
+    return p
+
+
 def plot_critical_difference(ranks: pd.DataFrame, critical: float, ax: plt.Axes, between: str = "modelo") -> None:
     """Postos médios do teste de Friedman com a diferença crítica de Nemenyi.
 
