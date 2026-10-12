@@ -23,7 +23,7 @@ instalado.
 
 | Arquivo | Módulo | Principais verificações |
 |---------|--------|-------------------------|
-| `test_simulation.py` | `simulation` | mesma semente = mesmo dataset; papéis e rótulos; parâmetros de realismo (horário, idade, inativos, relógio de atividade) |
+| `test_simulation.py` | `simulation` | mesma semente = mesmo dataset; papéis e rótulos; parâmetros de realismo (horário, idade, inativos, relógio de atividade); auditoria de papéis em todos os cenários; estrutura aleatória (varia com a semente, não muda nada quando desligada) |
 | `test_graph_tools.py` | `graph` | agregação de Pix repetidos, CSV de exemplo, matriz de adjacência, trilha do dinheiro |
 | `test_features.py` | `features` | cada atributo calculado à mão num grafo pequeno |
 | `test_temporal.py` | `temporal` | caminhos que respeitam o tempo, espera máxima, tempo de permanência |

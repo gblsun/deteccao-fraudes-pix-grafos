@@ -1,0 +1,107 @@
+account_id,role,regra,cenario,semente
+C001142,laranja,laranja recebe golpe,base,10
+C001142,laranja,laranja repassa,base,10
+C001649,laranja,laranja recebe golpe,base,10
+C001649,laranja,laranja repassa,base,10
+C000145,laranja,laranja recebe golpe,base,15
+C000145,laranja,laranja repassa,base,15
+C000417,laranja,laranja recebe golpe,base,15
+C000417,laranja,laranja repassa,base,15
+C000201,laranja,laranja recebe golpe,base,16
+C000201,laranja,laranja repassa,base,16
+C001266,laranja,laranja recebe golpe,base,19
+C001266,laranja,laranja repassa,base,19
+C001962,laranja,laranja recebe golpe,base,19
+C001962,laranja,laranja repassa,base,19
+C000519,laranja,laranja recebe golpe,base,20
+C000519,laranja,laranja repassa,base,20
+C000543,laranja,laranja recebe golpe,sem_horario,7
+C000543,laranja,laranja repassa,sem_horario,7
+C000690,laranja,laranja recebe golpe,sem_horario,7
+C000690,laranja,laranja repassa,sem_horario,7
+C000040,laranja,laranja recebe golpe,sem_horario,11
+C000040,laranja,laranja repassa,sem_horario,11
+C000069,laranja,laranja recebe golpe,sem_horario,13
+C000069,laranja,laranja repassa,sem_horario,13
+C001181,laranja,laranja recebe golpe,sem_horario,14
+C001181,laranja,laranja repassa,sem_horario,14
+C001142,laranja,laranja recebe golpe,sem_idade,10
+C001142,laranja,laranja repassa,sem_idade,10
+C001649,laranja,laranja recebe golpe,sem_idade,10
+C001649,laranja,laranja repassa,sem_idade,10
+C000145,laranja,laranja recebe golpe,sem_idade,15
+C000145,laranja,laranja repassa,sem_idade,15
+C000417,laranja,laranja recebe golpe,sem_idade,15
+C000417,laranja,laranja repassa,sem_idade,15
+C000201,laranja,laranja recebe golpe,sem_idade,16
+C000201,laranja,laranja repassa,sem_idade,16
+C001266,laranja,laranja recebe golpe,sem_idade,19
+C001266,laranja,laranja repassa,sem_idade,19
+C001962,laranja,laranja recebe golpe,sem_idade,19
+C001962,laranja,laranja repassa,sem_idade,19
+C000519,laranja,laranja recebe golpe,sem_idade,20
+C000519,laranja,laranja repassa,sem_idade,20
+C000543,laranja,laranja recebe golpe,sem_atalhos,7
+C000543,laranja,laranja repassa,sem_atalhos,7
+C000690,laranja,laranja recebe golpe,sem_atalhos,7
+C000690,laranja,laranja repassa,sem_atalhos,7
+C000040,laranja,laranja recebe golpe,sem_atalhos,11
+C000040,laranja,laranja repassa,sem_atalhos,11
+C000069,laranja,laranja recebe golpe,sem_atalhos,13
+C000069,laranja,laranja repassa,sem_atalhos,13
+C001181,laranja,laranja recebe golpe,sem_atalhos,14
+C001181,laranja,laranja repassa,sem_atalhos,14
+C000543,laranja,laranja recebe golpe,sem_valor,7
+C000543,laranja,laranja repassa,sem_valor,7
+C000690,laranja,laranja recebe golpe,sem_valor,7
+C000690,laranja,laranja repassa,sem_valor,7
+C000040,laranja,laranja recebe golpe,sem_valor,11
+C000040,laranja,laranja repassa,sem_valor,11
+C000069,laranja,laranja recebe golpe,sem_valor,13
+C000069,laranja,laranja repassa,sem_valor,13
+C001181,laranja,laranja recebe golpe,sem_valor,14
+C001181,laranja,laranja repassa,sem_valor,14
+C001371,laranja,laranja recebe golpe,com_inativos,2
+C001371,laranja,laranja repassa,com_inativos,2
+C000402,laranja,laranja recebe golpe,com_inativos,14
+C000402,laranja,laranja repassa,com_inativos,14
+C000202,laranja,laranja recebe golpe,com_inativos,17
+C000202,laranja,laranja repassa,com_inativos,17
+C000914,laranja,laranja recebe golpe,com_inativos,19
+C000914,laranja,laranja repassa,com_inativos,19
+C001206,laranja,laranja recebe golpe,com_inativos,20
+C001206,laranja,laranja repassa,com_inativos,20
+C000544,laranja,laranja recebe golpe,realista,8
+C000544,laranja,laranja repassa,realista,8
+C000146,laranja,laranja recebe golpe,realista,12
+C000146,laranja,laranja repassa,realista,12
+C001905,laranja,laranja recebe golpe,realista,12
+C001905,laranja,laranja repassa,realista,12
+C001606,laranja,laranja recebe golpe,coletor_ativo,3
+C001606,laranja,laranja repassa,coletor_ativo,3
+C000146,laranja,laranja recebe golpe,coletor_ativo,12
+C000146,laranja,laranja repassa,coletor_ativo,12
+C000467,laranja,laranja recebe golpe,coletor_ativo,16
+C000467,laranja,laranja repassa,coletor_ativo,16
+C000544,laranja,laranja recebe golpe,repasse_lento,8
+C000544,laranja,laranja repassa,repasse_lento,8
+C000146,laranja,laranja recebe golpe,repasse_lento,12
+C000146,laranja,laranja repassa,repasse_lento,12
+C001905,laranja,laranja recebe golpe,repasse_lento,12
+C001905,laranja,laranja repassa,repasse_lento,12
+C000067,laranja,laranja recebe golpe,negativos_dificeis,8
+C000067,laranja,laranja repassa,negativos_dificeis,8
+C000074,laranja,laranja recebe golpe,negativos_dificeis,12
+C000074,laranja,laranja repassa,negativos_dificeis,12
+C002107,laranja,laranja recebe golpe,quadrilhas_realistas,3
+C002107,laranja,laranja repassa,quadrilhas_realistas,3
+C000227,laranja,vítima não é fraudadora,quadrilhas_realistas,10
+C000507,laranja,laranja recebe golpe,quadrilhas_realistas,14
+C000507,laranja,laranja repassa,quadrilhas_realistas,14
+C001352,laranja,laranja recebe golpe,quadrilhas_realistas,14
+C001352,laranja,laranja repassa,quadrilhas_realistas,14
+C001308,laranja,laranja recebe golpe,quadrilhas_realistas,16
+C001308,laranja,laranja repassa,quadrilhas_realistas,16
+C001612,laranja,laranja recebe golpe,calibrado,1
+C001612,laranja,laranja repassa,calibrado,1
+C004067,laranja,vítima não é fraudadora,calibrado,6

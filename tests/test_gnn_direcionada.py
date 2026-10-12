@@ -8,7 +8,8 @@ from pixfraud import gnn
 from pixfraud.experiment import prepare
 from pixfraud.simulation import SimulationConfig, generate_dataset
 
-pytest.importorskip("torch_geometric")
+if not gnn.available():  # sem o extra "gnn", ou com a DLL do torch bloqueada pelo Windows
+    pytest.skip("PyTorch Geometric indisponível", allow_module_level=True)
 
 CONFIG = {"atributos": {"betweenness_k": 50}}
 

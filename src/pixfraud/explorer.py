@@ -711,6 +711,199 @@ _TEMPLATE = r"""<meta charset="utf-8">
     return nodeVisible(E.s[j]) && nodeVisible(E.t[j]);
   }
 
+  // ---- desenho sem WebGL ----
+  // Alguns navegadores não oferecem WebGL (aceleração de hardware desligada, GPU bloqueada
+  // ou contextos esgotados depois de muitas páginas). Aí a rede é desenhada com Canvas 2D,
+  // com a parte da interface do sigma que a página usa: refresh, eventos, câmera e setSetting.
+  class CanvasRenderer {
+    constructor(graph, container, settings) {
+      this.graph = graph;
+      this.container = container;
+      this.settings = Object.assign({}, settings);
+      this.handlers = {};
+      this.camera = { x: 0.5, y: 0.5, ratio: 1 };
+      this.camera.animate = (target, options) => this.animate(target, (options && options.duration) || 0);
+      this.hovered = null;
+      this.frame = null;
+      this.screen = new Map();
+      this.shown = [];
+      this.canvas = document.createElement("canvas");
+      this.canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab";
+      container.appendChild(this.canvas);
+      this.context = this.canvas.getContext("2d");
+      let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      graph.forEachNode((key, a) => { x0 = Math.min(x0, a.x); x1 = Math.max(x1, a.x); y0 = Math.min(y0, a.y); y1 = Math.max(y1, a.y); });
+      this.box = graph.order ? { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, range: Math.max(x1 - x0, y1 - y0) || 1 } : { cx: 0, cy: 0, range: 1 };
+      this.listen();
+      new ResizeObserver(() => this.refresh()).observe(container);
+      this.refresh();
+    }
+    on(event, handler) { (this.handlers[event] = this.handlers[event] || []).push(handler); return this; }
+    emit(event, payload) { (this.handlers[event] || []).forEach((h) => h(payload)); }
+    setSetting(key, value) { this.settings[key] = value; }
+    getCamera() { return this.camera; }
+    // posição normalizada (0 a 1, y para baixo), a mesma que a câmera usa
+    normalized(a) { return { x: (a.x - this.box.cx) / this.box.range + 0.5, y: (this.box.cy - a.y) / this.box.range + 0.5 }; }
+    getNodeDisplayData(key) { return this.graph.hasNode(key) ? this.normalized(this.graph.getNodeAttributes(key)) : undefined; }
+    scale() { return Math.min(this.width, this.height) * 0.92 / this.camera.ratio; }
+    toScreen(p) { const s = this.scale(); return { x: this.width / 2 + (p.x - this.camera.x) * s, y: this.height / 2 + (p.y - this.camera.y) * s }; }
+    animate(target, duration) {
+      const from = { x: this.camera.x, y: this.camera.y, ratio: this.camera.ratio }, start = performance.now();
+      const step = (now) => {
+        const t = duration ? Math.min(1, (now - start) / duration) : 1, e = t * (2 - t);
+        ["x", "y", "ratio"].forEach((k) => { if (target[k] !== undefined) this.camera[k] = from[k] + (target[k] - from[k]) * e; });
+        this.draw();
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+    refresh() {
+      if (this.frame === null) this.frame = requestAnimationFrame(() => { this.frame = null; this.draw(); });
+    }
+    draw() {
+      const dpr = window.devicePixelRatio || 1, rect = this.container.getBoundingClientRect();
+      this.width = rect.width;
+      this.height = rect.height;
+      const w = Math.round(rect.width * dpr), h = Math.round(rect.height * dpr);
+      if (this.canvas.width !== w || this.canvas.height !== h) { this.canvas.width = w; this.canvas.height = h; }
+      const ctx = this.context, st = this.settings, zoom = 1 / Math.sqrt(this.camera.ratio);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, this.width, this.height);
+      // contas: posição na tela, já com o redutor da página (cor, tamanho, escondida, destaque)
+      const shown = [];
+      this.screen = new Map();
+      this.graph.forEachNode((key, attrs) => {
+        const d = st.nodeReducer ? st.nodeReducer(key, attrs) : attrs;
+        if (d.hidden) return;
+        const p = this.toScreen(this.normalized(attrs));
+        const item = { key, x: p.x, y: p.y, size: Math.max(1, d.size * zoom), color: d.color || "#999",
+                       label: d.label, forceLabel: d.forceLabel, z: d.zIndex || 0 };
+        this.screen.set(key, item);
+        shown.push(item);
+      });
+      // Pix: agrupados por cor e espessura, para traçar milhares de linhas de uma vez
+      const edges = [];
+      this.graph.forEachEdge((key, attrs, source, target) => {
+        const a = this.screen.get(source), b = this.screen.get(target);
+        if (!a || !b) return;
+        const d = st.edgeReducer ? st.edgeReducer(key, attrs) : attrs;
+        if (d.hidden) return;
+        edges.push({ a, b, color: d.color || "#ccc", width: Math.max(0.4, d.size * 0.5 * zoom), z: d.zIndex || 0 });
+      });
+      edges.sort((p, q) => p.z - q.z);
+      let batch = null;
+      const flush = () => { if (batch) { ctx.strokeStyle = batch.color; ctx.lineWidth = batch.width; ctx.stroke(); } };
+      edges.forEach((e) => {
+        if (!batch || batch.color !== e.color || batch.width !== e.width || batch.z !== e.z) { flush(); batch = e; ctx.beginPath(); }
+        const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y, len = Math.hypot(dx, dy) || 1, end = Math.max(0, len - e.b.size);
+        ctx.moveTo(e.a.x, e.a.y);
+        ctx.lineTo(e.a.x + dx * end / len, e.a.y + dy * end / len);
+      });
+      flush();
+      // pontas de seta: em todas quando há poucas linhas; senão, só nas destacadas
+      const allArrows = edges.length < 4000;
+      edges.forEach((e) => {
+        if (!allArrows && e.z === 0) return;
+        const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y, len = Math.hypot(dx, dy);
+        if (len < e.b.size + 4) return;
+        const ux = dx / len, uy = dy / len, tip = len - e.b.size, head = Math.max(4, e.width * 3);
+        const tx = e.a.x + ux * tip, ty = e.a.y + uy * tip;
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(tx - ux * head - uy * head / 2, ty - uy * head + ux * head / 2);
+        ctx.lineTo(tx - ux * head + uy * head / 2, ty - uy * head - ux * head / 2);
+        ctx.closePath();
+        ctx.fillStyle = e.color;
+        ctx.fill();
+      });
+      shown.sort((p, q) => p.z - q.z);
+      shown.forEach((n) => {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.size, 0, 2 * Math.PI);
+        ctx.fillStyle = n.color;
+        ctx.fill();
+      });
+      // rótulos: os forçados e os das contas grandes na tela, sem empilhar na mesma célula
+      const size = st.labelSize || 11, taken = new Set();
+      ctx.font = size + "px " + (st.labelFont || "sans-serif");
+      ctx.fillStyle = (st.labelColor && st.labelColor.color) || "#000";
+      for (let k = shown.length - 1; k >= 0; k--) {
+        const n = shown[k];
+        if (!n.label || (!n.forceLabel && n.size < (st.labelRenderedSizeThreshold || 6))) continue;
+        const cell = Math.round(n.x / 90) + ":" + Math.round(n.y / (size + 6));
+        if (!n.forceLabel && taken.has(cell)) continue;
+        taken.add(cell);
+        ctx.fillText(n.label, n.x + n.size + 3, n.y + size / 3);
+      }
+      this.shown = shown;
+      const hov = this.hovered !== null && this.screen.get(this.hovered);
+      if (hov && st.hoverRenderer) {
+        st.hoverRenderer(ctx, { x: hov.x, y: hov.y, size: hov.size, label: this.graph.getNodeAttribute(hov.key, "label") }, st);
+      }
+    }
+    nodeAt(x, y) {
+      for (let k = this.shown.length - 1; k >= 0; k--) {
+        const n = this.shown[k];
+        if (Math.hypot(n.x - x, n.y - y) <= Math.max(n.size, 4)) return n.key;
+      }
+      return null;
+    }
+    listen() {
+      const c = this.canvas;
+      let drag = null;
+      const local = (e) => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+      c.addEventListener("pointerdown", (e) => {
+        c.setPointerCapture(e.pointerId);
+        const p = local(e);
+        drag = { x: p.x, y: p.y, cx: this.camera.x, cy: this.camera.y, moved: false };
+      });
+      c.addEventListener("pointermove", (e) => {
+        const p = local(e);
+        if (drag) {
+          if (Math.hypot(p.x - drag.x, p.y - drag.y) > 3) { drag.moved = true; c.style.cursor = "grabbing"; }
+          if (drag.moved) {
+            const s = this.scale();
+            this.camera.x = drag.cx - (p.x - drag.x) / s;
+            this.camera.y = drag.cy - (p.y - drag.y) / s;
+            this.refresh();
+          }
+          return;
+        }
+        const key = this.nodeAt(p.x, p.y);
+        if (key !== this.hovered) {
+          if (this.hovered !== null) this.emit("leaveNode", { node: this.hovered });
+          this.hovered = key;
+          c.style.cursor = key === null ? "grab" : "pointer";
+          if (key !== null) this.emit("enterNode", { node: key });
+          this.refresh();
+        }
+      });
+      c.addEventListener("pointerup", (e) => {
+        const p = local(e), was = drag;
+        drag = null;
+        c.style.cursor = this.hovered === null ? "grab" : "pointer";
+        if (!was || was.moved) return;
+        const key = this.nodeAt(p.x, p.y);
+        if (key !== null) this.emit("clickNode", { node: key });
+        else this.emit("clickStage", {});
+      });
+      c.addEventListener("pointerleave", () => {
+        if (this.hovered !== null && !drag) { this.emit("leaveNode", { node: this.hovered }); this.hovered = null; this.refresh(); }
+      });
+      c.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const p = local(e), s = this.scale();
+        const gx = this.camera.x + (p.x - this.width / 2) / s, gy = this.camera.y + (p.y - this.height / 2) / s;
+        this.camera.ratio = Math.min(this.settings.maxCameraRatio || 10, Math.max(this.settings.minCameraRatio || 0.01,
+          this.camera.ratio * Math.exp(e.deltaY * 0.0015)));
+        const s2 = this.scale();
+        this.camera.x = gx - (p.x - this.width / 2) / s2;
+        this.camera.y = gy - (p.y - this.height / 2) / s2;
+        this.refresh();
+      }, { passive: false });
+    }
+  }
+
   // ---- grafo e renderização ----
   if (!window.graphology || !window.Sigma) {
     $("sigma").innerHTML = '<div class="error">Não foi possível carregar as bibliotecas de visualização. Verifique a conexão com a internet e recarregue a página.</div>';
@@ -723,8 +916,7 @@ _TEMPLATE = r"""<meta charset="utf-8">
   }
 
   let renderer;
-  try {
-    renderer = new Sigma(graph, $("sigma"), {
+  const settings = {
       defaultEdgeType: "arrow",
       labelRenderedSizeThreshold: 9,
       labelFont: "IBM Plex Mono, monospace",
@@ -809,10 +1001,20 @@ _TEMPLATE = r"""<meta charset="utf-8">
         }
         return out;
       },
-    });
+  };
+  try {
+    renderer = new Sigma(graph, $("sigma"), settings);
   } catch (err) {
-    $("sigma").innerHTML = '<div class="error">O navegador não conseguiu iniciar o WebGL, necessário para desenhar a rede.</div>';
-    return;
+    // sem WebGL: o mesmo desenho em Canvas 2D (um pouco mais lento em redes grandes)
+    console.warn("WebGL indisponível; a rede é desenhada com Canvas 2D.", err);
+    $("sigma").innerHTML = "";
+    try {
+      renderer = new CanvasRenderer(graph, $("sigma"), settings);
+    } catch (err2) {
+      console.error(err2);
+      $("sigma").innerHTML = '<div class="error">O navegador não conseguiu desenhar a rede.</div>';
+      return;
+    }
   }
 
   function select(i, focus) {

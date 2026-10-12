@@ -25,6 +25,7 @@ import yaml
 
 from pixfraud.evaluation import evaluate
 from pixfraud.features import FEATURE_SETS, build_features
+from pixfraud.flow import label_spreading, propagate_risk
 from pixfraud.graph import build_graph
 from pixfraud.models import DETECTORS, GRAPH_DETECTORS, SUPERVISED, Detection
 from pixfraud.models.supervised import random_forest_known_fraud_scores
@@ -204,6 +205,61 @@ def known_fraud_scores(features: pd.DataFrame, known: list, seed: int = 42, fold
     divisão (ver ``models.supervised.random_forest.random_forest_known_fraud_scores``).
     """
     return random_forest_known_fraud_scores(features, known, seed=seed, folds=folds, **params)
+
+
+# Todos os modelos da vitrine (``scripts/avaliar_modelos.py`` e o explorador da rede),
+# agrupados por família, na ordem em que aparecem nas figuras.
+MODEL_FAMILIES = {
+    "não supervisionado": list(DETECTORS),
+    "estrutura do grafo": [*GRAPH_DETECTORS, "dominant"],
+    "semi-supervisionado": ["propagacao_relativa", "label_spreading", "combinado", "label_spreading_combinado"],
+    "teto supervisionado": [*SUPERVISED_MODELS, "graphsage"],
+}
+FAMILY_OF = {model: family for family, models in MODEL_FAMILIES.items() for model in models}
+MODEL_ORDER = [model for models in MODEL_FAMILIES.values() for model in models]
+
+
+def all_model_scores(
+    prepared: Prepared,
+    models: dict,
+    columns: list[str],
+    known: list,
+    known_legit: list,
+    seed: int = 42,
+    use_gnn: bool = False,
+    reference: str = "dbscan",
+    rank_index: pd.Index | None = None,
+) -> dict[str, pd.Series]:
+    """O escore de cada modelo da vitrine (``MODEL_FAMILIES``) num mesmo dataset.
+
+    ``models`` é a seção ``modelos`` da configuração (já com a semente, ver
+    ``seeded_models``); ``columns``, os atributos dos modelos que usam a tabela.
+    Os semi-supervisionados partem das fraudes ``known`` e das legítimas
+    ``known_legit``; os combinados são a média dos percentis com ``reference``,
+    calculados entre as contas de ``rank_index`` (padrão: todas). Os tetos
+    supervisionados usam os rótulos em validação cruzada. A GNN só entra com
+    ``use_gnn``.
+    """
+    table = prepared.features[columns]
+    scores = {m: detect(table, **models.get(m, {})).scores for m, detect in DETECTORS.items()}
+    scores |= {m: detect(prepared.graph, **models.get(m, {})).scores for m, detect in GRAPH_DETECTORS.items()}
+    scores["propagacao_relativa"] = propagate_risk(prepared.graph, known, relative=True)
+    scores["label_spreading"] = label_spreading(prepared.graph, known, known_legit)
+    index = prepared.labels.index if rank_index is None else rank_index
+
+    def percentile(model):
+        return scores[model].reindex(index).rank(pct=True)
+
+    scores["combinado"] = (percentile("propagacao_relativa") + percentile(reference)) / 2
+    scores["label_spreading_combinado"] = (percentile("label_spreading") + percentile(reference)) / 2
+    for model in SUPERVISED_MODELS:
+        scores[model] = supervised_scores(table, prepared.labels, seed=seed, model=model, **models.get(model, {}))
+    if use_gnn:
+        from pixfraud import gnn
+
+        scores["dominant"] = gnn.dominant_scores(prepared.graph, table, seed=seed)
+        scores["graphsage"] = gnn.graphsage_scores(prepared.graph, table, prepared.labels, seed=seed)
+    return scores
 
 
 def save_metadata(path: str | Path, config: dict | None = None, **extra) -> Path:

@@ -59,6 +59,7 @@ MODEL_COLORS = {
     "pca": "#3c7a36",
     "fraudar": "#7a5cc7",
     "node2vec_if": "#b279a2",
+    "dominant": "#d4a6e8",
     "propagacao": "#f58518",
     "propagacao_relativa": "#f58518",
     "label_spreading": "#ffbf79",

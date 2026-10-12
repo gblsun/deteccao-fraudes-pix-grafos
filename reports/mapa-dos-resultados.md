@@ -34,6 +34,11 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `tipo_de_rede_execucoes.csv`, `tipo_de_rede_resumo.csv` | `analisar_tipo_de_rede.py` | (cenário, semente): componentes, lei de potência, passeios e cosseno × Jaccard |
 | `tipo_de_rede_modelos.csv` | `analisar_tipo_de_rede.py` | rede × Erdős–Rényi × Barabási–Albert |
 | `tipo_de_rede_passeios.csv` | `analisar_tipo_de_rede.py` | (cenário, papel): onde terminam os passeios que saem das vítimas |
+| `modelos_execucoes.csv`, `modelos_resumo.csv`, `modelos_comparacoes.csv` | `avaliar_modelos.py` | (cenário, semente, modelo): AP, precision@k e ROC-AUC de todos os modelos, nas mesmas contas |
+| `falsos_positivos_papeis.csv` | `investigar_falsos_positivos.py` | (cenário, semente, modelo): papel real das k contas de maior risco (k = nº de fraudes) |
+| `falsos_positivos_top.csv`, `falsos_positivos_atributos.csv` | `investigar_falsos_positivos.py` | (cenário, modelo, posição): as contas de maior risco na semente 42, o papel real e o percentil de cada atributo |
+| `auditoria_papeis.csv` | `auditar_papeis.py` | conta cujo comportamento não bate com o papel (regra violada) |
+| `auditoria_resumo.csv`, `auditoria_perfis.csv` | `auditar_papeis.py` | (cenário, semente): contas por papel e violações; mediana do que cada papel faz |
 | `*_meta.json` | todos os scripts de avaliação | como o resultado foi gerado: commit, configuração, sementes, duração e versões |
 
 ### Colunas
@@ -75,6 +80,8 @@ está em [`docs/resultados.md`](../docs/resultados.md).
 | `gnn_average_precision.png` | `avaliar_gnn.py` | AP das GNN e das referências por cenário |
 | `sementes_convergencia.png` | `avaliar_sementes.py` | AP média e meia-largura do IC 95% contra o nº de sementes |
 | `tipo_de_rede_graus.png` | `analisar_tipo_de_rede.py` | distribuição de graus: rede × modelos clássicos; entrada × saída |
+| `modelos_average_precision.png`, `modelos_comparacoes.png` | `avaliar_modelos.py` | AP média e IC 95% de todos os modelos por cenário; diferenças pareadas |
+| `falsos_positivos_comercio.png` | `investigar_falsos_positivos.py` | fração das k contas de maior risco que são comércios, por modelo e cenário |
 | `padroes_de_fraude.png`, `quadrilha.gif`, `rede_exemplo.png` | `gerar_ilustracoes.py` | ilustrações do README: os padrões injetados, o dinheiro percorrendo a quadrilha e a fraude dentro do movimento normal |
 | `grafo_de_notas.png`, `grafo_do_codigo.png` | `ilustrar_grafos_de_conhecimento.py` | ilustrações do README: o grafo de notas do Obsidian e o mapa do código pelo Graphify (não são resultados da pesquisa) |
 
@@ -186,6 +193,17 @@ Erdős–Rényi e de um Barabási–Albert do mesmo tamanho; (b) grau de entrada
 de lei de potência, e grau de saída, sem ela.
 *Fonte: `analisar_tipo_de_rede.py`.*
 ![Tipo de rede](figures/tipo_de_rede_graus.png)
+
+**Figura 17** — Todos os modelos nas mesmas contas (não supervisionados, incluindo KNN,
+K-Means e PCA; estrutura do grafo; semi-supervisionados; tetos supervisionados): average
+precision média e IC 95% por cenário.
+*Fonte: `avaliar_modelos.py`.*
+![Todos os modelos](figures/modelos_average_precision.png)
+
+**Figura 18** — Fração das k contas de maior risco (k = nº de fraudes) que são comércios,
+por modelo e cenário: os falsos positivos da reunião de 01/10.
+*Fonte: `investigar_falsos_positivos.py`.*
+![Comércios no topo do risco](figures/falsos_positivos_comercio.png)
 
 ## Material interativo
 

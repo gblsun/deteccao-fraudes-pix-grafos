@@ -17,10 +17,13 @@ from pixfraud.simulation import (
     SCAM_SCENARIOS,
     SimulationConfig,
     _after_activity,
+    audit_roles,
+    draw_structure,
     generate_dataset,
     load_config,
     load_dataset,
     save_dataset,
+    structure_summary,
     with_overrides,
 )
 
@@ -286,3 +289,53 @@ def test_invalid_realism_parameters_are_rejected():
         replace(SMALL, laundering_typologies=["piramide"])
     with pytest.raises(ValueError, match="p_recruited_mule"):
         replace(SMALL, p_recruited_mule=1.5)
+
+
+@pytest.mark.parametrize("scenario", sorted(SCENARIOS))
+def test_every_role_matches_what_the_account_did(scenario):
+    cfg = replace(with_overrides(SimulationConfig(), SCENARIOS[scenario]), n_people=600, n_merchants=30, n_days=7,
+                  seed=3)
+    accounts, tx = generate_dataset(cfg)
+    violations = audit_roles(accounts, tx)
+    if cfg.estrutura_aleatoria:
+        assert violations.empty
+    else:  # limitações conhecidas da estrutura fixa: cada vítima sorteia a laranja, e uma pode ficar
+        # sem golpe; e uma vítima pode ser recrutada como laranja por outra quadrilha
+        assert set(violations["regra"]) <= {"laranja recebe golpe", "laranja repassa", "vítima não é fraudadora"}
+        assert (violations["role"] == "laranja").all()
+
+
+def test_audit_catches_a_wrong_role(dataset):
+    accounts, tx = dataset
+    wrong = accounts.copy()
+    collector = wrong.index[wrong["role"] == "coletor"][0]
+    merchant = wrong.index[wrong["role"] == "comercio"][0]
+    wrong.loc[collector, "role"], wrong.loc[merchant, "role"] = "comercio", "coletor"
+    violations = audit_roles(wrong, tx)
+    assert {"comércio é PJ", "coletora recebe repasse"} <= set(violations["regra"])
+
+
+def test_random_structure_off_draws_nothing():
+    cfg, rings = draw_structure(SMALL)
+    assert cfg is SMALL and rings == [SMALL] * SMALL.n_rings
+
+
+def test_random_structure_varies_with_the_seed():
+    cfg = replace(SMALL, n_people=600, estrutura_aleatoria=True, n_rings=4, laundering_typologies=LAUNDERING_TYPOLOGIES)
+    summaries = [structure_summary(replace(cfg, seed=s)) for s in range(8)]
+    assert len({len(s["quadrilhas"]) for s in summaries}) > 1
+    assert len({s["n_comercios"] for s in summaries}) > 1
+    sizes = [q["laranjas"] for s in summaries for q in s["quadrilhas"]]
+    assert len(set(sizes)) > 1
+    for summary in summaries:
+        assert 0.03 * 600 - 1 <= summary["n_comercios"] <= 0.07 * 600 + 1
+        assert summary["funcionarios_por_comercio"] > 0  # comércios pagam folha: não são só sumidouros
+        assert all(q["vitimas"] >= q["laranjas"] and q["cadeia"] >= 2 for q in summary["quadrilhas"])
+    # o dataset gerado bate com o resumo, e cada papel confere
+    accounts, tx = generate_dataset(replace(cfg, seed=5))
+    summary = structure_summary(replace(cfg, seed=5))
+    roles = accounts["role"].value_counts()
+    assert roles["coletor"] == len(summary["quadrilhas"])
+    assert roles["comercio"] == summary["n_comercios"]
+    assert audit_roles(accounts, tx).empty
+    assert generate_dataset(replace(cfg, seed=5))[1].equals(tx)  # reprodutível
