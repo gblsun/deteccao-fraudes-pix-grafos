@@ -3,6 +3,7 @@
 import ast
 import importlib.util
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -58,12 +59,34 @@ def test_every_vault_note_has_tags_frontmatter(path):
     assert re.match(r"^---\ntags: \[.+\]\n---", text), f"{path.relative_to(ROOT)}: sem frontmatter de tags"
 
 
+def _versioned_paths() -> set[Path] | None:
+    """Arquivos versionados no git e as pastas que os contêm; None fora de um repositório git.
+    O CI só enxerga o que foi commitado: um link para uma figura gerada localmente e
+    nunca commitada passa no `exists()` daqui e quebra lá."""
+    try:
+        files = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    found = {ROOT}
+    for name in files.decode("utf-8").split("\0"):
+        if name:
+            found.update([ROOT / name, *(ROOT / name).parents])
+    return found
+
+
+VERSIONED = _versioned_paths()
+
+
 @pytest.mark.parametrize("path", MARKDOWN, ids=lambda p: str(p.relative_to(ROOT)))
 def test_relative_links_point_to_existing_files(path):
     text = CODE.sub("", path.read_text(encoding="utf-8"))
     targets = [t for t in LINK.findall(text) if not t.startswith(("http://", "https://", "mailto:")) and "{{" not in t]
     missing = [t for t in targets if not (path.parent / t).exists()]
     assert not missing, f"links quebrados em {path.relative_to(ROOT)}: {missing}"
+    if VERSIONED is not None:
+        untracked = [t for t in targets if (path.parent / t).resolve() not in VERSIONED]
+        assert not untracked, f"links para arquivos fora do git (o CI não os vê) em {path.relative_to(ROOT)}: " \
+                              f"{untracked}"
 
 
 @pytest.mark.parametrize("path", sorted((ROOT / "src" / "pixfraud").rglob("*.py")),

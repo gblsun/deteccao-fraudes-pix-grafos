@@ -8498,6 +8498,11 @@
   },
   {
    "de": "reports/mapa-dos-resultados.md",
+   "para": "reports/05_interpretacao/figures/falsos_positivos_comercio.png",
+   "tipo": "arquivo"
+  },
+  {
+   "de": "reports/mapa-dos-resultados.md",
    "para": "reports/amlworld/figures/amlworld_pix_tipologias.png",
    "tipo": "arquivo"
   },

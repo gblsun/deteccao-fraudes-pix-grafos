@@ -1,13 +1,13 @@
 {
-  "gerado_em": "2026-10-08T09:53:48",
-  "commit": "1ba4fe4063e035529c6679d392ba5352ce18798f",
+  "gerado_em": "2026-10-12T18:08:20",
+  "commit": "665609eea87d6d9c9f42b70b9960be8e8adc69fd",
   "alteracoes_nao_commitadas": true,
-  "python": "3.14.0",
+  "python": "3.14.6",
   "pacotes": {
     "numpy": "2.5.3",
     "pandas": "3.0.6",
-    "networkx": "3.7",
-    "scikit-learn": "1.9.1",
+    "networkx": "3.6.1",
+    "scikit-learn": "1.8.0",
     "scipy": "1.18.1"
   },
   "configuracao": {
@@ -51,7 +51,8 @@
         "cadeia"
       ],
       "p_contested": 0.0,
-      "contest_delay_h": 48
+      "contest_delay_h": 48,
+      "estrutura_aleatoria": false
     },
     "atributos": {
       "betweenness_k": 500,
@@ -98,7 +99,21 @@
         "seed": 42
       },
       "pca": {
+        "components": "all",
+        "weighted": true,
         "contamination": 0.05
+      },
+      "random_forest": {
+        "n_estimators": 300,
+        "max_depth": null,
+        "min_samples_leaf": 1,
+        "max_features": "sqrt"
+      },
+      "gradient_boosting": {
+        "max_iter": 300,
+        "learning_rate": 0.05,
+        "min_samples_leaf": 5,
+        "max_leaf_nodes": 31
       }
     }
   },
@@ -109,32 +124,6 @@
       "p_new_fraud_account": 0.0,
       "quiet_fraction": 0.3,
       "n_rings": 2
-    },
-    "negativos_dificeis": {
-      "fraud_hours": "comercial",
-      "p_new_fraud_account": 0.0,
-      "quiet_fraction": 0.3,
-      "n_rings": 2,
-      "calendar": "semanal",
-      "employees_per_merchant": 4,
-      "supplier_tx_per_week": 1,
-      "p_organizer": 0.02,
-      "p_fast_forwarder": 0.05
-    },
-    "quadrilhas_realistas": {
-      "fraud_hours": "comercial",
-      "p_new_fraud_account": 0.0,
-      "quiet_fraction": 0.3,
-      "n_rings": 2,
-      "p_recruited_mule": 0.5,
-      "collector_cashout": true,
-      "laundering_typologies": [
-        "cadeia",
-        "espalha_junta",
-        "ciclo",
-        "bipartido"
-      ],
-      "p_contested": 0.6
     },
     "calibrado": {
       "fraud_hours": "comercial",
@@ -180,9 +169,11 @@
     "autoencoder",
     "combinado",
     "dbscan",
+    "dominant",
     "ecod",
     "fraudar",
     "gradient_boosting",
+    "graphsage",
     "isolation_forest",
     "kmeans",
     "knn",
@@ -195,6 +186,6 @@
     "propagacao_relativa",
     "random_forest"
   ],
-  "processos": 4,
-  "duracao_s": 963
+  "processos": 1,
+  "duracao_s": 58949
 }
